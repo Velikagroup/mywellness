@@ -111,16 +111,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
   
   const urlParams = new URLSearchParams(window.location.search);
   const urlStep = parseInt(urlParams.get('step')) || 0;
-  const isRecapMode = urlParams.get('mode') === 'recap';
-  const isRecalibrateFlow = urlParams.get('from') === 'dashboard';
   
-  console.log('🔍 Quiz URL Params:', {
-    from: urlParams.get('from'),
-    mode: urlParams.get('mode'),
-    isRecalibrateFlow,
-    isRecapMode,
-    fullURL: window.location.search
-  });
+
 
   const [currentStep, setCurrentStep] = useState(urlStep);
   const [quizData, setQuizData] = useState(() => {
@@ -261,12 +253,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        if ((isRecapMode || isRecalibrateFlow) && currentUser) {
-          // ✅ Modalità ricalibrazione: pulisci localStorage e parti da zero
-          localStorage.removeItem(`quizData_${language}`);
-          setQuizData({ gender: currentUser.gender || '' });
-          setCurrentStep(0);
-        } else if (currentUser && currentUser.quiz_completed && !isRecapMode && !isRecalibrateFlow) {
+        // Se ha completato il quiz e ha subscription attiva/trial → Dashboard
+        if (currentUser && currentUser.quiz_completed) {
           const hasActiveSubscription = currentUser.subscription_status === 'active' || 
                                         currentUser.subscription_status === 'trial';
           
@@ -274,7 +262,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
             navigate(createPageUrl('Dashboard'), { replace: true });
             return;
           } else {
-            navigate(createPageUrl('pricing'), { replace: true });
+            // Se ha completato quiz ma NO subscription → vai a PostQuizSubscription
+            navigate(createPageUrl('PostQuizSubscription'), { replace: true });
             return;
           }
         }
@@ -577,7 +566,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
       };
 
       await base44.auth.updateMe(userDataToSave);
-      
+
       const today = new Date().toISOString().split('T')[0];
       try {
         await base44.entities.WeightHistory.create({
@@ -588,73 +577,49 @@ export default function QuizContainer({ translations, language = 'it' }) {
       } catch (weightError) {
         console.warn('⚠️ Weight error:', weightError);
       }
-      
-      if (!isRecapMode) {
+
+      // Traccia affiliate se presente
+      const affiliateCode = localStorage.getItem('affiliateCode');
+      if (affiliateCode) {
         try {
-          const trialEndsAt = new Date();
-          trialEndsAt.setDate(trialEndsAt.getDate() + 7);
-          
-          const affiliateCode = localStorage.getItem('affiliateCode');
-          
-          const updateData = {
-            subscription_status: 'trial',
-            subscription_plan: 'trial',
-            trial_ends_at: trialEndsAt.toISOString()
-          };
-          
-          if (affiliateCode) {
-            updateData.referred_by_affiliate_code = affiliateCode;
-            
-            try {
-              const affiliateLinks = await base44.entities.AffiliateLink.filter({ 
-                affiliate_code: affiliateCode.toUpperCase() 
-              });
-              
-              if (affiliateLinks.length > 0) {
-                const affiliateLink = affiliateLinks[0];
-                
-                await base44.entities.AffiliateCredit.create({
-                  affiliate_link_id: affiliateLink.id,
-                  referrer_user_id: affiliateLink.user_id,
-                  referred_user_id: user.id,
-                  referred_user_email: user.email,
-                  credit_type: 'signup',
-                  credit_amount: 0,
-                  status: 'pending'
-                });
-                
-                await base44.entities.AffiliateLink.update(affiliateLink.id, {
-                  total_referrals: (affiliateLink.total_referrals || 0) + 1
-                });
-              }
-            } catch (affError) {
-              console.warn('⚠️ Affiliate tracking error:', affError);
-            }
-            
-            localStorage.removeItem('affiliateCode');
-          }
-          
-          await base44.auth.updateMe(updateData);
-          
-          try {
-            await base44.functions.invoke('sendStandardFreeWelcome', {
-              userId: user.id,
-              userEmail: user.email,
-              userName: user.full_name || 'User'
+          const affiliateLinks = await base44.entities.AffiliateLink.filter({ 
+            affiliate_code: affiliateCode.toUpperCase() 
+          });
+
+          if (affiliateLinks.length > 0) {
+            const affiliateLink = affiliateLinks[0];
+
+            await base44.entities.AffiliateCredit.create({
+              affiliate_link_id: affiliateLink.id,
+              referrer_user_id: affiliateLink.user_id,
+              referred_user_id: user.id,
+              referred_user_email: user.email,
+              credit_type: 'signup',
+              credit_amount: 0,
+              status: 'pending'
             });
-          } catch (emailError) {
-            console.error('⚠️ Email error:', emailError);
+
+            await base44.entities.AffiliateLink.update(affiliateLink.id, {
+              total_referrals: (affiliateLink.total_referrals || 0) + 1
+            });
+
+            await base44.auth.updateMe({
+              referred_by_affiliate_code: affiliateCode
+            });
           }
-        } catch (error) {
-          console.error('Error setting trial:', error);
+        } catch (affError) {
+          console.warn('⚠️ Affiliate tracking error:', affError);
         }
+
+        localStorage.removeItem('affiliateCode');
       }
       
       localStorage.removeItem(`quizData_${language}`);
       localStorage.removeItem(`quizDataToSave_${language}`);
       localStorage.removeItem('needsTrialSetup');
-      
-      navigate(createPageUrl('Dashboard'), { replace: true });
+
+      // Vai alla pagina di subscription
+      navigate(createPageUrl('PostQuizSubscription'), { replace: true });
       
     } catch (error) {
       console.error("Error saving quiz data:", error);

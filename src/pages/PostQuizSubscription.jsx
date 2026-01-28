@@ -1,0 +1,350 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
+import { Button } from '@/components/ui/button';
+import { Check, Bell, Lock, Crown, Sparkles } from 'lucide-react';
+import { useLanguage } from '@/components/i18n/LanguageContext';
+
+export default function PostQuizSubscription() {
+  const navigate = useNavigate();
+  const { t } = useLanguage();
+  const [user, setUser] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState('monthly');
+  const [showReminderScreen, setShowReminderScreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [timelineProgress, setTimelineProgress] = useState(0);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+        
+        // Se ha già una subscription attiva, vai alla dashboard
+        if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
+          navigate(createPageUrl('Dashboard'), { replace: true });
+        }
+      } catch (error) {
+        console.error('Error loading user:', error);
+        navigate(createPageUrl('Quiz'), { replace: true });
+      }
+    };
+    
+    loadUser();
+  }, [navigate]);
+
+  // Animazione timeline quando yearly è selezionato
+  useEffect(() => {
+    if (selectedPlan === 'yearly') {
+      const interval = setInterval(() => {
+        setTimelineProgress(prev => {
+          if (prev >= 100) {
+            clearInterval(interval);
+            return 100;
+          }
+          return prev + 2;
+        });
+      }, 30);
+      
+      return () => clearInterval(interval);
+    } else {
+      setTimelineProgress(0);
+    }
+  }, [selectedPlan]);
+
+  const handleStartTrial = async () => {
+    if (selectedPlan === 'yearly') {
+      // Mostra schermata reminder per yearly
+      setShowReminderScreen(true);
+    } else {
+      // Avvia checkout per monthly
+      await handleCheckout('monthly');
+    }
+  };
+
+  const handleCheckout = async (plan) => {
+    setIsLoading(true);
+    try {
+      const priceId = plan === 'yearly' 
+        ? 'price_yearly_id' // Sostituire con ID reale
+        : 'price_monthly_id'; // Sostituire con ID reale
+      
+      const { data: publishableKey } = await base44.functions.invoke('getStripePublishableKey');
+      const stripe = window.Stripe(publishableKey);
+      
+      // Crea Payment Sheet per Apple/Google Pay
+      const { data: session } = await base44.functions.invoke('stripeCreateTrialSubscription', {
+        priceId,
+        userId: user.id,
+        hasTrial: plan === 'yearly',
+        trialDays: plan === 'yearly' ? 3 : 0
+      });
+      
+      // Redirect a Stripe Payment Sheet
+      await stripe.redirectToCheckout({ sessionId: session.id });
+      
+    } catch (error) {
+      console.error('Checkout error:', error);
+      alert(t?.checkout?.error || 'Errore durante il checkout');
+    }
+    setIsLoading(false);
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Sparkles className="w-8 h-8 animate-spin text-[#26847F]" />
+      </div>
+    );
+  }
+
+  const features = [
+    {
+      icon: '🧬',
+      title: t?.subscription?.feature1Title || 'Età biologica del tuo corpo',
+      subtitle: t?.subscription?.feature1Subtitle || 'Scopri la tua vera età biologica'
+    },
+    {
+      icon: '📊',
+      title: t?.subscription?.feature2Title || 'Percentuale di massa grassa',
+      subtitle: t?.subscription?.feature2Subtitle || 'Monitoraggio preciso della composizione corporea'
+    },
+    {
+      icon: '💪',
+      title: t?.subscription?.feature3Title || 'Scoperta del tuo somatotipo',
+      subtitle: t?.subscription?.feature3Subtitle || 'Piano personalizzato sul tuo corpo'
+    },
+    {
+      icon: '📸',
+      title: t?.subscription?.feature4Title || 'Scan cibi ed etichette',
+      subtitle: t?.subscription?.feature4Subtitle || 'Traccia calorie con una foto'
+    }
+  ];
+
+  const timelineSteps = [
+    {
+      icon: Lock,
+      title: t?.subscription?.timelineToday || 'Today',
+      subtitle: t?.subscription?.timelineTodayText || "Unlock all the app's features like AI calorie scanning and more.",
+      color: 'text-orange-500'
+    },
+    {
+      icon: Bell,
+      title: t?.subscription?.timeline2Days || 'In 2 Days - Reminder',
+      subtitle: t?.subscription?.timeline2DaysText || "We'll send you a reminder that your trial is ending soon.",
+      color: 'text-orange-500'
+    },
+    {
+      icon: Crown,
+      title: t?.subscription?.timeline3Days || 'In 3 Days - Billing Starts',
+      subtitle: t?.subscription?.timeline3DaysText || "You'll be charged on {date} unless you cancel anytime before.",
+      color: 'text-gray-900'
+    }
+  ];
+
+  if (showReminderScreen) {
+    return (
+      <div className="min-h-screen bg-white p-6 flex flex-col">
+        <button
+          onClick={() => setShowReminderScreen(false)}
+          className="self-start text-gray-600 mb-8"
+        >
+          ← {t?.common?.back || 'Back'}
+        </button>
+
+        <div className="flex-1 flex flex-col items-center justify-between max-w-md mx-auto w-full">
+          <div className="space-y-8 text-center w-full">
+            <h1 className="text-3xl font-bold text-gray-900 px-4">
+              {t?.subscription?.reminderTitle || "We'll send you a reminder before your free trial ends"}
+            </h1>
+
+            <div className="relative py-12">
+              <div className="relative w-48 h-48 mx-auto">
+                <Bell className="w-48 h-48 text-gray-300" strokeWidth={1.5} />
+                <div className="absolute -top-2 -right-2 w-16 h-16 bg-red-500 rounded-full flex items-center justify-center">
+                  <span className="text-white text-2xl font-bold">1</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-center gap-2 text-gray-900">
+              <Check className="w-5 h-5" />
+              <p className="font-semibold">{t?.subscription?.noPaymentNow || 'No Payment Due Now'}</p>
+            </div>
+          </div>
+
+          <div className="w-full space-y-4">
+            <Button
+              onClick={() => handleCheckout('yearly')}
+              disabled={isLoading}
+              className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
+            >
+              {isLoading ? t?.common?.loading : (t?.subscription?.continueForFree || 'Continue for FREE')}
+            </Button>
+            <p className="text-center text-sm text-gray-500">
+              {t?.subscription?.yearlyPrice || '3 days free, then 49,99 € per year (4,16 €/month)'}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-white p-6 flex flex-col">
+      <button
+        onClick={() => navigate(createPageUrl('Dashboard'))}
+        className="self-start text-gray-600 mb-8"
+      >
+        ← {t?.common?.back || 'Back'}
+      </button>
+
+      <div className="flex-1 flex flex-col max-w-md mx-auto w-full space-y-8">
+        <div className="space-y-4 text-center">
+          <h1 className="text-3xl font-bold text-gray-900">
+            {t?.subscription?.unlockTitle || 'Unlock MyWellness to reach your goals faster.'}
+          </h1>
+        </div>
+
+        {/* Features List */}
+        <div className="space-y-4">
+          {features.map((feature, index) => (
+            <div key={index} className="flex items-start gap-3">
+              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-900 flex items-center justify-center">
+                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+              </div>
+              <div className="flex-1">
+                <p className="font-bold text-gray-900 flex items-center gap-2">
+                  <span className="text-xl">{feature.icon}</span>
+                  {feature.title}
+                </p>
+                <p className="text-sm text-gray-600">{feature.subtitle}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Animated Timeline (only for yearly) */}
+        {selectedPlan === 'yearly' && (
+          <div className="space-y-1 py-4">
+            <h2 className="text-xl font-bold text-center mb-6">
+              {t?.subscription?.trialTitle || 'Start your 3-day FREE trial to continue.'}
+            </h2>
+            {timelineSteps.map((step, index) => {
+              const StepIcon = step.icon;
+              const isActive = timelineProgress >= (index * 33.33);
+              const isFilling = timelineProgress > (index * 33.33) && timelineProgress < ((index + 1) * 33.33);
+              const fillPercentage = isFilling ? ((timelineProgress - (index * 33.33)) / 33.33) * 100 : (isActive ? 100 : 0);
+              
+              return (
+                <div key={index} className="flex items-start gap-4 relative">
+                  {/* Icon Circle */}
+                  <div className={`w-12 h-12 rounded-full ${isActive ? 'bg-orange-500' : 'bg-gray-300'} flex items-center justify-center flex-shrink-0 relative z-10 transition-all duration-300`}>
+                    <StepIcon className="w-6 h-6 text-white" />
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 pb-8">
+                    <h3 className={`font-bold ${isActive ? 'text-gray-900' : 'text-gray-500'} transition-colors duration-300`}>
+                      {step.title}
+                    </h3>
+                    <p className={`text-sm ${isActive ? 'text-gray-600' : 'text-gray-400'} transition-colors duration-300`}>
+                      {step.subtitle.replace('{date}', new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString())}
+                    </p>
+                  </div>
+
+                  {/* Connecting Line */}
+                  {index < timelineSteps.length - 1 && (
+                    <div className="absolute left-6 top-12 w-0.5 h-full -translate-x-1/2">
+                      <div className="w-full bg-gray-200 h-full">
+                        <div 
+                          className="w-full bg-orange-500 transition-all duration-300 ease-out"
+                          style={{ height: `${fillPercentage}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Plan Selection */}
+        <div className="grid grid-cols-2 gap-4">
+          <button
+            onClick={() => setSelectedPlan('monthly')}
+            className={`relative p-4 rounded-2xl border-2 transition-all ${
+              selectedPlan === 'monthly'
+                ? 'border-gray-900 bg-gray-50'
+                : 'border-gray-200 bg-white'
+            }`}
+          >
+            <div className="text-left space-y-1">
+              <p className="font-semibold text-gray-900">Monthly</p>
+              <p className="text-2xl font-bold text-gray-900">9,99 €<span className="text-sm font-normal">/mo</span></p>
+            </div>
+            {selectedPlan === 'monthly' && (
+              <div className="absolute top-4 right-4 w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+              </div>
+            )}
+          </button>
+
+          <button
+            onClick={() => setSelectedPlan('yearly')}
+            className={`relative p-4 rounded-2xl border-2 transition-all ${
+              selectedPlan === 'yearly'
+                ? 'border-gray-900 bg-gray-50'
+                : 'border-gray-200 bg-white'
+            }`}
+          >
+            <div className="absolute -top-2 right-2 bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded-full">
+              3 DAYS FREE
+            </div>
+            <div className="text-left space-y-1">
+              <p className="font-semibold text-gray-900">Yearly</p>
+              <p className="text-2xl font-bold text-gray-900">4,16 €<span className="text-sm font-normal">/mo</span></p>
+            </div>
+            {selectedPlan === 'yearly' && (
+              <div className="absolute top-4 right-4 w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+              </div>
+            )}
+          </button>
+        </div>
+
+        {/* No Payment Badge */}
+        {selectedPlan === 'yearly' && (
+          <div className="flex items-center justify-center gap-2 text-gray-900">
+            <Check className="w-5 h-5" />
+            <p className="font-semibold">{t?.subscription?.noPaymentNow || 'No Payment Due Now'}</p>
+          </div>
+        )}
+
+        {/* CTA Button */}
+        <div className="space-y-2">
+          <Button
+            onClick={handleStartTrial}
+            disabled={isLoading}
+            className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
+          >
+            {isLoading ? (
+              t?.common?.loading || 'Loading...'
+            ) : selectedPlan === 'yearly' ? (
+              t?.subscription?.startTrial || 'Start My 3-Day Free Trial'
+            ) : (
+              t?.subscription?.startJourney || 'Start My Journey'
+            )}
+          </Button>
+          <p className="text-center text-sm text-gray-500">
+            {selectedPlan === 'yearly'
+              ? (t?.subscription?.yearlyPrice || '3 days free, then 49,99 € per year (4,16 €/month)')
+              : (t?.subscription?.monthlyPrice || 'Just 9,99 € per month')}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
