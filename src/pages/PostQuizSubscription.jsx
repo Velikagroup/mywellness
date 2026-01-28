@@ -14,8 +14,8 @@ export default function PostQuizSubscription() {
   const [showReminderScreen, setShowReminderScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timelineProgress, setTimelineProgress] = useState(0);
-  const stripeRef = useRef(null);
-  const prRef = useRef(null);
+  const [checkoutSessions, setCheckoutSessions] = useState({ monthly: null, yearly: null });
+  const [sessionLoading, setSessionLoading] = useState(true);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -32,15 +32,35 @@ export default function PostQuizSubscription() {
       }
     };
     
-    loadUser();
+    const preloadCheckoutSessions = async () => {
+      try {
+        // Crea sessioni monthly e yearly in parallelo
+        const [monthlyRes, yearlyRes] = await Promise.all([
+          base44.functions.invoke('stripeCreatePaymentSheet', {
+            priceId: 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6',
+            hasTrial: false,
+            trialDays: 0
+          }),
+          base44.functions.invoke('stripeCreatePaymentSheet', {
+            priceId: 'price_1SuOAr2OXBs6ZYwlteMU5EVp',
+            hasTrial: true,
+            trialDays: 3
+          })
+        ]);
 
-    // Carica Stripe.js
-    if (!window.Stripe) {
-      const script = document.createElement('script');
-      script.src = 'https://js.stripe.com/v3/';
-      script.async = true;
-      document.head.appendChild(script);
-    }
+        setCheckoutSessions({
+          monthly: monthlyRes?.data?.url || monthlyRes?.url,
+          yearly: yearlyRes?.data?.url || yearlyRes?.url
+        });
+      } catch (error) {
+        console.error('Error preloading checkout sessions:', error);
+      } finally {
+        setSessionLoading(false);
+      }
+    };
+    
+    loadUser();
+    preloadCheckoutSessions();
   }, [navigate]);
 
   // Animazione timeline quando yearly è selezionato
@@ -62,74 +82,24 @@ export default function PostQuizSubscription() {
     }
   }, [selectedPlan]);
 
-  const handleStartTrial = async () => {
+  const handleStartTrial = () => {
     if (selectedPlan === 'yearly') {
-      // Mostra schermata reminder per yearly
       setShowReminderScreen(true);
     } else {
-      // Avvia checkout per monthly
-      await handleCheckout('monthly');
+      handleCheckout('monthly');
     }
   };
 
-  const handleCheckout = async (plan) => {
-    setIsLoading(true);
-    try {
-      // Aspetta che Stripe sia disponibile
-      if (!window.Stripe) {
-        throw new Error('Stripe not loaded');
-      }
-
-      // Ottieni la chiave pubblica e inizializza Stripe
-      const keyRes = await base44.functions.invoke('getStripePublishableKey');
-      const stripeKey = keyRes?.data?.key || keyRes?.key;
-      
-      if (!stripeKey) {
-        throw new Error('Stripe key not found');
-      }
-
-      const stripe = window.Stripe(stripeKey);
-
-      const priceId = plan === 'yearly' 
-        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
-        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
-      
-      console.log('🔄 Creating PaymentIntent for:', plan, priceId);
-      
-      // Crea PaymentIntent
-      const response = await base44.functions.invoke('stripePaymentIntent', {
-        priceId,
-        hasTrial: plan === 'yearly',
-        trialDays: plan === 'yearly' ? 3 : 0
-      });
-
-      const data = response?.data || response;
-
-      if (!data?.success) {
-        throw new Error(data?.error || 'Payment Intent failed');
-      }
-
-      // Crea Stripe Checkout Session (alternativa più stabile a Payment Request)
-      const sessionResponse = await base44.functions.invoke('stripeCreatePaymentSheet', {
-        priceId,
-        hasTrial: plan === 'yearly',
-        trialDays: plan === 'yearly' ? 3 : 0
-      });
-
-      const sessionData = sessionResponse?.data || sessionResponse;
-
-      if (!sessionData?.success || !sessionData?.url) {
-        throw new Error(sessionData?.error || 'Checkout session creation failed');
-      }
-
-      // Redirect a Stripe Checkout
-      window.location.href = sessionData.url;
-
-    } catch (error) {
-      console.error('❌ Payment error:', error);
-      alert(t?.checkout?.error || `Errore: ${error.message}`);
-      setIsLoading(false);
+  const handleCheckout = (plan) => {
+    const checkoutUrl = plan === 'yearly' ? checkoutSessions.yearly : checkoutSessions.monthly;
+    
+    if (!checkoutUrl) {
+      alert(t?.checkout?.error || 'Errore nel caricamento del checkout');
+      return;
     }
+
+    // Redirect sincronamente al click per evitare errori Apple Pay
+    window.location.href = checkoutUrl;
   };
 
   if (!user) {
