@@ -10,10 +10,14 @@ export default function PostQuizSubscription() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [user, setUser] = useState(null);
-  const [selectedPlan, setSelectedPlan] = useState('monthly');
-  const [showReminderScreen, setShowReminderScreen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [timelineProgress, setTimelineProgress] = useState(0);
+    const [selectedPlan, setSelectedPlan] = useState('monthly');
+    const [showReminderScreen, setShowReminderScreen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [timelineProgress, setTimelineProgress] = useState(0);
+    const [stripe, setStripe] = useState(null);
+    const [elements, setElements] = useState(null);
+    const stripeRef = useRef(null);
+    const elementsRef = useRef(null);
 
   useEffect(() => {
     const loadUser = async () => {
