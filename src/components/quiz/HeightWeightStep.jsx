@@ -60,30 +60,52 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
 
   const handleHeightScroll = () => {
     if (heightRef.current) {
-      const scrollTop = heightRef.current.scrollTop;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      const centerY = scrollTop + containerHeight / 2;
-      const rawIndex = (centerY - topPadding) / itemHeight;
-      const index = Math.round(rawIndex);
+      const container = heightRef.current;
+      const centerY = container.scrollTop + container.clientHeight / 2;
+      
+      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      
+      items.forEach((item, idx) => {
+        const itemTop = item.offsetTop;
+        const itemCenter = itemTop + item.clientHeight / 2;
+        const distance = Math.abs(itemCenter - centerY);
+        
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = idx;
+        }
+      });
+      
       const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
-      const newHeight = heightValues[Math.max(0, Math.min(index, heightValues.length - 1))];
+      const newHeight = heightValues[Math.max(0, Math.min(closestIndex, heightValues.length - 1))];
       setSelectedHeight(newHeight);
     }
   };
 
   const handleWeightScroll = () => {
     if (weightRef.current) {
-      const scrollTop = weightRef.current.scrollTop;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      const centerY = scrollTop + containerHeight / 2;
-      const rawIndex = (centerY - topPadding) / itemHeight;
-      const index = Math.round(rawIndex);
+      const container = weightRef.current;
+      const centerY = container.scrollTop + container.clientHeight / 2;
+      
+      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      
+      items.forEach((item, idx) => {
+        const itemTop = item.offsetTop;
+        const itemCenter = itemTop + item.clientHeight / 2;
+        const distance = Math.abs(itemCenter - centerY);
+        
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = idx;
+        }
+      });
+      
       const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
-      const newWeight = weightValues[Math.max(0, Math.min(index, weightValues.length - 1))];
+      const newWeight = weightValues[Math.max(0, Math.min(closestIndex, weightValues.length - 1))];
       setSelectedWeight(newWeight);
     }
   };

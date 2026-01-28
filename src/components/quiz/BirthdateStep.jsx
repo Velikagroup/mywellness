@@ -86,15 +86,25 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
 
   const handleDayScroll = () => {
     if (daysRef.current) {
-      const scrollTop = daysRef.current.scrollTop;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      const centerY = scrollTop + containerHeight / 2;
-      const rawIndex = (centerY - topPadding) / itemHeight;
-      const index = Math.round(rawIndex);
-      // Days sono 1-31 (non 0-indexed come i mesi)
-      const newDay = Math.max(1, Math.min(index + 1, 31));
+      const container = daysRef.current;
+      const centerY = container.scrollTop + container.clientHeight / 2;
+      
+      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      
+      items.forEach((item, idx) => {
+        const itemTop = item.offsetTop;
+        const itemCenter = itemTop + item.clientHeight / 2;
+        const distance = Math.abs(itemCenter - centerY);
+        
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = idx;
+        }
+      });
+      
+      const newDay = Math.max(1, Math.min(closestIndex, 31));
       setSelectedDay(newDay);
       
       const age = calculateAgeForDate(selectedYear, selectedMonth, newDay);
@@ -105,14 +115,25 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
 
   const handleYearScroll = () => {
     if (yearsRef.current) {
-      const scrollTop = yearsRef.current.scrollTop;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      const centerY = scrollTop + containerHeight / 2;
-      const rawIndex = (centerY - topPadding) / itemHeight;
-      const index = Math.round(rawIndex);
-      const newYear = YEARS[Math.max(0, Math.min(index, YEARS.length - 1))];
+      const container = yearsRef.current;
+      const centerY = container.scrollTop + container.clientHeight / 2;
+      
+      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      
+      items.forEach((item, idx) => {
+        const itemTop = item.offsetTop;
+        const itemCenter = itemTop + item.clientHeight / 2;
+        const distance = Math.abs(itemCenter - centerY);
+        
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = idx;
+        }
+      });
+      
+      const newYear = YEARS[Math.max(0, Math.min(closestIndex, YEARS.length - 1))];
       setSelectedYear(newYear);
       
       const age = calculateAgeForDate(newYear, selectedMonth, selectedDay);
