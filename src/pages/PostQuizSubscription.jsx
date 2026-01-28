@@ -109,45 +109,21 @@ export default function PostQuizSubscription() {
         throw new Error(data?.error || 'Payment Intent failed');
       }
 
-      // Crea Payment Request
-      const paymentRequest = stripe.paymentRequest({
-        country: 'IT',
-        currency: data.currency,
-        total: {
-          label: 'MyWellness Subscription',
-          amount: data.amount,
-        },
-        requestPayerName: true,
-        requestPayerEmail: true,
+      // Crea Stripe Checkout Session (alternativa più stabile a Payment Request)
+      const sessionResponse = await base44.functions.invoke('stripeCreatePaymentSheet', {
+        priceId,
+        hasTrial: plan === 'yearly',
+        trialDays: plan === 'yearly' ? 3 : 0
       });
 
-      // Gestisci il pagamento
-      paymentRequest.on('paymentmethod', async (e) => {
-        const { error: confirmError } = await stripe.confirmCardPayment(
-          data.clientSecret,
-          { payment_method: e.paymentMethod.id },
-          { handleActions: false }
-        );
+      const sessionData = sessionResponse?.data || sessionResponse;
 
-        if (confirmError) {
-          e.complete('fail');
-          console.error('Payment failed:', confirmError);
-          alert(`Pagamento fallito: ${confirmError.message}`);
-          setIsLoading(false);
-        } else {
-          e.complete('success');
-          console.log('✅ Payment successful');
-          navigate(createPageUrl('ThankYou'), { replace: true });
-        }
-      });
-
-      // Verifica se Payment Request è disponibile
-      const canMakePayment = await paymentRequest.canMakePayment();
-      if (canMakePayment) {
-        paymentRequest.show();
-      } else {
-        throw new Error('Payment method not available');
+      if (!sessionData?.success || !sessionData?.url) {
+        throw new Error(sessionData?.error || 'Checkout session creation failed');
       }
+
+      // Redirect a Stripe Checkout
+      window.location.href = sessionData.url;
 
     } catch (error) {
       console.error('❌ Payment error:', error);
