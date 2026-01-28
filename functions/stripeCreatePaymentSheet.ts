@@ -43,14 +43,13 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        console.log(`💳 Creating Payment Sheet for priceId: ${priceId}, trial: ${hasTrial ? `${trialDays} days` : 'none'}`);
+        console.log(`💳 Creating Payment Intent for priceId: ${priceId}, trial: ${hasTrial ? `${trialDays} days` : 'none'}`);
 
         // Crea o recupera customer Stripe
         let stripeCustomerId = user.stripe_customer_id;
         
         if (stripeCustomerId) {
             try {
-                // Verifica che il customer esista
                 await stripe.customers.retrieve(stripeCustomerId);
                 console.log(`✅ Customer found: ${stripeCustomerId}`);
             } catch (error) {
@@ -78,43 +77,32 @@ Deno.serve(async (req) => {
             console.log(`✅ Customer created: ${stripeCustomerId}`);
         }
 
-        // Crea Checkout Session per Payment Sheet
-        const sessionParams = {
-            mode: 'subscription',
+        // Recupera il prezzo per ottenere l'importo
+        const price = await stripe.prices.retrieve(priceId);
+        const amount = price.unit_amount; // in centesimi
+        
+        // Crea Setup Intent per la sottoscrizione con Apple Pay/Google Pay
+        const setupIntent = await stripe.setupIntents.create({
             customer: stripeCustomerId,
-            line_items: [
-                {
-                    price: priceId,
-                    quantity: 1,
-                }
-            ],
-            success_url: `https://app.projectmywellness.com/Dashboard?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `https://app.projectmywellness.com/PostQuizSubscription`,
+            payment_method_types: ['card'],
+            usage: 'off_session',
             metadata: {
                 user_id: user.id,
-                has_trial: hasTrial ? 'true' : 'false'
-            },
-            subscription_data: {
-                metadata: {
-                    user_id: user.id
-                }
+                price_id: priceId,
+                has_trial: hasTrial ? 'true' : 'false',
+                trial_days: trialDays.toString()
             }
-        };
+        });
 
-        // Aggiungi trial solo se richiesto
-        if (hasTrial && trialDays > 0) {
-            sessionParams.subscription_data.trial_period_days = trialDays;
-            sessionParams.payment_method_collection = 'if_required'; // Non richiede pagamento per trial
-        }
-
-        const session = await stripe.checkout.sessions.create(sessionParams);
-
-        console.log(`✅ Checkout Session created: ${session.id}`);
+        console.log(`✅ Setup Intent created: ${setupIntent.id}`);
 
         return Response.json({
             success: true,
-            sessionId: session.id,
-            url: session.url
+            setupIntentClientSecret: setupIntent.client_secret,
+            customerId: stripeCustomerId,
+            priceId: priceId,
+            amount: amount,
+            publishableKey: Deno.env.get("STRIPE_PUBLISHABLE_KEY")
         });
 
     } catch (error) {
