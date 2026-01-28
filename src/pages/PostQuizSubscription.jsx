@@ -73,36 +73,37 @@ export default function PostQuizSubscription() {
       const priceId = plan === 'yearly' 
         ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp' // €49.99/anno con 3 giorni trial
         : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6'; // €9.99/mese senza trial
-      
-      console.log('🔄 Creating checkout session for:', plan, priceId);
-      
-      // Crea Checkout Session
+
+      console.log('🔄 Creating payment intent for:', plan, priceId);
+
+      // Crea Setup Intent
       const response = await base44.functions.invoke('stripeCreatePaymentSheet', {
         priceId,
         hasTrial: plan === 'yearly',
         trialDays: plan === 'yearly' ? 3 : 0
       });
 
-      console.log('✅ Checkout response:', response);
+      console.log('✅ Response:', response);
       const data = response?.data || response;
 
       if (!data?.success) {
-        throw new Error(data?.error || 'Checkout failed');
+        throw new Error(data?.error || 'Payment failed');
       }
 
-      // Redirect diretto all'URL di Stripe Checkout
-      if (data?.url) {
-        console.log('🔄 Redirecting to:', data.url);
-        window.location.href = data.url;
+      // Apri modal di pagamento
+      if (data?.clientSecret) {
+        console.log('🔄 Opening payment modal');
+        setClientSecret(data.clientSecret);
+        setShowPaymentModal(true);
       } else {
-        throw new Error('No checkout URL received');
+        throw new Error('No client secret received');
       }
-      
+
     } catch (error) {
-      console.error('❌ Checkout error:', error);
-      alert(t?.checkout?.error || `Errore durante il checkout: ${error.message}`);
-      setIsLoading(false);
+      console.error('❌ Payment error:', error);
+      alert(t?.checkout?.error || `Errore: ${error.message}`);
     }
+    setIsLoading(false);
   };
 
   if (!user) {
