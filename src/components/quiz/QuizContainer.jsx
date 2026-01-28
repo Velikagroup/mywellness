@@ -21,6 +21,9 @@ import ObstaclesStep from './ObstaclesStep';
 import DietSpecificStep from './DietSpecificStep';
 import GoalsStep from './GoalsStep';
 import WeightPotentialStep from './WeightPotentialStep';
+import TrustStep from './TrustStep';
+import ReferralCodeStep from './ReferralCodeStep';
+import ReadyToGenerateStep from './ReadyToGenerateStep';
 import QuizStepWrapper from './QuizStepWrapper';
 
 function calculateAge(birthdate) {
@@ -92,7 +95,10 @@ function buildDynamicSteps(translations, quizData) {
                   { component: ObstaclesStep, label: translations?.quiz?.quizObstaclesTitle || "Obstacles" },
                   { component: DietSpecificStep, label: translations?.quiz?.quizDietSpecificTitle || "Diet" },
                   { component: GoalsStep, label: translations?.quiz?.quizGoalsTitle || "Goals" },
-                  { component: WeightPotentialStep, label: translations?.quiz?.quizWeightPotentialTitle || "Weight Potential" }
+                  { component: WeightPotentialStep, label: translations?.quiz?.quizWeightPotentialTitle || "Weight Potential" },
+                  { component: TrustStep, label: translations?.quiz?.quizTrustTitle || "Trust" },
+                  { component: ReferralCodeStep, label: translations?.quiz?.quizReferralTitle || "Referral Code" },
+                  { component: ReadyToGenerateStep, label: translations?.quiz?.quizReadyTitle || "Ready" }
                 );
 
                 return steps;
