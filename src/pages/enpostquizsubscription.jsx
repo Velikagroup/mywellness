@@ -4,7 +4,7 @@ import PostQuizSubscription from './PostQuizSubscription';
 
 export default function EnPostQuizSubscription() {
   return (
-    <LanguageProvider initialLanguage="en">
+    <LanguageProvider forcedLanguage="en">
       <PostQuizSubscription />
     </LanguageProvider>
   );
