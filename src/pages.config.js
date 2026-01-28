@@ -66,6 +66,12 @@ import ptcheckout from './pages/ptcheckout';
 import ptpricing from './pages/ptpricing';
 import ptquiz from './pages/ptquiz';
 import PostQuizSubscription from './pages/PostQuizSubscription';
+import itpostquizsubscription from './pages/itpostquizsubscription';
+import enpostquizsubscription from './pages/enpostquizsubscription';
+import espostquizsubscription from './pages/espostquizsubscription';
+import ptpostquizsubscription from './pages/ptpostquizsubscription';
+import depostquizsubscription from './pages/depostquizsubscription';
+import frpostquizsubscription from './pages/frpostquizsubscription';
 import __Layout from './Layout.jsx';
 
 
@@ -138,6 +144,12 @@ export const PAGES = {
     "ptpricing": ptpricing,
     "ptquiz": ptquiz,
     "PostQuizSubscription": PostQuizSubscription,
+    "itpostquizsubscription": itpostquizsubscription,
+    "enpostquizsubscription": enpostquizsubscription,
+    "espostquizsubscription": espostquizsubscription,
+    "ptpostquizsubscription": ptpostquizsubscription,
+    "depostquizsubscription": depostquizsubscription,
+    "frpostquizsubscription": frpostquizsubscription,
 }
 
 export const pagesConfig = {
