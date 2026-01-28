@@ -87,13 +87,12 @@ export default function PostQuizSubscription() {
         throw new Error(data?.error || 'Payment failed');
       }
 
-      // Apri modal di pagamento
-      if (data?.clientSecret) {
-        console.log('🔄 Opening payment modal');
-        setClientSecret(data.clientSecret);
-        setShowPaymentModal(true);
+      // Redirect diretto all'URL di Stripe Checkout
+      if (data?.url) {
+        console.log('🔄 Redirecting to:', data.url);
+        window.location.href = data.url;
       } else {
-        throw new Error('No client secret received');
+        throw new Error('No checkout URL received');
       }
 
     } catch (error) {
