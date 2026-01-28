@@ -14,31 +14,46 @@ export default function PostQuizSubscription() {
   const [showReminderScreen, setShowReminderScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timelineProgress, setTimelineProgress] = useState(0);
+  const [stripeKey, setStripeKey] = useState(null);
+  const stripeRef = React.useRef(null);
 
   useEffect(() => {
-    const loadUser = async () => {
+    const loadInitialData = async () => {
       try {
+        // Load user
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
         if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
           navigate(createPageUrl('Dashboard'), { replace: true });
         }
+
+        // Pre-load Stripe key
+        const keyRes = await base44.functions.invoke('getStripePublishableKey');
+        const key = keyRes?.data?.key || keyRes?.key;
+        if (key) {
+          setStripeKey(key);
+          
+          // Load Stripe.js and initialize
+          if (!window.Stripe) {
+            const script = document.createElement('script');
+            script.src = 'https://js.stripe.com/v3/';
+            script.async = true;
+            script.onload = () => {
+              stripeRef.current = window.Stripe(key);
+            };
+            document.head.appendChild(script);
+          } else {
+            stripeRef.current = window.Stripe(key);
+          }
+        }
       } catch (error) {
-        console.error('Error loading user:', error);
+        console.error('Error loading data:', error);
         navigate(createPageUrl('Quiz'), { replace: true });
       }
     };
-
-    // Carica Stripe.js
-    if (!window.Stripe) {
-      const script = document.createElement('script');
-      script.src = 'https://js.stripe.com/v3/';
-      script.async = true;
-      document.head.appendChild(script);
-    }
     
-    loadUser();
+    loadInitialData();
   }, [navigate]);
 
   // Animazione timeline quando yearly è selezionato
