@@ -68,7 +68,7 @@ export default function PostQuizSubscription() {
     }
   };
 
-  const handleCheckout = (plan) => {
+  const handleCheckout = async (plan) => {
     if (!window.Stripe) {
       alert('Stripe non caricato');
       return;
@@ -76,22 +76,22 @@ export default function PostQuizSubscription() {
 
     setIsLoading(true);
 
-    // Carica chiave e crea Payment Request SUBITO DOPO IL CLICK - NO AWAIT PRIMA DI show()
-    const priceId = plan === 'yearly' 
-      ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
-      : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
+    try {
+      const priceId = plan === 'yearly' 
+        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
+        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
 
-    const amount = plan === 'yearly' ? 49900 : 9990; // in centesimi
-    const currency = 'eur';
+      const amount = plan === 'yearly' ? 49900 : 9990;
+      const currency = 'eur';
 
-    // Ottieni Stripe key (dovrebbe essere già available)
-    base44.functions.invoke('getStripePublishableKey').then((keyRes) => {
+      // Ottieni chiave Stripe
+      const keyRes = await base44.functions.invoke('getStripePublishableKey');
       const stripeKey = keyRes?.data?.key || keyRes?.key;
       if (!stripeKey) throw new Error('Stripe key not found');
 
       const stripe = window.Stripe(stripeKey);
 
-      // Crea Payment Request IMMEDIATAMENTE
+      // Crea Payment Request
       const paymentRequest = stripe.paymentRequest({
         country: 'IT',
         currency: currency,
@@ -103,20 +103,12 @@ export default function PostQuizSubscription() {
         requestPayerEmail: true,
       });
 
-      // SUBITO - Mostra il payment sheet PRIMA di qualsiasi async
-      paymentRequest.canMakePayment().then((result) => {
-        if (result) {
-          paymentRequest.show();
-        } else {
-          setIsLoading(false);
-          alert('Apple Pay o Google Pay non disponibile');
-        }
-      });
+      // Mostra Apple Pay/Google Pay SENZA aspettare canMakePayment
+      paymentRequest.show();
 
-      // Setup listener per quando l'utente completa il pagamento in Apple Pay
+      // Setup listener per il pagamento
       paymentRequest.on('paymentmethod', async (e) => {
         try {
-          // ORA posso fare async per creare il Payment Intent
           const response = await base44.functions.invoke('stripePaymentIntent', {
             priceId,
             hasTrial: plan === 'yearly',
@@ -126,7 +118,6 @@ export default function PostQuizSubscription() {
           const data = response?.data || response;
           if (!data?.success) throw new Error(data?.error || 'Payment Intent failed');
 
-          // Conferma il pagamento
           const { paymentIntent, error } = await stripe.confirmCardPayment(
             data.clientSecret,
             { payment_method: e.paymentMethod.id },
@@ -149,11 +140,11 @@ export default function PostQuizSubscription() {
         }
       });
 
-    }).catch((error) => {
-      console.error('Error loading Stripe:', error);
+    } catch (error) {
+      console.error('Error:', error);
       alert(`Errore: ${error.message}`);
       setIsLoading(false);
-    });
+    }
   };
 
   if (!user) {
