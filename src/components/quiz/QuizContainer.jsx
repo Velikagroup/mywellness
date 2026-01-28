@@ -111,7 +111,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
   
   const urlParams = new URLSearchParams(window.location.search);
   const urlStep = parseInt(urlParams.get('step')) || 0;
-  
+  const isRecalibrateFlow = urlParams.get('from') === 'dashboard';
 
 
   const [currentStep, setCurrentStep] = useState(urlStep);
@@ -307,7 +307,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
     };
 
     loadUserData();
-  }, [navigate, isRecapMode, isRecalibrateFlow, language]);
+  }, [navigate, isRecalibrateFlow, language]);
 
   useEffect(() => {
     if (!isLoadingUser && !quizActivityTracked && currentStep === 1) {
