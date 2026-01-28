@@ -78,24 +78,43 @@ Deno.serve(async (req) => {
             console.log(`✅ Customer created: ${stripeCustomerId}`);
         }
 
-        // Crea SetupIntent per salvare il metodo di pagamento
-        const setupIntent = await stripe.setupIntents.create({
+        // Crea Checkout Session per Payment Sheet
+        const sessionParams = {
+            mode: 'subscription',
             customer: stripeCustomerId,
-            usage: 'off_session',
+            line_items: [
+                {
+                    price: priceId,
+                    quantity: 1,
+                }
+            ],
+            success_url: `https://app.projectmywellness.com/Dashboard?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `https://app.projectmywellness.com/PostQuizSubscription`,
             metadata: {
-                user_id: user.id
+                user_id: user.id,
+                has_trial: hasTrial ? 'true' : 'false'
+            },
+            subscription_data: {
+                metadata: {
+                    user_id: user.id
+                }
             }
-        });
+        };
 
-        console.log(`✅ Setup Intent created: ${setupIntent.id}, clientSecret: ${setupIntent.client_secret}`);
+        // Aggiungi trial solo se richiesto
+        if (hasTrial && trialDays > 0) {
+            sessionParams.subscription_data.trial_period_days = trialDays;
+            sessionParams.payment_method_collection = 'if_required'; // Non richiede pagamento per trial
+        }
+
+        const session = await stripe.checkout.sessions.create(sessionParams);
+
+        console.log(`✅ Checkout Session created: ${session.id}`);
 
         return Response.json({
             success: true,
-            clientSecret: setupIntent.client_secret,
-            customer: stripeCustomerId,
-            priceId: priceId,
-            hasTrial: hasTrial,
-            trialDays: trialDays
+            sessionId: session.id,
+            url: session.url
         });
 
     } catch (error) {

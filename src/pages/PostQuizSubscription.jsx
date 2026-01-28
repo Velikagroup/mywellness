@@ -70,21 +70,21 @@ export default function PostQuizSubscription() {
       const priceId = plan === 'yearly' 
         ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp' // €49.99/anno con 3 giorni trial
         : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6'; // €9.99/mese senza trial
-
-      console.log('🔄 Creating payment intent for:', plan, priceId);
-
-      // Crea Setup Intent
+      
+      console.log('🔄 Creating checkout session for:', plan, priceId);
+      
+      // Crea Checkout Session
       const response = await base44.functions.invoke('stripeCreatePaymentSheet', {
         priceId,
         hasTrial: plan === 'yearly',
         trialDays: plan === 'yearly' ? 3 : 0
       });
 
-      console.log('✅ Response:', response);
+      console.log('✅ Checkout response:', response);
       const data = response?.data || response;
 
       if (!data?.success) {
-        throw new Error(data?.error || 'Payment failed');
+        throw new Error(data?.error || 'Checkout failed');
       }
 
       // Redirect diretto all'URL di Stripe Checkout
@@ -94,12 +94,12 @@ export default function PostQuizSubscription() {
       } else {
         throw new Error('No checkout URL received');
       }
-
+      
     } catch (error) {
-      console.error('❌ Payment error:', error);
-      alert(t?.checkout?.error || `Errore: ${error.message}`);
+      console.error('❌ Checkout error:', error);
+      alert(t?.checkout?.error || `Errore durante il checkout: ${error.message}`);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   if (!user) {
@@ -156,7 +156,7 @@ export default function PostQuizSubscription() {
 
   if (showReminderScreen) {
     return (
-        <div className="min-h-screen bg-white p-6 flex flex-col pb-28">
+      <div className="min-h-screen bg-white p-6 flex flex-col pb-28">
         <button
           onClick={() => setShowReminderScreen(false)}
           className="self-start text-gray-600 mb-8"
@@ -359,15 +359,6 @@ export default function PostQuizSubscription() {
           </div>
         </div>
       </div>
-      <PaymentModal
-        isOpen={showPaymentModal}
-        clientSecret={clientSecret}
-        onClose={() => setShowPaymentModal(false)}
-        onSuccess={() => {
-          alert('✅ Pagamento completato! Benvenuto in MyWellness');
-          navigate(createPageUrl('Dashboard'), { replace: true });
-        }}
-      />
     </div>
   );
 }
