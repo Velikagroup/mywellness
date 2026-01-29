@@ -457,7 +457,7 @@ Deno.serve(async (req) => {
                     const user = users[0];
                     const trafficSource = invoice.metadata?.traffic_source || user.traffic_source || 'direct';
 
-                    // Update user status
+                    // 🚨 BLOCCO IMMEDIATO: dopo tentativo fallito, Stripe riproverà, ma intanto blocchiamo
                     await base44.asServiceRole.entities.User.update(user.id, {
                         subscription_status: 'payment_failed'
                     });
@@ -479,6 +479,32 @@ Deno.serve(async (req) => {
                     });
 
                     console.log(`❌ Failed payment recorded for user ${user.id}`);
+
+                    // 🚨 Se questo è l'ultimo tentativo di Stripe (attempt_count >= 4), blocca definitivamente
+                    if (invoice.attempt_count >= 4 || invoice.next_payment_attempt === null) {
+                        console.log('🚫 Final payment attempt failed - BLOCKING user access');
+                        
+                        // Cancella subscription su Stripe se ancora attiva
+                        if (user.stripe_subscription_id) {
+                            try {
+                                await stripe.subscriptions.cancel(user.stripe_subscription_id);
+                                console.log(`✅ Stripe subscription ${user.stripe_subscription_id} cancelled`);
+                            } catch (cancelError) {
+                                console.error('⚠️ Error cancelling subscription:', cancelError.message);
+                            }
+                        }
+
+                        // BLOCCO TOTALE
+                        await base44.asServiceRole.entities.User.update(user.id, {
+                            subscription_plan: 'free',
+                            subscription_status: 'cancelled',
+                            stripe_subscription_id: null,
+                            subscription_period_end: null,
+                            trial_ends_at: null
+                        });
+
+                        console.log(`🚫 User ${user.id} BLOCKED - downgraded to free`);
+                    }
                 }
                 break;
             }
@@ -612,6 +638,7 @@ Deno.serve(async (req) => {
             case 'customer.subscription.deleted': {
                 const subscription = event.data.object;
                 console.log('🗑️ Subscription deleted:', subscription.id);
+                console.log('🔍 Cancellation reason:', subscription.cancellation_details?.reason);
 
                 const customerId = subscription.customer;
                 const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
@@ -623,11 +650,15 @@ Deno.serve(async (req) => {
                     if (subscription.metadata?.subscription_type === 'trial') {
                         console.log('✅ Trial ended, scheduled subscription should activate');
                     } else {
+                        // 🚨 BLOCCO TOTALE - sia che l'utente cancelli manualmente o che Stripe cancelli per pagamento fallito
                         await base44.asServiceRole.entities.User.update(user.id, {
+                            subscription_plan: 'free',
                             subscription_status: 'cancelled',
-                            stripe_subscription_id: null
+                            stripe_subscription_id: null,
+                            subscription_period_end: null,
+                            trial_ends_at: null
                         });
-                        console.log(`✅ Subscription cancelled for user ${user.id}`);
+                        console.log(`🚫 User ${user.id} BLOCKED - subscription deleted`);
                     }
                 }
                 break;
