@@ -896,11 +896,9 @@ export default function PricingPageContent() {
                 className={`water-glass-effect border-2 transition-all duration-300 hover:shadow-2xl h-full flex flex-col ${plan.popular ? 'border-[var(--brand-primary)] scale-100 md:scale-105' : 'border-white/40'} ${selectedPlan === plan.id ? 'ring-4 ring-[var(--brand-primary)]/30' : ''}`}
               >
                 {plan.id === 'yearly' && (
-                  <div className="popular-badge text-[var(--brand-primary)] text-center py-2.5 text-xs font-semibold tracking-widest uppercase">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></div>
+                  <div className="flex justify-center pt-4 pb-2">
+                    <div className="bg-black text-white text-center px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase">
                       3 GIORNI TRIAL GRATIS
-                      <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></div>
                     </div>
                   </div>
                 )}
