@@ -37,7 +37,7 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
       <div className="w-full max-w-[416px] mx-auto px-4 flex items-start gap-1.5">
         <button
           onClick={handleBack}
-          className="flex-shrink-0 w-5 h-5 text-gray-600 hover:text-gray-900 transition-colors mt-10"
+          className="flex-shrink-0 w-5 h-5 text-gray-600 hover:text-gray-900 transition-colors mt-6"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
