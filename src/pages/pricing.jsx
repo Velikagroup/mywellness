@@ -120,28 +120,6 @@ function PricingPageContent() {
 
   const plans = [
     {
-      id: 'standard',
-      name: t('pricing.planStandard'),
-      priceMonthly: 0,
-      priceAnnual: 0,
-      stripePriceIdMonthly: null,
-      stripePriceIdAnnual: null,
-      icon: Shield,
-      iconColor: "text-gray-600",
-      iconBg: "bg-gray-100",
-      description: t('pricing.planStandardDesc'),
-      features: [
-        t('pricing.featureStd1'),
-        t('pricing.featureStd2'),
-        t('pricing.featureStd3'),
-        t('pricing.featureStd4'),
-        t('pricing.featureStd5')
-      ],
-      cta: t('pricing.startFree'),
-      popular: false,
-      isFree: true
-    },
-    {
       id: 'base',
       name: t('pricing.planBase'),
       priceMonthly: 19,
@@ -975,7 +953,7 @@ function PricingPageContent() {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-6 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-6 mb-16">
             {plans.map((plan, index) => (
               <Card 
                 key={plan.id}
@@ -1103,12 +1081,6 @@ function PricingPageContent() {
                       <th className="text-left p-6 text-sm font-bold text-gray-700 bg-white/30">{t('pricing.features')}</th>
                       <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
                         <div className="flex flex-col items-center gap-2">
-                          <Shield className="w-6 h-6 text-gray-600" />
-                          <span>{t('pricing.planStandard')}</span>
-                        </div>
-                      </th>
-                      <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
-                        <div className="flex flex-col items-center gap-2">
                           <Target className="w-6 h-6 text-blue-600" />
                           <span>{t('pricing.planBase')}</span>
                         </div>
@@ -1133,11 +1105,9 @@ function PricingPageContent() {
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
-                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.featureStd2')}</td>
-                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
@@ -1147,46 +1117,39 @@ function PricingPageContent() {
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
-                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.featureStd4')}</td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
-                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableNutritionPlan')}</td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableGenerationsNutrition')}</td>
-                      <td className="p-4 text-center text-sm text-gray-500">-</td>
                       <td className="p-4 text-center text-sm font-semibold text-gray-900">4</td>
                       <td className="p-4 text-center text-sm font-semibold text-gray-900">8</td>
                       <td className="p-4 text-center text-sm font-semibold text-[var(--brand-primary)]">{t('pricing.unlimited')}</td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableRecipesAI')}</td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableShoppingList')}</td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableCalorieBalance')}</td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
@@ -1194,13 +1157,11 @@ function PricingPageContent() {
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableWorkoutPlan')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableGenerationsWorkout')}</td>
-                      <td className="p-4 text-center text-sm text-gray-500">-</td>
                       <td className="p-4 text-center text-sm text-gray-500">-</td>
                       <td className="p-4 text-center text-sm font-semibold text-gray-900">4</td>
                       <td className="p-4 text-center text-sm font-semibold text-[var(--brand-primary)]">{t('pricing.unlimited')}</td>
@@ -1208,13 +1169,11 @@ function PricingPageContent() {
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableMealAnalysis')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableRebalancing')}</td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
@@ -1223,12 +1182,10 @@ function PricingPageContent() {
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableProgressAnalysis')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableLabelScanning')}</td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
@@ -1237,12 +1194,10 @@ function PricingPageContent() {
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableSmartwatchSync')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tablePrioritySupport')}</td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
