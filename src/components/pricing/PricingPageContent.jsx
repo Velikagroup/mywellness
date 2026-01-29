@@ -885,32 +885,7 @@ export default function PricingPageContent() {
               {t('pricing.subtitle')}
             </p>
 
-            {/* Billing Toggle */}
-            <div className="inline-flex items-center gap-4 water-glass-effect rounded-full p-2 shadow-lg">
-              <button
-                onClick={() => setIsAnnual(false)}
-                className={`px-6 py-3 rounded-full font-semibold transition-all ${
-                  !isAnnual
-                    ? 'bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white shadow-md'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                {t('pricing.monthly')}
-              </button>
-              <button
-                onClick={() => setIsAnnual(true)}
-                className={`px-6 py-3 rounded-full font-semibold transition-all relative ${
-                  isAnnual
-                    ? 'bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white shadow-md'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                {t('pricing.yearly')}
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
-                  {t('pricing.save20')}
-                </span>
-              </button>
-            </div>
+
           </div>
 
           {/* Pricing Cards */}
