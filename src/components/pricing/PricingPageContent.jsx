@@ -208,15 +208,15 @@ export default function PricingPageContent() {
       iconBg: "bg-[var(--brand-primary-light)]",
       description: 'Piano completo mensile con tutte le funzionalità',
       features: [
-        'Piano alimentare personalizzato',
-        'Piano di allenamento personalizzato',
-        'Analisi foto pasti e progresso',
-        'Ribilanciamento automatico',
+        'Piani nutrizionali e allenamento AI',
+        'Generazioni illimitate',
+        'Body Scan con analisi composizione corporea',
+        'Analisi AI pasti con foto',
+        'Ribilanciamento automatico calorie',
+        'Scansione etichette con Health Score',
         'Lista della spesa intelligente',
-        'Tracking calorie e macros',
         'Sincronizzazione smartwatch',
-        'Supporto prioritario',
-        'Generazioni illimitate'
+        'Supporto prioritario'
       ],
       cta: t('pricing.startFree'),
       popular: false
@@ -233,15 +233,15 @@ export default function PricingPageContent() {
       iconBg: "bg-purple-100",
       description: 'Piano completo annuale - Risparmia €69.89/anno',
       features: [
-        'Piano alimentare personalizzato',
-        'Piano di allenamento personalizzato',
-        'Analisi foto pasti e progresso',
-        'Ribilanciamento automatico',
+        'Piani nutrizionali e allenamento AI',
+        'Generazioni illimitate',
+        'Body Scan con analisi composizione corporea',
+        'Analisi AI pasti con foto',
+        'Ribilanciamento automatico calorie',
+        'Scansione etichette con Health Score',
         'Lista della spesa intelligente',
-        'Tracking calorie e macros',
         'Sincronizzazione smartwatch',
-        'Supporto prioritario',
-        'Generazioni illimitate'
+        'Supporto prioritario'
       ],
       cta: t('pricing.startFree'),
       popular: true
