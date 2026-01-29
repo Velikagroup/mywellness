@@ -29,7 +29,12 @@ export const translations = {
       lang: "it",
       goal: "Obiettivo",
       privacyPolicy: "Privacy Policy",
-      termsConditions: "Termini e Condizioni"
+      termsConditions: "Termini e Condizioni",
+      active: "Attivo",
+      trial: "Trial",
+      cancelled: "Cancellato",
+      paymentFailed: "Pagamento Fallito",
+      expired: "Scaduto"
     },
     home: {
       aiPowered: "Alimentato dall'Intelligenza Artificiale",
@@ -2402,7 +2407,12 @@ export const translations = {
       lang: "en",
       goal: "Goal",
       privacyPolicy: "Privacy Policy",
-      termsConditions: "Terms & Conditions"
+      termsConditions: "Terms & Conditions",
+      active: "Active",
+      trial: "Trial",
+      cancelled: "Cancelled",
+      paymentFailed: "Payment Failed",
+      expired: "Expired"
     },
     quiz: {
       quizIntroTitle: "Discover your",
@@ -4764,7 +4774,12 @@ export const translations = {
       lang: "es",
       goal: "Objetivo",
       privacyPolicy: "Política de Privacidad",
-      termsConditions: "Términos y Condiciones"
+      termsConditions: "Términos y Condiciones",
+      active: "Activo",
+      trial: "Prueba",
+      cancelled: "Cancelado",
+      paymentFailed: "Pago Fallido",
+      expired: "Expirado"
     },
     quiz: {
       quizIntroTitle: "Descubre tu",
@@ -7034,7 +7049,12 @@ export const translations = {
       lang: "pt",
       goal: "Meta",
       privacyPolicy: "Política de Privacidade",
-      termsConditions: "Termos e Condições"
+      termsConditions: "Termos e Condições",
+      active: "Ativo",
+      trial: "Teste",
+      cancelled: "Cancelado",
+      paymentFailed: "Pagamento Falhou",
+      expired: "Expirado"
     },
     quiz: {
       quizIntroTitle: "Descubra sua",
@@ -9362,7 +9382,12 @@ export const translations = {
       lang: "de",
       goal: "Ziel",
       privacyPolicy: "Datenschutzrichtlinie",
-      termsConditions: "Allgemeine Geschäftsbedingungen"
+      termsConditions: "Allgemeine Geschäftsbedingungen",
+      active: "Aktiv",
+      trial: "Testversion",
+      cancelled: "Gekündigt",
+      paymentFailed: "Zahlung Fehlgeschlagen",
+      expired: "Abgelaufen"
     },
     quiz: {
       quizIntroTitle: "Entdecken Sie Ihr",
@@ -11690,7 +11715,12 @@ export const translations = {
       lang: "fr",
       goal: "Objectif",
       privacyPolicy: "Politique de Confidentialité",
-      termsConditions: "Conditions Générales"
+      termsConditions: "Conditions Générales",
+      active: "Actif",
+      trial: "Essai",
+      cancelled: "Annulé",
+      paymentFailed: "Paiement Échoué",
+      expired: "Expiré"
     },
     quiz: {
       quizIntroTitle: "Découvrez votre",
