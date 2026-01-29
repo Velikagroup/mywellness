@@ -893,11 +893,11 @@ export default function PricingPageContent() {
             {plans.map((plan, index) => (
               <Card 
                 key={plan.id}
-                className={`water-glass-effect border-2 transition-all duration-300 hover:shadow-2xl h-full flex flex-col ${plan.popular ? 'border-[var(--brand-primary)] scale-100 md:scale-105' : 'border-white/40'} ${selectedPlan === plan.id ? 'ring-4 ring-[var(--brand-primary)]/30' : ''}`}
+                className={`water-glass-effect border-2 transition-all duration-300 hover:shadow-2xl h-full flex flex-col ${plan.popular ? 'border-[var(--brand-primary)] scale-100 md:scale-105' : 'border-white/40'} ${selectedPlan === plan.id ? 'ring-4 ring-[var(--brand-primary)]/30' : ''} ${plan.id === 'yearly' ? 'relative' : ''}`}
               >
                 {plan.id === 'yearly' && (
-                  <div className="flex justify-center pt-4 pb-2">
-                    <div className="bg-black text-white text-center px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="bg-black text-white text-center px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase whitespace-nowrap shadow-lg">
                       3 GIORNI TRIAL GRATIS
                     </div>
                   </div>
