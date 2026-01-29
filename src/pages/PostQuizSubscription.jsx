@@ -114,28 +114,60 @@ export default function PostQuizSubscription() {
     try {
       const priceId = 'price_1SubPS2OXBs6ZYwlrhculB4e';
 
-      console.log('🚀 Calling stripeCreateTrialSubscription...');
-      const response = await base44.functions.invoke('stripeCreateTrialSubscription', {
-        priceId
+      if (!stripeRef.current || !walletAvailable) {
+        alert('Wallet non disponibile');
+        setIsLoading(false);
+        return;
+      }
+
+      // Apre wallet a €0 per verificare la carta
+      const paymentRequest = stripeRef.current.paymentRequest({
+        country: 'IT',
+        currency: 'eur',
+        total: {
+          label: 'MyWellness - 3 giorni gratis',
+          amount: 0,
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
       });
 
-      console.log('📦 Response:', response);
-      const data = response?.data || response;
-      console.log('📦 Data:', data);
+      paymentRequest.on('paymentmethod', async (e) => {
+        try {
+          const response = await base44.functions.invoke('stripeCreateTrialSubscription', {
+            priceId,
+            paymentMethodId: e.paymentMethod.id
+          });
 
-      if (data?.success) {
-        console.log('✅ Trial creato:', data.subscription_id);
-        // Attendi un po' prima di navigare per assicurarsi che il DB sia aggiornato
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        navigate(createPageUrl('Dashboard'), { replace: true });
-      } else {
-        console.error('❌ Errore:', data);
-        alert(`Errore nella creazione del trial: ${data?.error || 'Unknown error'}`);
-        setIsLoading(false);
-      }
+          const data = response?.data || response;
+
+          if (data?.success) {
+            e.complete('success');
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            navigate(createPageUrl('Dashboard'), { replace: true });
+          } else {
+            e.complete('fail');
+            alert('Errore nella creazione del trial');
+            setIsLoading(false);
+          }
+        } catch (error) {
+          e.complete('fail');
+          alert('Errore durante la creazione del trial');
+          setIsLoading(false);
+        }
+      });
+
+      paymentRequest.canMakePayment().then((result) => {
+        if (result) {
+          paymentRequest.show();
+        } else {
+          alert('Wallet non disponibile');
+          setIsLoading(false);
+        }
+      });
     } catch (error) {
-      console.error('Errore catch:', error);
-      alert(`Errore durante la creazione del trial: ${error.message}`);
+      console.error('Errore:', error);
+      alert('Errore durante il setup del wallet');
       setIsLoading(false);
     }
   };
