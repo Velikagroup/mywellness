@@ -28,9 +28,19 @@ Deno.serve(async (req) => {
         // Cerca o crea un customer Stripe
         let customerId = user.stripe_customer_id;
 
+        if (customerId) {
+            try {
+                await stripe.customers.retrieve(customerId);
+            } catch (error) {
+                console.warn('⚠️ Customer non valido, ne creo uno nuovo');
+                customerId = null;
+            }
+        }
+
         if (!customerId) {
             const customer = await stripe.customers.create({
                 email: user.email,
+                name: user.full_name,
                 metadata: {
                     user_id: user.id,
                     full_name: user.full_name
@@ -39,7 +49,7 @@ Deno.serve(async (req) => {
             customerId = customer.id;
 
             // Salva il customer ID nell'utente
-            await base44.auth.updateMe({
+            await base44.asServiceRole.entities.User.update(user.id, {
                 stripe_customer_id: customerId
             });
         }
