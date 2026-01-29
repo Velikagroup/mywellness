@@ -824,7 +824,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
       {!isRecalibrateFlow && (
         <button
           onClick={handleRestore}
-          className="fixed top-6 right-6 z-50 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
+          className="fixed top-10 right-6 z-50 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
         >
           Restore
         </button>

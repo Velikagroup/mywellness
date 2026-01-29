@@ -37,12 +37,12 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
       <div className="w-full max-w-[416px] mx-auto px-4 flex items-start gap-1.5">
         <button
           onClick={handleBack}
-          className="flex-shrink-0 w-5 h-5 text-gray-600 hover:text-gray-900 transition-colors mt-9"
+          className="flex-shrink-0 w-5 h-5 text-gray-600 hover:text-gray-900 transition-colors mt-10"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
         {typeof currentStep === 'number' && totalSteps && (
-          <div className="flex-grow h-0.5 bg-gray-200 rounded-full overflow-hidden mt-12">
+          <div className="flex-grow h-0.5 bg-gray-200 rounded-full overflow-hidden mt-10">
             <div 
               className="h-full bg-gray-800 transition-all duration-300"
               style={{ width: `${progressValue}%` }}
