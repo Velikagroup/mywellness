@@ -72,11 +72,50 @@ export default function QuizStepWrapper({
             padding: 16px 24px !important;
           }
         }
+
+        .quiz-header-fixed {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 40;
+          background: white;
+          border-bottom: 1px solid #e5e7eb;
+        }
+
+        .quiz-header-content {
+          max-width: 416px;
+          margin: 0 auto;
+          padding: 16px 0;
+        }
       `}</style>
 
-      <div className="min-h-screen bg-white">
-        <div className="flex flex-col items-center pt-4 pb-24 px-4">
-          <div className="max-w-[416px] w-full mt-0">
+      {/* Fixed Header with Progress Bar and Back Button */}
+      <div className="quiz-header-fixed">
+        <div className="quiz-header-content px-4">
+          {/* Progress Bar */}
+          <div className="mb-4">
+            <Progress value={progressValue} className="h-1" />
+          </div>
+          
+          {/* Back Button */}
+          {currentStep > 0 && (
+            <div className="flex justify-start mb-2">
+              <button
+                onClick={onPrev}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>{backButtonText}</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="min-h-screen bg-white pt-24">
+        <div className="flex flex-col items-center pb-24 px-4">
+          <div className="max-w-[416px] w-full">
             {children}
           </div>
         </div>
