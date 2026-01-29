@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Sparkles, EyeOff, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
+import { Sparkles, EyeOff, CheckCircle2, Loader2, ArrowLeft, LogIn } from "lucide-react";
 
 import IntroStep from './IntroStep';
 import BirthdateStep from './BirthdateStep';
@@ -254,6 +254,20 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
     loadUserData();
   }, [navigate, isRecalibrateFlow, language]);
+
+  const handleRestore = async () => {
+    const langQuizMap = {
+      it: 'itquiz',
+      en: 'enquiz',
+      es: 'esquiz',
+      pt: 'ptquiz',
+      de: 'dequiz',
+      fr: 'frquiz'
+    };
+    const quizPage = langQuizMap[language] || 'itquiz';
+    const nextUrl = window.location.origin + createPageUrl(quizPage);
+    await base44.auth.redirectToLogin(nextUrl);
+  };
 
   useEffect(() => {
     if (!isLoadingUser && !quizActivityTracked && currentStep === 1) {
@@ -804,6 +818,16 @@ export default function QuizContainer({ translations, language = 'it' }) {
         >
           <ArrowLeft className="w-5 h-5" />
           <span className="hidden sm:inline">{t?.common?.back || 'Back'}</span>
+        </button>
+      )}
+
+      {!isRecalibrateFlow && (
+        <button
+          onClick={handleRestore}
+          className="fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-white/90 backdrop-blur-sm hover:bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all text-gray-700 hover:text-[var(--brand-primary)] font-medium"
+        >
+          <LogIn className="w-5 h-5" />
+          <span className="hidden sm:inline">{t?.common?.login || 'Login'}</span>
         </button>
       )}
       
