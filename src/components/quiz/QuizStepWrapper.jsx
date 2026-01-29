@@ -15,7 +15,8 @@ export default function QuizStepWrapper({
   backButtonText = "Indietro",
   showBackButton = true,
   showNextButton = true,
-  translations
+  translations,
+  className = ""
 }) {
   // Calcola progresso con peso decrescente per step
   const calculateWeightedProgress = () => {
