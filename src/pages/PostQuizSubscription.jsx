@@ -157,6 +157,10 @@ export default function PostQuizSubscription() {
         }
       });
 
+      paymentRequest.on('cancel', () => {
+        setIsLoading(false);
+      });
+
       paymentRequest.canMakePayment().then((result) => {
         if (result) {
           paymentRequest.show();
@@ -227,6 +231,10 @@ export default function PostQuizSubscription() {
           e.complete('fail');
           setIsLoading(false);
         });
+      });
+
+      paymentRequest.on('cancel', () => {
+        setIsLoading(false);
       });
 
       paymentRequest.canMakePayment().then((result) => {
