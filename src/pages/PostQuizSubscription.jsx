@@ -168,6 +168,8 @@ export default function PostQuizSubscription() {
           alert('Wallet non disponibile');
           setIsLoading(false);
         }
+      }).catch(() => {
+        setIsLoading(false);
       });
     } catch (error) {
       console.error('Errore:', error);
@@ -243,6 +245,8 @@ export default function PostQuizSubscription() {
         } else {
           setIsLoading(false);
         }
+      }).catch(() => {
+        setIsLoading(false);
       });
     } catch (error) {
       console.error('Errore:', error);
