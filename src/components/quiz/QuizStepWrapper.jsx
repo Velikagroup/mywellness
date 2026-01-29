@@ -75,7 +75,7 @@ export default function QuizStepWrapper({
         }
       `}</style>
 
-      <div className="min-h-screen bg-white">
+      <div className={`min-h-screen bg-white ${className}`}>
         <div className="flex flex-col items-center pt-4 pb-24 px-4">
           <div className="max-w-[416px] w-full mt-0">
             {children}
