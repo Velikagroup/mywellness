@@ -687,10 +687,11 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
   };
 
   const statusLabels = {
-    trial: 'Attivo',
-    active: 'Attivo',
-    expired: 'Scaduto',
-    cancelled: 'Cancellato'
+    trial: t('common.active'),
+    active: t('common.active'),
+    expired: t('common.expired'),
+    cancelled: t('common.cancelled'),
+    payment_failed: t('common.paymentFailed')
   };
 
   return (

@@ -24,25 +24,25 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const getPlans = () => [
     {
       id: 'monthly',
-      name: 'Mensile',
-      description: 'Pagamento mensile',
+      name: t('upgradeModal.monthly'),
+      description: t('upgradeModal.monthlyPayment'),
       price: 9.99,
       billingPeriod: 'monthly',
       icon: Sparkles,
       iconBg: 'bg-blue-100',
       iconColor: 'text-blue-600',
       features: [
-        '🧬 Piani personalizzati AI',
-        '📊 Tracking completo',
-        '💪 Allenamenti personalizzati',
-        '📸 Analisi foto progressi',
-        '🔄 Accesso illimitato'
+        t('upgradeModal.aiPersonalizedPlans'),
+        t('upgradeModal.completeTracking'),
+        t('upgradeModal.personalizedWorkouts'),
+        t('upgradeModal.photoProgressAI'),
+        t('upgradeModal.unlimitedAccess')
       ]
     },
     {
       id: 'yearly',
-      name: 'Annuale',
-      description: '3 giorni gratis, poi €49,99/anno',
+      name: t('upgradeModal.yearly'),
+      description: t('upgradeModal.threeDaysFree'),
       price: 4.16,
       totalPrice: 49.99,
       billingPeriod: 'yearly',
@@ -50,16 +50,16 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       iconBg: 'bg-gradient-to-br from-[#26847F] to-teal-500',
       iconColor: 'text-white',
       popular: true,
-      badge: 'RISPARMIA 58%',
+      badge: t('upgradeModal.save58'),
       hasTrial: true,
       features: [
-        '🧬 Piani personalizzati AI',
-        '📊 Tracking completo',
-        '💪 Allenamenti personalizzati',
-        '📸 Analisi foto progressi',
-        '🔄 Accesso illimitato',
-        '🎁 3 giorni di prova gratuita',
-        '💰 Risparmio €70/anno'
+        t('upgradeModal.aiPersonalizedPlans'),
+        t('upgradeModal.completeTracking'),
+        t('upgradeModal.personalizedWorkouts'),
+        t('upgradeModal.photoProgressAI'),
+        t('upgradeModal.unlimitedAccess'),
+        '🎁 ' + t('subscription.threeDaysFree'),
+        '💰 ' + t('upgradeModal.save70PerYear')
       ]
     }
   ];
@@ -249,15 +249,15 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                         <div className="text-5xl font-black text-gray-900">
                           €{plan.price}
                         </div>
-                        <div className="text-sm text-gray-600 mt-2">al mese</div>
+                        <div className="text-sm text-gray-600 mt-2">{t('upgradeModal.perMonth')}</div>
                         {plan.totalPrice && (
                           <div className="text-xs text-gray-500 mt-1">
-                            €{plan.totalPrice} fatturati annualmente
+                            €{plan.totalPrice} {t('upgradeModal.billedAnnually')}
                           </div>
                         )}
                         {plan.hasTrial && (
                           <div className="mt-3 inline-block bg-green-100 text-green-700 text-xs font-bold px-4 py-2 rounded-full">
-                            🎁 3 giorni gratis
+                            🎁 {t('subscription.threeDaysFree')}
                           </div>
                         )}
                       </div>
@@ -276,7 +276,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                           disabled
                           className="w-full h-14 text-base font-bold bg-gray-200 text-gray-500 cursor-not-allowed rounded-xl"
                         >
-                          Piano Attuale
+                          {t('upgradeModal.currentPlanBadge')}
                         </Button>
                       ) : (
                         <Button
@@ -287,7 +287,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                               : 'bg-gray-900 hover:bg-gray-800 text-white'
                           }`}
                         >
-                          {plan.hasTrial ? 'Inizia Prova Gratuita' : 'Scegli Piano Mensile'}
+                          {plan.hasTrial ? t('upgradeModal.startFreeTrial') : t('upgradeModal.chooseMonthly')}
                         </Button>
                       )}
                     </div>
