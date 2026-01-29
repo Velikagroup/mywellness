@@ -198,7 +198,7 @@ export default function PricingPageContent() {
   const plans = [
     {
       id: 'monthly',
-      name: 'MyWellness',
+      name: language === 'it' ? 'MyWellness' : 'MyWellness',
       priceMonthly: 9.99,
       priceAnnual: 9.99,
       stripePriceIdMonthly: "price_1SuOAq2OXBs6ZYwlxkJ6LnU6",
@@ -206,8 +206,18 @@ export default function PricingPageContent() {
       icon: Zap,
       iconColor: "text-[var(--brand-primary)]",
       iconBg: "bg-[var(--brand-primary-light)]",
-      description: 'Piano completo mensile con tutte le funzionalità',
-      features: [
+      description: language === 'it' 
+        ? 'Piano completo mensile con tutte le funzionalità'
+        : language === 'en'
+        ? 'Complete monthly plan with all features'
+        : language === 'es'
+        ? 'Plan mensual completo con todas las características'
+        : language === 'pt'
+        ? 'Plano mensal completo com todas as funcionalidades'
+        : language === 'de'
+        ? 'Vollständiger Monatsplan mit allen Funktionen'
+        : 'Plan mensuel complet avec toutes les fonctionnalités',
+      features: language === 'it' ? [
         'Piani nutrizionali e allenamento AI',
         'Body Scan con analisi composizione corporea',
         'Analisi AI pasti con foto',
@@ -216,13 +226,58 @@ export default function PricingPageContent() {
         'Lista della spesa intelligente',
         'Sincronizzazione smartwatch',
         'Supporto prioritario'
+      ] : language === 'en' ? [
+        'AI nutrition and workout plans',
+        'Body Scan with body composition analysis',
+        'AI meal photo analysis',
+        'Automatic calorie rebalancing',
+        'Label scanning with Health Score',
+        'Smart shopping list',
+        'Smartwatch synchronization',
+        'Priority support'
+      ] : language === 'es' ? [
+        'Planes nutricionales y entrenamiento IA',
+        'Body Scan con análisis composición corporal',
+        'Análisis IA comidas con foto',
+        'Rebalanceo automático calorías',
+        'Escaneo etiquetas con Health Score',
+        'Lista de compras inteligente',
+        'Sincronización smartwatch',
+        'Soporte prioritario'
+      ] : language === 'pt' ? [
+        'Planos nutricionais e treino IA',
+        'Body Scan com análise composição corporal',
+        'Análise IA refeições com foto',
+        'Rebalanceamento automático calorias',
+        'Escaneamento rótulos com Health Score',
+        'Lista de compras inteligente',
+        'Sincronização smartwatch',
+        'Suporte prioritário'
+      ] : language === 'de' ? [
+        'KI-Ernährungs- und Trainingspläne',
+        'Body Scan mit Körperzusammensetzungsanalyse',
+        'KI-Mahlzeitfotoanalyse',
+        'Automatisches Kalorien-Rebalancing',
+        'Etiketten-Scan mit Health Score',
+        'Intelligente Einkaufsliste',
+        'Smartwatch-Synchronisierung',
+        'Prioritäts-Support'
+      ] : [
+        'Plans nutritionnels et entraînement IA',
+        'Body Scan avec analyse composition corporelle',
+        'Analyse IA repas avec photo',
+        'Rééquilibrage automatique calories',
+        'Scan étiquettes avec Health Score',
+        'Liste de courses intelligente',
+        'Synchronisation smartwatch',
+        'Support prioritaire'
       ],
       cta: t('pricing.startFree'),
       popular: false
     },
     {
       id: 'yearly',
-      name: 'MyWellness Annual',
+      name: language === 'it' ? 'MyWellness Annual' : language === 'en' ? 'MyWellness Annual' : language === 'es' ? 'MyWellness Anual' : language === 'pt' ? 'MyWellness Anual' : language === 'de' ? 'MyWellness Jährlich' : 'MyWellness Annuel',
       priceMonthly: 4.16,
       priceAnnual: 49.99,
       stripePriceIdMonthly: "price_1SuOAr2OXBs6ZYwlteMU5EVp",
@@ -230,8 +285,18 @@ export default function PricingPageContent() {
       icon: Crown,
       iconColor: "text-purple-600",
       iconBg: "bg-purple-100",
-      description: 'Piano completo annuale - Risparmia €69.89/anno',
-      features: [
+      description: language === 'it'
+        ? 'Piano completo annuale - Risparmia €69.89/anno'
+        : language === 'en'
+        ? 'Complete annual plan - Save €69.89/year'
+        : language === 'es'
+        ? 'Plan anual completo - Ahorra €69.89/año'
+        : language === 'pt'
+        ? 'Plano anual completo - Economize €69.89/ano'
+        : language === 'de'
+        ? 'Vollständiger Jahresplan - Sparen Sie €69.89/Jahr'
+        : 'Plan annuel complet - Économisez €69.89/an',
+      features: language === 'it' ? [
         'Piani nutrizionali e allenamento AI',
         'Body Scan con analisi composizione corporea',
         'Analisi AI pasti con foto',
@@ -240,6 +305,51 @@ export default function PricingPageContent() {
         'Lista della spesa intelligente',
         'Sincronizzazione smartwatch',
         'Supporto prioritario'
+      ] : language === 'en' ? [
+        'AI nutrition and workout plans',
+        'Body Scan with body composition analysis',
+        'AI meal photo analysis',
+        'Automatic calorie rebalancing',
+        'Label scanning with Health Score',
+        'Smart shopping list',
+        'Smartwatch synchronization',
+        'Priority support'
+      ] : language === 'es' ? [
+        'Planes nutricionales y entrenamiento IA',
+        'Body Scan con análisis composición corporal',
+        'Análisis IA comidas con foto',
+        'Rebalanceo automático calorías',
+        'Escaneo etiquetas con Health Score',
+        'Lista de compras inteligente',
+        'Sincronización smartwatch',
+        'Soporte prioritario'
+      ] : language === 'pt' ? [
+        'Planos nutricionais e treino IA',
+        'Body Scan com análise composição corporal',
+        'Análise IA refeições com foto',
+        'Rebalanceamento automático calorias',
+        'Escaneamento rótulos com Health Score',
+        'Lista de compras inteligente',
+        'Sincronização smartwatch',
+        'Suporte prioritário'
+      ] : language === 'de' ? [
+        'KI-Ernährungs- und Trainingspläne',
+        'Body Scan mit Körperzusammensetzungsanalyse',
+        'KI-Mahlzeitfotoanalyse',
+        'Automatisches Kalorien-Rebalancing',
+        'Etiketten-Scan mit Health Score',
+        'Intelligente Einkaufsliste',
+        'Smartwatch-Synchronisierung',
+        'Prioritäts-Support'
+      ] : [
+        'Plans nutritionnels et entraînement IA',
+        'Body Scan avec analyse composition corporelle',
+        'Analyse IA repas avec photo',
+        'Rééquilibrage automatique calories',
+        'Scan étiquettes avec Health Score',
+        'Liste de courses intelligente',
+        'Synchronisation smartwatch',
+        'Support prioritaire'
       ],
       cta: t('pricing.startFree'),
       popular: true
