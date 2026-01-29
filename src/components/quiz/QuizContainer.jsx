@@ -810,7 +810,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
   }
 
   return (
-    <div className="relative pt-5">
+    <div className="relative pt-5 mt-[50px]">
       {isRecalibrateFlow && (
         <button
           onClick={() => navigate(createPageUrl('Dashboard'))}
