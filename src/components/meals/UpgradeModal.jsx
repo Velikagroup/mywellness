@@ -227,7 +227,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                 return (
                   <div key={plan.id} className="relative">
                     {plan.badge && (
-                      <div className="absolute -top-7 left-1/2 -translate-x-1/2 z-10">
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 z-10">
                         <div className="px-6 py-2 rounded-full text-xs font-bold bg-[#26847F] text-white shadow-lg">
                           {plan.badge}
                         </div>
