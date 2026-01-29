@@ -10,10 +10,14 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { priceId } = await req.json();
+        const { priceId, paymentMethodId } = await req.json();
 
         if (!priceId) {
             return Response.json({ error: 'Missing priceId' }, { status: 400 });
+        }
+
+        if (!paymentMethodId) {
+            return Response.json({ error: 'Missing paymentMethodId' }, { status: 400 });
         }
 
         const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
