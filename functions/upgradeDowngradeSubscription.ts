@@ -120,7 +120,7 @@ Deno.serve(async (req) => {
                 
                 await base44.asServiceRole.entities.User.update(user.id, {
                     subscription_status: newPlan === 'yearly' && subscription.trial_end ? 'trial' : 'active',
-                    subscription_plan: 'premium',
+                    subscription_plan: newPlan,
                     stripe_subscription_id: subscription.id,
                     trial_ends_at: newPlan === 'yearly' && subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null
                 });
@@ -140,7 +140,7 @@ Deno.serve(async (req) => {
                         currency: 'eur',
                         status: 'succeeded',
                         type: 'subscription_payment',
-                        plan: 'premium',
+                        plan: newPlan,
                         billing_period: newPlan === 'yearly' ? 'yearly' : 'monthly',
                         payment_date: new Date().toISOString(),
                         description: `Abbonamento ${newPlan === 'yearly' ? 'Annuale' : 'Mensile'}`,
@@ -436,7 +436,7 @@ Deno.serve(async (req) => {
 
         // STEP 3: Aggiorna utente nel database
         await base44.asServiceRole.entities.User.update(user.id, {
-            subscription_plan: 'premium',
+            subscription_plan: newPlan,
             subscription_status: 'active',
             trial_ends_at: null,
             pending_plan_change: null
@@ -455,7 +455,7 @@ Deno.serve(async (req) => {
                     currency: 'eur',
                     status: 'succeeded',
                     type: 'subscription_payment',
-                    plan: 'premium',
+                    plan: newPlan,
                     billing_period: newPlan === 'yearly' ? 'yearly' : 'monthly',
                     payment_date: new Date().toISOString(),
                     description: `Cambio piano a ${newPlan === 'yearly' ? 'Annuale' : 'Mensile'}`,
