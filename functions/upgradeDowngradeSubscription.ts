@@ -12,27 +12,25 @@ Deno.serve(async (req) => {
             return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { newPlan, newBillingPeriod, calculateOnly } = await req.json();
+        const { newPlan, calculateOnly } = await req.json();
         
-        if (!newPlan || !newBillingPeriod) {
+        if (!newPlan) {
             return Response.json({ 
                 success: false, 
-                error: 'Missing newPlan or newBillingPeriod' 
+                error: 'Missing newPlan' 
             }, { status: 400 });
         }
 
-        console.log(`✅ User ${user.email} requesting change to ${newPlan}/${newBillingPeriod}`);
+        console.log(`✅ User ${user.email} requesting change to ${newPlan}`);
 
         const PLAN_PRICES = {
-            base: { monthly: 19, yearly: 182.4 },
-            pro: { monthly: 29, yearly: 278.4 },
-            premium: { monthly: 39, yearly: 374.4 }
+            monthly: 9.99,
+            yearly: 49.99
         };
 
         const PRICE_IDS = {
-            base: { monthly: 'price_1SXADj2OXBs6ZYwlY8id3Yhy', yearly: 'price_1SXADj2OXBs6ZYwlywQCp6oR' },
-            pro: { monthly: 'price_1SXADj2OXBs6ZYwlqdFI6aUU', yearly: 'price_1SXADk2OXBs6ZYwl0zZsxETJ' },
-            premium: { monthly: 'price_1SXADk2OXBs6ZYwlxiqqQqVA', yearly: 'price_1SXADl2OXBs6ZYwl0PlnAeX9' }
+            monthly: 'price_1SubPS2OXBs6ZYwlbjszSDt9',
+            yearly: 'price_1SubPS2OXBs6ZYwlrhculB4e'
         };
 
         const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
@@ -44,7 +42,7 @@ Deno.serve(async (req) => {
         if (isUpgradeFromFree) {
             console.log('🆕 Upgrade from free/trial plan');
             
-            const planPrice = PLAN_PRICES[newPlan]?.[newBillingPeriod];
+            const planPrice = PLAN_PRICES[newPlan];
             
             // Verifica metodo di pagamento
             let hasPaymentMethod = false;
@@ -82,7 +80,6 @@ Deno.serve(async (req) => {
                     requiresCheckout: !hasPaymentMethod,
                     hasPaymentMethod: hasPaymentMethod,
                     currentPlan: user.subscription_plan || 'standard',
-                    currentBillingPeriod: 'none',
                     newPlanPrice: planPrice,
                     amountToPay: finalAmountToPay,
                     creditFromCurrentPlan: 0,
@@ -97,9 +94,9 @@ Deno.serve(async (req) => {
             if (hasPaymentMethod) {
                 console.log('✅ User has payment method - creating subscription directly');
                 
-                const newPriceId = PRICE_IDS[newPlan]?.[newBillingPeriod];
+                const newPriceId = PRICE_IDS[newPlan];
                 
-                const subscription = await stripe.subscriptions.create({
+                const subscriptionData = {
                     customer: user.stripe_customer_id,
                     items: [{ price: newPriceId }],
                     payment_behavior: 'error_if_incomplete',
@@ -108,18 +105,24 @@ Deno.serve(async (req) => {
                         user_id: user.id,
                         subscription_type: 'paid',
                         plan_type: newPlan,
-                        billing_period: newBillingPeriod,
                         upgraded_from: user.subscription_plan || 'standard'
                     }
-                });
+                };
+
+                // Se è yearly, aggiungi trial
+                if (newPlan === 'yearly') {
+                    subscriptionData.trial_period_days = 3;
+                }
+
+                const subscription = await stripe.subscriptions.create(subscriptionData);
                 
                 console.log(`✅ Subscription created: ${subscription.id}`);
                 
                 await base44.asServiceRole.entities.User.update(user.id, {
-                    subscription_status: 'active',
-                    subscription_plan: newPlan,
+                    subscription_status: newPlan === 'yearly' && subscription.trial_end ? 'trial' : 'active',
+                    subscription_plan: 'premium',
                     stripe_subscription_id: subscription.id,
-                    trial_ends_at: null
+                    trial_ends_at: newPlan === 'yearly' && subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null
                 });
                 
                 // Crea Transaction
@@ -137,10 +140,10 @@ Deno.serve(async (req) => {
                         currency: 'eur',
                         status: 'succeeded',
                         type: 'subscription_payment',
-                        plan: newPlan,
-                        billing_period: newBillingPeriod,
+                        plan: 'premium',
+                        billing_period: newPlan === 'yearly' ? 'yearly' : 'monthly',
                         payment_date: new Date().toISOString(),
-                        description: `Upgrade a ${newPlan} (${newBillingPeriod === 'yearly' ? 'Annuale' : 'Mensile'})`,
+                        description: `Abbonamento ${newPlan === 'yearly' ? 'Annuale' : 'Mensile'}`,
                         traffic_source: user.traffic_source || 'direct'
                     });
                 } catch (txError) {
@@ -245,7 +248,7 @@ Deno.serve(async (req) => {
             });
         }
 
-        // ========== UPGRADE/DOWNGRADE DA PIANO A PAGAMENTO ==========
+        // ========== CAMBIO TRA MONTHLY/YEARLY ==========
         if (!user.stripe_subscription_id) {
             return Response.json({ 
                 success: false, 
@@ -253,22 +256,21 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        const newPriceId = PRICE_IDS[newPlan]?.[newBillingPeriod];
+        const newPriceId = PRICE_IDS[newPlan];
         
         if (!newPriceId) {
             return Response.json({ 
                 success: false, 
-                error: 'Invalid plan or billing period' 
+                error: 'Invalid plan' 
             }, { status: 400 });
         }
 
         console.log('📦 Retrieving current subscription...');
         const subscription = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
         
-        const currentPlan = user.subscription_plan || 'base';
         const currentBillingPeriod = subscription.items.data[0].price.recurring.interval === 'year' ? 'yearly' : 'monthly';
 
-        // Calcola proration
+        // Se sta passando da monthly a yearly o viceversa
         const now = Math.floor(Date.now() / 1000);
         const periodStart = subscription.current_period_start;
         const periodEnd = subscription.current_period_end;
@@ -276,16 +278,13 @@ Deno.serve(async (req) => {
         const remainingTime = periodEnd - now;
         const percentageRemaining = remainingTime / totalPeriodDuration;
 
-        const currentPlanPrice = PLAN_PRICES[currentPlan][currentBillingPeriod];
+        const currentPlanPrice = PLAN_PRICES[currentBillingPeriod];
         const creditFromCurrentPlan = currentPlanPrice * percentageRemaining;
-        const newPlanPrice = PLAN_PRICES[newPlan][newBillingPeriod];
+        const newPlanPrice = PLAN_PRICES[newPlan];
 
-        const isDowngrade = (
-            (currentPlan === 'premium' && (newPlan === 'pro' || newPlan === 'base')) ||
-            (currentPlan === 'pro' && newPlan === 'base')
-        );
+        // Da yearly a monthly = downgrade
+        const isDowngrade = (currentBillingPeriod === 'yearly' && newPlan === 'monthly');
 
-        // Calcolo manuale: Nuovo piano - Credito residuo
         let amountToPay = 0;
         if (!isDowngrade) {
             amountToPay = newPlanPrice - creditFromCurrentPlan;
@@ -319,8 +318,7 @@ Deno.serve(async (req) => {
                 success: true,
                 calculate: true,
                 hasPaymentMethod: true,
-                currentPlan,
-                currentBillingPeriod,
+                currentPlan: currentBillingPeriod,
                 currentPlanPrice,
                 newPlanPrice,
                 creditFromCurrentPlan,
@@ -346,8 +344,7 @@ Deno.serve(async (req) => {
             });
 
             await base44.asServiceRole.entities.User.update(user.id, {
-                pending_plan_change: newPlan,
-                pending_billing_period: newBillingPeriod
+                pending_plan_change: newPlan
             });
 
             return Response.json({
@@ -439,11 +436,10 @@ Deno.serve(async (req) => {
 
         // STEP 3: Aggiorna utente nel database
         await base44.asServiceRole.entities.User.update(user.id, {
-            subscription_plan: newPlan,
+            subscription_plan: 'premium',
             subscription_status: 'active',
             trial_ends_at: null,
-            pending_plan_change: null,
-            pending_billing_period: null
+            pending_plan_change: null
         });
         console.log(`✅ User updated in database: ${newPlan}`);
 
@@ -459,13 +455,13 @@ Deno.serve(async (req) => {
                     currency: 'eur',
                     status: 'succeeded',
                     type: 'subscription_payment',
-                    plan: newPlan,
-                    billing_period: newBillingPeriod,
+                    plan: 'premium',
+                    billing_period: newPlan === 'yearly' ? 'yearly' : 'monthly',
                     payment_date: new Date().toISOString(),
-                    description: `Upgrade prorated da ${currentPlan} a ${newPlan}`,
+                    description: `Cambio piano a ${newPlan === 'yearly' ? 'Annuale' : 'Mensile'}`,
                     traffic_source: user.traffic_source || 'direct',
                     metadata: {
-                        upgraded_from: currentPlan,
+                        upgraded_from: currentBillingPeriod,
                         credit_applied: creditFromCurrentPlan.toFixed(2),
                         payment_intent_id: paymentIntent.id
                     }

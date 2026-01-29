@@ -681,8 +681,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
   const planLabels = {
     trial: 'Standard',
     standard: 'Standard',
-    base: 'Base',
-    pro: 'Pro',
+    monthly: 'Premium Mensile',
+    yearly: 'Premium Annuale',
     premium: 'Premium'
   };
 

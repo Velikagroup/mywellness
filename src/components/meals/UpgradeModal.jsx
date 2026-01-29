@@ -23,86 +23,43 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
 
   const getPlans = () => [
     {
-      id: 'standard',
-      name: t('upgradeModal.planStandard'),
-      description: t('upgradeModal.planStandardDesc'),
-      monthlyPrice: 0,
-      yearlyPrice: 0,
-      yearlyMonthly: 0,
-      icon: CheckCircle,
-      iconBg: 'bg-gray-100',
-      iconColor: 'text-gray-600',
-      isFree: true,
-      features: [
-        t('upgradeModal.featureStd1'),
-        t('upgradeModal.featureStd2'),
-        t('upgradeModal.featureStd3'),
-        t('upgradeModal.featureStd4'),
-        t('upgradeModal.featureStd5')
-      ]
-    },
-    {
-      id: 'base',
-      name: t('upgradeModal.planBase'),
-      description: t('upgradeModal.planBaseDesc'),
-      monthlyPrice: 19,
-      yearlyPrice: 182.4,
-      yearlyMonthly: 15.2,
+      id: 'monthly',
+      name: 'Mensile',
+      description: 'Pagamento mensile',
+      price: 9.99,
+      billingPeriod: 'monthly',
       icon: Sparkles,
       iconBg: 'bg-blue-100',
       iconColor: 'text-blue-600',
       features: [
-        t('upgradeModal.featureBase1'),
-        t('upgradeModal.featureBase2'),
-        t('upgradeModal.featureBase3'),
-        t('upgradeModal.featureBase4'),
-        t('upgradeModal.featureBase5'),
-        t('upgradeModal.featureBase6')
+        '🧬 Piani personalizzati AI',
+        '📊 Tracking completo',
+        '💪 Allenamenti personalizzati',
+        '📸 Analisi foto progressi',
+        '🔄 Accesso illimitato'
       ]
     },
     {
-      id: 'pro',
-      name: t('upgradeModal.planPro'),
-      description: t('upgradeModal.planProDesc'),
-      monthlyPrice: 29,
-      yearlyPrice: 278.4,
-      yearlyMonthly: 23.2,
-      icon: Zap,
+      id: 'yearly',
+      name: 'Annuale',
+      description: '3 giorni gratis, poi €49,99/anno',
+      price: 4.16,
+      totalPrice: 49.99,
+      billingPeriod: 'yearly',
+      icon: Crown,
       iconBg: 'bg-gradient-to-br from-[#26847F] to-teal-500',
       iconColor: 'text-white',
       popular: true,
-      badge: t('upgradeModal.badgeMostChosen'),
+      badge: 'RISPARMIA 58%',
+      hasTrial: true,
       features: [
-        t('upgradeModal.featurePro1'),
-        t('upgradeModal.featurePro2'),
-        t('upgradeModal.featurePro3'),
-        t('upgradeModal.featurePro4'),
-        t('upgradeModal.featurePro5'),
-        t('upgradeModal.featurePro6'),
-        t('upgradeModal.featurePro7'),
-        t('upgradeModal.featurePro8'),
-        t('upgradeModal.featurePro9')
-      ]
-    },
-    {
-      id: 'premium',
-      name: t('upgradeModal.planPremium'),
-      description: t('upgradeModal.planPremiumDesc'),
-      monthlyPrice: 39,
-      yearlyPrice: 374.4,
-      yearlyMonthly: 31.2,
-      icon: Crown,
-      iconBg: 'bg-purple-100',
-      iconColor: 'text-purple-600',
-      badge: t('upgradeModal.badgeExclusive'),
-      features: [
-        t('upgradeModal.featurePremium1'),
-        t('upgradeModal.featurePremium2'),
-        t('upgradeModal.featurePremium3'),
-        t('upgradeModal.featurePremium4'),
-        t('upgradeModal.featurePremium5'),
-        t('upgradeModal.featurePremium6'),
-        t('upgradeModal.featurePremium7')
+        '🧬 Piani personalizzati AI',
+        '📊 Tracking completo',
+        '💪 Allenamenti personalizzati',
+        '📸 Analisi foto progressi',
+        '🔄 Accesso illimitato',
+        '🎁 3 giorni di prova gratuita',
+        '💰 Risparmio €70/anno'
       ]
     }
   ];
@@ -121,17 +78,30 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   if (!isOpen) return null;
 
   const handleSelectPlan = async (plan) => {
-    // Redirect direttamente alla pagina checkout dedicata
-    const checkoutPages = {
-      'it': 'itcheckout',
-      'en': 'encheckout',
-      'es': 'escheckout',
-      'pt': 'ptcheckout',
-      'de': 'decheckout',
-      'fr': 'frcheckout'
-    };
-    navigate(createPageUrl(checkoutPages[language] || 'itcheckout') + `?plan=${plan.id}&billing=${billingCycle}`);
-    onClose();
+    setIsUpgrading(true);
+    try {
+      const response = await base44.functions.invoke('upgradeDowngradeSubscription', {
+        newPlan: plan.id,
+        calculateOnly: false
+      });
+
+      const data = response.data || response;
+
+      if (data.success) {
+        alert(`✅ Piano aggiornato a ${plan.name}!`);
+        onClose();
+        window.location.reload();
+      } else if (data.requiresCheckout) {
+        navigate(createPageUrl('PostQuizSubscription'));
+        onClose();
+      } else {
+        alert('❌ Errore: ' + (data.error || 'Errore sconosciuto'));
+      }
+    } catch (error) {
+      console.error('Error upgrading:', error);
+      alert('❌ Errore durante l\'operazione. Riprova.');
+    }
+    setIsUpgrading(false);
   };
 
   const handleConfirmUpgrade = async () => {
@@ -249,99 +219,54 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
               </p>
             </div>
 
-            <div className="flex items-center justify-center gap-2 mb-12">
-              <div className="relative bg-gray-100 rounded-full p-1 flex">
-                <button
-                  onClick={() => setBillingCycle('monthly')}
-                  className={`relative px-8 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                    billingCycle === 'monthly'
-                      ? 'bg-[#26847F] text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {t('upgradeModal.monthly')}
-                </button>
-                <button
-                  onClick={() => setBillingCycle('yearly')}
-                  className={`relative px-8 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                    billingCycle === 'yearly'
-                      ? 'bg-[#26847F] text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  {t('upgradeModal.yearly')}
-                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
-                    {t('upgradeModal.save20')}
-                  </span>
-                </button>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {plans.map((plan) => {
                 const Icon = plan.icon;
-                // Normalizza i piani: trial e standard sono lo stesso
-                const normalizedCurrentPlan = (currentPlan === 'trial' || currentPlan === 'standard') ? 'standard' : currentPlan;
-                const isCurrentPlan = normalizedCurrentPlan === plan.id;
+                const isCurrentPlan = currentPlan === plan.id;
                 
                 return (
                   <div key={plan.id} className="relative">
                     {plan.badge && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                        <div className={`px-4 py-1 rounded-full text-xs font-bold ${
-                          plan.popular 
-                            ? 'bg-[#26847F] text-white' 
-                            : 'bg-purple-600 text-white'
-                        }`}>
+                        <div className="px-6 py-2 rounded-full text-xs font-bold bg-[#26847F] text-white shadow-lg">
                           {plan.badge}
                         </div>
                       </div>
                     )}
                     
-                    <div className={`liquid-glass rounded-3xl p-6 h-full flex flex-col transition-all duration-300 hover:shadow-2xl ${
+                    <div className={`liquid-glass rounded-3xl p-8 h-full flex flex-col transition-all duration-300 hover:shadow-2xl ${
                       plan.popular ? 'ring-2 ring-[#26847F] scale-105' : ''
                     }`}>
                       <div className="text-center mb-6">
-                        <div className={`w-16 h-16 mx-auto mb-4 rounded-2xl ${plan.iconBg} flex items-center justify-center`}>
-                          <Icon className={`w-8 h-8 ${plan.iconColor}`} />
+                        <div className={`w-20 h-20 mx-auto mb-4 rounded-2xl ${plan.iconBg} flex items-center justify-center`}>
+                          <Icon className={`w-10 h-10 ${plan.iconColor}`} />
                         </div>
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+                        <h3 className="text-3xl font-bold text-gray-900 mb-2">{plan.name}</h3>
                         <p className="text-sm text-gray-600">{plan.description}</p>
                       </div>
 
-                      <div className="text-center mb-6">
-                        {plan.isFree ? (
-                          <div>
-                            <div className="text-4xl font-black text-gray-900">
-                              {t('upgradeModal.free')}
-                            </div>
-                            <div className="text-sm text-gray-600 mt-1">{t('upgradeModal.forever')}</div>
+                      <div className="text-center mb-8">
+                        <div className="text-5xl font-black text-gray-900">
+                          €{plan.price}
+                        </div>
+                        <div className="text-sm text-gray-600 mt-2">al mese</div>
+                        {plan.totalPrice && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            €{plan.totalPrice} fatturati annualmente
                           </div>
-                        ) : billingCycle === 'monthly' ? (
-                          <div>
-                            <div className="text-4xl font-black text-gray-900">
-                              €{plan.monthlyPrice}
-                            </div>
-                            <div className="text-sm text-gray-600 mt-1">{t('upgradeModal.perMonth')}</div>
-                          </div>
-                        ) : (
-                          <div>
-                            <div className="text-4xl font-black text-gray-900">
-                              €{plan.yearlyMonthly}
-                            </div>
-                            <div className="text-sm text-gray-600 mt-1">{t('upgradeModal.perMonth')}</div>
-                            <div className="text-xs text-green-600 font-semibold mt-1">
-                              {t('upgradeModal.save').replace('{amount}', ((plan.monthlyPrice * 12) - plan.yearlyPrice).toFixed(0))}
-                            </div>
+                        )}
+                        {plan.hasTrial && (
+                          <div className="mt-3 inline-block bg-green-100 text-green-700 text-xs font-bold px-4 py-2 rounded-full">
+                            🎁 3 giorni gratis
                           </div>
                         )}
                       </div>
 
-                      <ul className="space-y-3 mb-6 flex-1">
+                      <ul className="space-y-4 mb-8 flex-1">
                         {plan.features.map((feature, fIdx) => (
-                          <li key={fIdx} className="flex items-start gap-2 text-sm">
-                            <CheckCircle className="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" />
-                            <span className="text-gray-700">{feature}</span>
+                          <li key={fIdx} className="flex items-start gap-3 text-sm">
+                            <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                            <span className="text-gray-700 font-medium">{feature}</span>
                           </li>
                         ))}
                       </ul>
@@ -349,20 +274,20 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                       {isCurrentPlan ? (
                         <Button
                           disabled
-                          className="w-full h-12 text-base font-bold bg-gray-200 text-gray-500 cursor-not-allowed rounded-xl"
+                          className="w-full h-14 text-base font-bold bg-gray-200 text-gray-500 cursor-not-allowed rounded-xl"
                         >
-                          {t('upgradeModal.currentPlanBadge')}
+                          Piano Attuale
                         </Button>
                       ) : (
                         <Button
                           onClick={() => handleSelectPlan(plan)}
-                          className={`w-full h-12 text-base font-bold rounded-xl transition-all ${
+                          className={`w-full h-14 text-base font-bold rounded-xl transition-all ${
                             plan.popular
                               ? 'bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-lg hover:shadow-xl'
                               : 'bg-gray-900 hover:bg-gray-800 text-white'
                           }`}
                         >
-                          {t('upgradeModal.switchTo').replace('{plan}', plan.name)}
+                          {plan.hasTrial ? 'Inizia Prova Gratuita' : 'Scegli Piano Mensile'}
                         </Button>
                       )}
                     </div>
