@@ -841,6 +841,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
         showBackButton={currentStep > 0}
         showNextButton={true}
         translations={translations}
+        className="mt-12"
       >
         <CurrentStepComponent
           data={quizData}
