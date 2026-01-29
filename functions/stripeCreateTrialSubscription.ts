@@ -58,7 +58,19 @@ Deno.serve(async (req) => {
             });
         }
 
-        // Crea la subscription con 3 giorni di trial (€0 iniziale)
+        // Allega il payment method al customer
+        await stripe.paymentMethods.attach(paymentMethodId, {
+            customer: customerId
+        });
+
+        // Imposta come default
+        await stripe.customers.update(customerId, {
+            invoice_settings: {
+                default_payment_method: paymentMethodId
+            }
+        });
+
+        // Crea la subscription con 3 giorni di trial (€0 iniziale, addebito dopo trial)
         const subscription = await stripe.subscriptions.create({
             customer: customerId,
             items: [
@@ -66,6 +78,7 @@ Deno.serve(async (req) => {
                     price: priceId
                 }
             ],
+            default_payment_method: paymentMethodId,
             trial_period_days: 3,
             metadata: {
                 user_id: user.id
