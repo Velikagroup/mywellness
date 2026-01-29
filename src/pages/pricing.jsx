@@ -200,7 +200,7 @@ function PricingPageContent() {
     },
     {
       id: 'yearly',
-      name: language === 'it' ? 'MyWellness Annual' : language === 'en' ? 'MyWellness Annual' : language === 'es' ? 'MyWellness Anual' : language === 'pt' ? 'MyWellness Anual' : language === 'de' ? 'MyWellness Jährlich' : 'MyWellness Annuel',
+      name: language === 'it' ? 'MyWellness Annuale' : language === 'en' ? 'MyWellness Annual' : language === 'es' ? 'MyWellness Anual' : language === 'pt' ? 'MyWellness Anual' : language === 'de' ? 'MyWellness Jährlich' : 'MyWellness Annuel',
       priceMonthly: 4.16,
       priceAnnual: 49.99,
       stripePriceIdMonthly: "price_1SuOAr2OXBs6ZYwlteMU5EVp",
