@@ -209,7 +209,6 @@ export default function PricingPageContent() {
       description: 'Piano completo mensile con tutte le funzionalità',
       features: [
         'Piani nutrizionali e allenamento AI',
-        'Generazioni illimitate',
         'Body Scan con analisi composizione corporea',
         'Analisi AI pasti con foto',
         'Ribilanciamento automatico calorie',
@@ -234,7 +233,6 @@ export default function PricingPageContent() {
       description: 'Piano completo annuale - Risparmia €69.89/anno',
       features: [
         'Piani nutrizionali e allenamento AI',
-        'Generazioni illimitate',
         'Body Scan con analisi composizione corporea',
         'Analisi AI pasti con foto',
         'Ribilanciamento automatico calorie',
