@@ -1012,21 +1012,29 @@ function PricingPageContent() {
           {/* Pricing Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-16 max-w-5xl mx-auto">
             {plans.map((plan, index) => (
-              <Card 
-                key={plan.id}
-                className={`water-glass-effect border-2 transition-all duration-300 hover:shadow-2xl h-full flex flex-col ${plan.popular ? 'border-[var(--brand-primary)] scale-100 md:scale-105' : 'border-white/40'} ${selectedPlan === plan.id ? 'ring-4 ring-[var(--brand-primary)]/30' : ''}`}
-              >
-                {plan.popular && (
-                  <div className="popular-badge text-[var(--brand-primary)] text-center py-2.5 text-xs font-semibold tracking-widest uppercase">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></div>
-                      {t('pricing.mostChosen')}
-                      <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></div>
+              <div key={plan.id} className="relative">
+                {plan.id === 'yearly' && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                    <div className="bg-black text-white text-center px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider uppercase whitespace-nowrap shadow-lg">
+                      3 GIORNI TRIAL GRATIS
                     </div>
                   </div>
                 )}
+              
+                <Card 
+                  className={`water-glass-effect border-2 transition-all duration-300 hover:shadow-2xl h-full flex flex-col ${plan.popular ? 'border-[var(--brand-primary)] scale-100 md:scale-105' : 'border-white/40'} ${selectedPlan === plan.id ? 'ring-4 ring-[var(--brand-primary)]/30' : ''}`}
+                >
+                  {plan.popular && (
+                    <div className="popular-badge text-[var(--brand-primary)] text-center py-2.5 text-xs font-semibold tracking-widest uppercase">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></div>
+                        {t('pricing.mostChosen')}
+                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></div>
+                      </div>
+                    </div>
+                  )}
 
-                {plan.id === "premium" && (
+                  {plan.id === "premium" && (
                   <div className="premium-badge text-purple-600 text-center py-2.5 text-xs font-semibold tracking-widest uppercase">
                     <div className="flex items-center justify-center gap-2">
                       <Crown className="w-3 h-3" />
@@ -1119,7 +1127,8 @@ function PricingPageContent() {
                     <span className="relative z-10">{plan.cta}</span>
                   </button>
                 </CardContent>
-              </Card>
+                </Card>
+              </div>
             ))}
           </div>
 
