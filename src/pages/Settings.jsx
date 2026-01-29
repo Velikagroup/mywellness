@@ -1776,7 +1776,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               <Button
                 onClick={() => setShowDeleteAccountDialog(false)}
                 variant="outline"
-                className="w-full rounded-full"
+                className="w-full rounded-full h-12 font-bold"
               >
                 No, torna indietro
               </Button>
@@ -1849,7 +1849,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 }}
                 disabled={isSaving}
                 variant="destructive"
-                className="w-full bg-red-600 hover:bg-red-700 rounded-full"
+                className="w-full bg-red-600 hover:bg-red-700 rounded-full h-12 font-bold"
               >
                 {isSaving ? 'Cancellazione in corso...' : 'Sì, cancella tutto'}
               </Button>
