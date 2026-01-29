@@ -48,6 +48,19 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
+
+        // 🚫 BLOCCO: se subscription non valida e sta cercando di accedere a pagine protette
+        const protectedPages = ['/dashboard', '/meals', '/workouts', '/settings'];
+        const currentPath = location.pathname.toLowerCase();
+        const isProtectedPage = protectedPages.some(p => currentPath.includes(p));
+
+        if (isProtectedPage && currentUser) {
+          const validStatuses = ['active', 'trial'];
+          if (!validStatuses.includes(currentUser.subscription_status)) {
+            console.log(`🚫 Access blocked: subscription_status = ${currentUser.subscription_status}`);
+            navigate(createLocalizedPageUrl('pricing', language), { replace: true });
+          }
+        }
       } catch (error) {
         if (error?.response?.status === 401 ||
             error?.message?.includes('401') ||
@@ -59,7 +72,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       }
     };
     loadUser();
-  }, []);
+  }, [location.pathname, language, navigate]);
   
   const fontOption = "inter";
   
