@@ -113,23 +113,29 @@ export default function PostQuizSubscription() {
     setIsLoading(true);
     try {
       const priceId = 'price_1SubPS2OXBs6ZYwlrhculB4e';
+
+      console.log('🚀 Calling stripeCreateTrialSubscription...');
       const response = await base44.functions.invoke('stripeCreateTrialSubscription', {
         priceId
       });
 
+      console.log('📦 Response:', response);
       const data = response?.data || response;
+      console.log('📦 Data:', data);
 
       if (data?.success) {
         console.log('✅ Trial creato:', data.subscription_id);
+        // Attendi un po' prima di navigare per assicurarsi che il DB sia aggiornato
+        await new Promise(resolve => setTimeout(resolve, 1000));
         navigate(createPageUrl('Dashboard'), { replace: true });
       } else {
         console.error('❌ Errore:', data);
-        alert('Errore nella creazione del trial. Riprova.');
+        alert(`Errore nella creazione del trial: ${data?.error || 'Unknown error'}`);
         setIsLoading(false);
       }
     } catch (error) {
-      console.error('Errore:', error);
-      alert('Errore durante la creazione del trial. Riprova.');
+      console.error('Errore catch:', error);
+      alert(`Errore durante la creazione del trial: ${error.message}`);
       setIsLoading(false);
     }
   };
