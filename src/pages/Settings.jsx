@@ -1851,7 +1851,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 variant="destructive"
                 className="w-full bg-red-600 hover:bg-red-700"
               >
-                {isSaving ? 'Cancellazione in corso...' : 'Sì, cancella tutto e resetta'}
+                {isSaving ? 'Cancellazione in corso...' : 'Sì, cancella tutto'}
               </Button>
             </div>
           </div>
