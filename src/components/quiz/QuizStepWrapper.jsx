@@ -15,8 +15,7 @@ export default function QuizStepWrapper({
   backButtonText = "Indietro",
   showBackButton = true,
   showNextButton = true,
-  translations,
-  className = ""
+  translations
 }) {
   // Calcola progresso con peso decrescente per step
   const calculateWeightedProgress = () => {
@@ -75,7 +74,7 @@ export default function QuizStepWrapper({
         }
       `}</style>
 
-      <div className={`min-h-screen bg-white mt-12 ${className}`}>
+      <div className="min-h-screen bg-white">
         <div className="flex flex-col items-center pt-4 pb-24 px-4">
           <div className="max-w-[416px] w-full mt-0">
             {children}
