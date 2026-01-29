@@ -97,6 +97,7 @@ export default function Settings() {
   const [cancellationReason, setCancellationReason] = useState('');
   const [cancellationDetails, setCancellationDetails] = useState('');
   const [wouldRecommend, setWouldRecommend] = useState(null);
+  const [showDeleteAccountDialog, setShowDeleteAccountDialog] = useState(false);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [selectedTicketForChat, setSelectedTicketForChat] = useState(null);
   const [showLanguageDialog, setShowLanguageDialog] = useState(false);
@@ -907,16 +908,14 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     {user?.subscription_plan === 'premium' ? t('settings.changePlan') : t('settings.upgradePlan')}
                   </Button>
 
-                  {(user?.subscription_status === 'active' || user?.subscription_status === 'trial') && !user?.cancellation_at_period_end && (
-                    <Button
-                      onClick={() => setShowCancelDialog(true)}
-                      variant="outline"
-                      className="flex-1 border-red-300 text-red-600 hover:bg-red-50"
-                    >
-                      <Trash2 className="w-4 h-4 mr-2" />
-                      {t('settings.cancelSubscription')}
-                    </Button>
-                  )}
+                  <Button
+                    onClick={() => setShowDeleteAccountDialog(true)}
+                    variant="outline"
+                    className="flex-1 border-red-300 text-red-600 hover:bg-red-50"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Cancella Account
+                  </Button>
                 </div>
 
                 {user?.cancellation_at_period_end && user?.subscription_period_end && (
@@ -1745,6 +1744,119 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
           onUpdate={loadUserData}
         />
       )}
+
+      {/* Dialog Delete Account */}
+      <Dialog open={showDeleteAccountDialog} onOpenChange={setShowDeleteAccountDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-red-600 flex items-center gap-2">
+              <AlertTriangle className="w-6 h-6" />
+              Cancella Account
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
+              <p className="text-red-900 font-bold mb-2">⚠️ ATTENZIONE: Questa azione è irreversibile!</p>
+              <p className="text-red-800 text-sm">
+                Cancellando il tuo account:
+              </p>
+              <ul className="text-red-800 text-sm mt-2 space-y-1 list-disc list-inside">
+                <li>Perderai TUTTI i tuoi dati</li>
+                <li>Perderai i tuoi piani personalizzati</li>
+                <li>Perderai lo storico dei progressi</li>
+                <li>NON potrai più recuperare nulla</li>
+              </ul>
+            </div>
+            
+            <p className="text-gray-700 text-sm">
+              Dovrai ricominciare dal quiz iniziale se vorrai usare nuovamente l'app.
+            </p>
+
+            <div className="flex flex-col gap-3 pt-4">
+              <Button
+                onClick={() => setShowDeleteAccountDialog(false)}
+                variant="outline"
+                className="w-full"
+              >
+                No, torna indietro
+              </Button>
+              <Button
+                onClick={async () => {
+                  setIsSaving(true);
+                  try {
+                    // Reset completo dell'account
+                    await base44.auth.updateMe({
+                      subscription_status: null,
+                      subscription_plan: null,
+                      subscription_period_end: null,
+                      stripe_customer_id: null,
+                      stripe_subscription_id: null,
+                      billing_type: null,
+                      company_name: null,
+                      tax_id: null,
+                      pec_sdi: null,
+                      billing_address: null,
+                      billing_city: null,
+                      billing_zip: null,
+                      billing_country: null,
+                      phone_number: null,
+                      target_weight: null,
+                      current_weight: null,
+                      height: null,
+                      age: null,
+                      gender: null,
+                      activity_level: null,
+                      fitness_goal: null,
+                      diet_type: null,
+                      allergies: null,
+                      workout_days: null,
+                      workout_location: null,
+                      equipment: null,
+                      cancellation_at_period_end: null
+                    });
+
+                    // Cancella tutti i dati dell'utente
+                    await Promise.all([
+                      base44.entities.MealPlan.filter({ user_id: user.id }).then(plans => 
+                        Promise.all(plans.map(p => base44.entities.MealPlan.delete(p.id)))
+                      ),
+                      base44.entities.WorkoutPlan.filter({ user_id: user.id }).then(plans => 
+                        Promise.all(plans.map(p => base44.entities.WorkoutPlan.delete(p.id)))
+                      ),
+                      base44.entities.WeightHistory.filter({ user_id: user.id }).then(weights => 
+                        Promise.all(weights.map(w => base44.entities.WeightHistory.delete(w.id)))
+                      ),
+                      base44.entities.MealLog.filter({ user_id: user.id }).then(logs => 
+                        Promise.all(logs.map(l => base44.entities.MealLog.delete(l.id)))
+                      ),
+                      base44.entities.ProgressPhoto.filter({ user_id: user.id }).then(photos => 
+                        Promise.all(photos.map(p => base44.entities.ProgressPhoto.delete(p.id)))
+                      ),
+                      base44.entities.WorkoutLog.filter({ user_id: user.id }).then(logs => 
+                        Promise.all(logs.map(l => base44.entities.WorkoutLog.delete(l.id)))
+                      )
+                    ]);
+
+                    // Logout
+                    rememberMeManager.clearToken();
+                    await base44.auth.logout();
+                    window.location.href = 'https://projectmywellness.com/login';
+                  } catch (error) {
+                    console.error('Error deleting account:', error);
+                    alert('❌ Errore durante la cancellazione dell\'account');
+                    setIsSaving(false);
+                  }
+                }}
+                disabled={isSaving}
+                variant="destructive"
+                className="w-full bg-red-600 hover:bg-red-700"
+              >
+                {isSaving ? 'Cancellazione in corso...' : 'Sì, cancella tutto e resetta'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Language Selection Dialog */}
       <Dialog open={showLanguageDialog} onOpenChange={setShowLanguageDialog}>
