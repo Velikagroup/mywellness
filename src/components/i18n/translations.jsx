@@ -3393,7 +3393,7 @@ export const translations = {
       faq1Question: "Can I cancel anytime?",
       faq1Answer: "Yes, you can cancel whenever you want without any commitment or penalty. The service will remain active until the end of the already paid period.",
       faq2Question: "What does the MyWellness plan include?",
-      faq2Answer: "The plan includes ALL features: personalized nutrition and workout plans, unlimited generations, AI meal photo analysis, automatic rebalancing, Body Scan with AI body composition analysis, label scanning with Health Score, smart shopping list, smartwatch sync, and priority support.",
+      faq2Answer: "The plan includes ALL features: AI-driven nutrition and workout plans, Body Scan with AI body composition analysis, AI meal photo analysis, automatic calorie rebalancing, label scanning with Health Score, smart shopping list, smartwatch synchronization, and priority support.",
       faq3Question: "What's the difference between monthly and yearly plan?",
       faq3Answer: "Both plans include the exact same features. The yearly plan saves you 58% (€4.16/month instead of €9.99/month) and includes 3 free trial days. The monthly plan costs €9.99/month with no trial.",
       faq4Question: "What payment methods do you accept?",
