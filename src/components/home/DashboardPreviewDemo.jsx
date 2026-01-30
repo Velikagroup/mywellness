@@ -14,8 +14,8 @@ export default function DashboardPreviewDemo() {
   const translations = React.useMemo(() => ({
     it: {
       scientificAnalysis: '✅ Analisi Scientifica',
-      scientificDashboard: 'Dashboard Scientifico',
-      subtitle: 'Visualizza TMB, necessità caloriche, grasso corporeo e proiezioni di obiettivi in tempo reale.',
+      scientificDashboard: 'Dashboard Scientifica',
+      subtitle: 'Monitora il tuo bilancio calorico giornaliero in tempo reale - la metrica più importante per raggiungere i tuoi obiettivi. Visualizza anche BMR, fabbisogno calorico, massa grassa e proiezioni.',
       startWeight: 'Peso Iniziale',
       targetWeight: 'Peso Target',
       variation: 'Variazione',
@@ -39,7 +39,7 @@ export default function DashboardPreviewDemo() {
     en: {
       scientificAnalysis: '✅ Scientific Analysis',
       scientificDashboard: 'Scientific Dashboard',
-      subtitle: 'Visualize BMR, calorie needs, body fat and goal projections in real-time.',
+      subtitle: 'Track your daily calorie balance in real-time - the most important metric to achieve your goals. Also view BMR, calorie needs, body fat and projections.',
       startWeight: 'Starting Weight',
       targetWeight: 'Target Weight',
       variation: 'Variation',
@@ -63,7 +63,7 @@ export default function DashboardPreviewDemo() {
     es: {
       scientificAnalysis: '✅ Análisis Científico',
       scientificDashboard: 'Dashboard Científico',
-      subtitle: 'Visualiza TMB, necesidades calóricas, grasa corporal y proyecciones de objetivos en tiempo real.',
+      subtitle: 'Monitorea tu balance calórico diario en tiempo real - la métrica más importante para lograr tus objetivos. También visualiza TMB, necesidades calóricas, grasa corporal y proyecciones.',
       startWeight: 'Peso Inicial',
       targetWeight: 'Peso Objetivo',
       variation: 'Variación',
@@ -87,7 +87,7 @@ export default function DashboardPreviewDemo() {
     pt: {
       scientificAnalysis: '✅ Análise Científica',
       scientificDashboard: 'Dashboard Científico',
-      subtitle: 'Visualize TMB, necessidades calóricas, gordura corporal e projeções de objetivos em tempo real.',
+      subtitle: 'Monitore seu balanço calórico diário em tempo real - a métrica mais importante para alcançar seus objetivos. Também visualize TMB, necessidades calóricas, gordura corporal e projeções.',
       startWeight: 'Peso Inicial',
       targetWeight: 'Peso Alvo',
       variation: 'Variação',
@@ -111,7 +111,7 @@ export default function DashboardPreviewDemo() {
     de: {
       scientificAnalysis: '✅ Wissenschaftliche Analyse',
       scientificDashboard: 'Wissenschaftliches Dashboard',
-      subtitle: 'Visualisieren Sie BMR, Kalorienbedarf, Körperfett und Zielprognosen in Echtzeit.',
+      subtitle: 'Verfolgen Sie Ihre tägliche Kalorienbilanz in Echtzeit - die wichtigste Metrik, um Ihre Ziele zu erreichen. Sehen Sie auch BMR, Kalorienbedarf, Körperfett und Prognosen.',
       startWeight: 'Startgewicht',
       targetWeight: 'Zielgewicht',
       variation: 'Variation',
@@ -135,7 +135,7 @@ export default function DashboardPreviewDemo() {
     fr: {
       scientificAnalysis: '✅ Analyse Scientifique',
       scientificDashboard: 'Dashboard Scientifique',
-      subtitle: 'Visualisez MB, besoins caloriques, masse grasse et projections d\'objectifs en temps réel.',
+      subtitle: 'Suivez votre bilan calorique quotidien en temps réel - la métrique la plus importante pour atteindre vos objectifs. Visualisez aussi MB, besoins caloriques, masse grasse et projections.',
       startWeight: 'Poids Initial',
       targetWeight: 'Poids Cible',
       variation: 'Variation',
