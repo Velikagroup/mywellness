@@ -1416,13 +1416,6 @@ function HomeContent() {
 
             {/* Contenuto */}
             <div className="px-6 py-4">
-              {/* Icona centrale */}
-              <div className="flex justify-center mb-6">
-                <div className="w-14 h-14 bg-[var(--brand-primary)] rounded-2xl flex items-center justify-center">
-                  <Sparkles className="w-7 h-7 text-white" />
-                </div>
-              </div>
-
               {/* Titolo principale */}
               <h3 className="text-2xl font-bold text-center mb-2 text-gray-900">
                 {t('home.popupTitle1')} <span className="text-[var(--brand-primary)]">{t('home.popupTitle2')}</span>
@@ -1438,25 +1431,32 @@ function HomeContent() {
                 {t('home.popupGenderLabel')}
               </p>
 
-              {/* Scelta Genere */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
+              {/* Scelta Genere - Layout Verticale */}
+              <div className="space-y-3 mb-6">
                 <button
                   onClick={() => handleQuizPopupStart('male')}
-                  className="bg-white hover:bg-gray-50 border border-gray-200 rounded-2xl p-5 transition-all"
+                  className="w-full bg-gray-900 hover:bg-gray-800 text-white rounded-2xl p-4 transition-all"
                 >
-                  <div className="text-center space-y-1">
-                    <div className="text-3xl">👨</div>
-                    <div className="font-medium text-gray-900 text-sm">{t('home.popupMale')}</div>
+                  <div className="text-center">
+                    <div className="font-medium text-base">{t('home.popupMale')}</div>
                   </div>
                 </button>
 
                 <button
                   onClick={() => handleQuizPopupStart('female')}
-                  className="bg-white hover:bg-gray-50 border border-gray-200 rounded-2xl p-5 transition-all"
+                  className="w-full bg-white hover:bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl p-4 transition-all"
                 >
-                  <div className="text-center space-y-1">
-                    <div className="text-3xl">👩</div>
-                    <div className="font-medium text-gray-900 text-sm">{t('home.popupFemale')}</div>
+                  <div className="text-center">
+                    <div className="font-medium text-base">{t('home.popupFemale')}</div>
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => handleQuizPopupStart('other')}
+                  className="w-full bg-white hover:bg-gray-50 border border-gray-200 text-gray-900 rounded-2xl p-4 transition-all"
+                >
+                  <div className="text-center">
+                    <div className="font-medium text-base">{t('home.popupOther')}</div>
                   </div>
                 </button>
               </div>

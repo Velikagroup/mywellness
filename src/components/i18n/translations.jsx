@@ -653,6 +653,7 @@ export const translations = {
       popupGenderLabel: "Seleziona il tuo sesso:",
       popupMale: "Uomo",
       popupFemale: "Donna",
+      popupOther: "Altro",
       popupBullet1: "⏱️ Richiede solo 3 minuti",
       popupBullet2: "🎯 Calcoli scientifici precisi",
       popupBullet3: "📊 I tuoi dati sono privati e sicuri"
@@ -3295,6 +3296,7 @@ export const translations = {
       popupGenderLabel: "Select your gender:",
       popupMale: "Male",
       popupFemale: "Female",
+      popupOther: "Other",
       popupBullet1: "⏱️ Takes only 3 minutes",
       popupBullet2: "🎯 Precise scientific calculations",
       popupBullet3: "📊 Your data is private and secure"
@@ -5400,6 +5402,7 @@ export const translations = {
       popupGenderLabel: "Selecciona tu sexo:",
       popupMale: "Hombre",
       popupFemale: "Mujer",
+      popupOther: "Otro",
       popupBullet1: "⏱️ Solo toma 3 minutos",
       popupBullet2: "🎯 Cálculos científicos precisos",
       popupBullet3: "📊 Tus datos son privados y seguros"
@@ -7631,6 +7634,7 @@ export const translations = {
       popupGenderLabel: "Selecione seu sexo:",
       popupMale: "Homem",
       popupFemale: "Mulher",
+      popupOther: "Outro",
       popupBullet1: "⏱️ Leva apenas 3 minutos",
       popupBullet2: "🎯 Cálculos científicos precisos",
       popupBullet3: "📊 Seus dados são privados e seguros"
@@ -9964,6 +9968,7 @@ export const translations = {
       popupGenderLabel: "Wählen Sie Ihr Geschlecht:",
       popupMale: "Mann",
       popupFemale: "Frau",
+      popupOther: "Andere",
       popupBullet1: "⏱️ Dauert nur 3 Minuten",
       popupBullet2: "🎯 Präzise wissenschaftliche Berechnungen",
       popupBullet3: "📊 Ihre Daten sind privat und sicher"
@@ -12296,6 +12301,7 @@ export const translations = {
       popupGenderLabel: "Sélectionnez votre sexe:",
       popupMale: "Homme",
       popupFemale: "Femme",
+      popupOther: "Autre",
       popupBullet1: "⏱️ Ne prend que 3 minutes",
       popupBullet2: "🎯 Calculs scientifiques précis",
       popupBullet3: "📊 Vos données sont privées et sécurisées"
