@@ -3289,7 +3289,7 @@ export const translations = {
       instructionRest5Min: "Let rest for 5 minutes",
       
       popupTitle1: "Discover your",
-      popupTitle2: "body fat",
+      popupTitle2: "biological age",
       popupSubtitle: "and build the",
       popupSubtitle2: "nutrition plan",
       popupSubtitle3: "made just for you",
@@ -5395,7 +5395,7 @@ export const translations = {
       quizDemoOptionFastSubtitle: "0.75-1kg/semana",
       
       popupTitle1: "Descubre tu",
-      popupTitle2: "grasa corporal",
+      popupTitle2: "edad biológica",
       popupSubtitle: "y construye el",
       popupSubtitle2: "plan nutricional",
       popupSubtitle3: "hecho a tu medida",
@@ -7627,7 +7627,7 @@ export const translations = {
       quizDemoOptionFastSubtitle: "0.75-1kg/semana",
       
       popupTitle1: "Descubra sua",
-      popupTitle2: "gordura corporal",
+      popupTitle2: "idade biológica",
       popupSubtitle: "e construa o",
       popupSubtitle2: "plano nutricional",
       popupSubtitle3: "feito sob medida para você",
@@ -9961,7 +9961,7 @@ export const translations = {
       demoDietPaleo: "Paleo",
       
       popupTitle1: "Entdecken Sie Ihr",
-      popupTitle2: "Körperfett",
+      popupTitle2: "biologisches Alter",
       popupSubtitle: "und erstellen Sie den",
       popupSubtitle2: "Ernährungsplan",
       popupSubtitle3: "maßgeschneidert für Sie",
@@ -12294,7 +12294,7 @@ export const translations = {
       demoDietPaleo: "Paleo",
       
       popupTitle1: "Découvrez votre",
-      popupTitle2: "masse grasse",
+      popupTitle2: "âge biologique",
       popupSubtitle: "et construisez le",
       popupSubtitle2: "plan nutritionnel",
       popupSubtitle3: "fait sur mesure pour vous",
