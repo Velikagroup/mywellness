@@ -1409,20 +1409,15 @@ function HomeContent() {
               <div className="h-full bg-gray-800 w-[8%] transition-all" />
             </div>
 
-            {/* Progress Text */}
-            <div className="px-6 pt-6 pb-2">
-              <p className="text-xs text-gray-500 text-center">1 / 12 {t('quiz.quizQuestionsCompleted')}</p>
-            </div>
-
             {/* Contenuto */}
-            <div className="px-6 py-4">
+            <div className="px-6 py-8">
               {/* Titolo principale */}
-              <h3 className="text-2xl font-bold text-center mb-2 text-gray-900">
+              <h3 className="text-2xl font-bold text-left mb-2 text-gray-900">
                 {t('home.popupTitle1')} <span className="text-[var(--brand-primary)]">{t('home.popupTitle2')}</span>
               </h3>
 
               {/* Sottotitolo */}
-              <p className="text-center text-gray-600 text-sm mb-6">
+              <p className="text-left text-gray-600 text-sm mb-6">
                 {t('home.popupSubtitle')} <strong className="text-gray-900">{t('home.popupSubtitle2')}</strong> {t('home.popupSubtitle3')}
               </p>
 
