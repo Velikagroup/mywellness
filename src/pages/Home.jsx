@@ -1398,92 +1398,82 @@ function HomeContent() {
       <Dialog open={showQuizPopup} onOpenChange={handleQuizPopupClose}>
         <DialogContent 
           hideClose={false}
-          className="sm:max-w-lg rounded-3xl border-0 shadow-2xl p-0 overflow-hidden"
+          className="sm:max-w-[416px] rounded-3xl border-0 shadow-2xl p-0 overflow-hidden"
           style={{
-            background: '#f9fafb',
-            backgroundImage: `
-              radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 50%),
-              radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
-              radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
-              radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
-              radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%)
-            `,
-            backgroundSize: '250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%',
-            animation: 'gradientShift 45s ease-in-out infinite'
+            background: 'white'
           }}
         >
-          <div className="relative">
+          <div className="relative bg-white">
             {/* Progress Bar */}
-            <div className="h-2 bg-gray-100">
-              <div className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 w-[8%] rounded-r-full transition-all" />
+            <div className="h-0.5 bg-gray-200 w-full">
+              <div className="h-full bg-gray-800 w-[8%] transition-all" />
             </div>
 
             {/* Progress Text */}
-            <div className="px-8 pt-6 pb-2">
-              <p className="text-sm text-gray-600 text-center">1 / 12 {t('quiz.quizQuestionsCompleted')}</p>
+            <div className="px-6 pt-6 pb-2">
+              <p className="text-xs text-gray-500 text-center">1 / 12 {t('quiz.quizQuestionsCompleted')}</p>
             </div>
 
             {/* Contenuto */}
-            <div className="px-8 py-6">
+            <div className="px-6 py-4">
               {/* Icona centrale */}
               <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-400 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Sparkles className="w-8 h-8 text-white" />
+                <div className="w-14 h-14 bg-[var(--brand-primary)] rounded-2xl flex items-center justify-center">
+                  <Sparkles className="w-7 h-7 text-white" />
                 </div>
               </div>
 
               {/* Titolo principale */}
-              <h3 className="text-3xl font-bold text-center mb-3">
-                {t('home.popupTitle1')} <span className="animated-text-gradient">{t('home.popupTitle2')}</span>
+              <h3 className="text-2xl font-bold text-center mb-2 text-gray-900">
+                {t('home.popupTitle1')} <span className="text-[var(--brand-primary)]">{t('home.popupTitle2')}</span>
               </h3>
 
               {/* Sottotitolo */}
-              <p className="text-center text-gray-600 mb-6">
-                {t('home.popupSubtitle')} <strong>{t('home.popupSubtitle2')}</strong> {t('home.popupSubtitle3')}
+              <p className="text-center text-gray-600 text-sm mb-6">
+                {t('home.popupSubtitle')} <strong className="text-gray-900">{t('home.popupSubtitle2')}</strong> {t('home.popupSubtitle3')}
               </p>
 
               {/* Label */}
-              <p className="text-center text-sm font-semibold text-gray-700 mb-4">
+              <p className="text-center text-sm font-medium text-gray-900 mb-4">
                 {t('home.popupGenderLabel')}
               </p>
 
-              {/* Scelta Genere - Style Minimale come nell'immagine */}
-              <div className="grid grid-cols-2 gap-4 mb-8">
+              {/* Scelta Genere */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
                 <button
                   onClick={() => handleQuizPopupStart('male')}
-                  className="bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-[var(--brand-primary)] rounded-2xl p-6 transition-all hover:shadow-md"
+                  className="bg-white hover:bg-gray-50 border border-gray-200 rounded-2xl p-5 transition-all"
                 >
-                  <div className="text-center space-y-2">
-                    <div className="text-4xl mb-1">👨</div>
-                    <div className="font-semibold text-gray-900">{t('home.popupMale')}</div>
+                  <div className="text-center space-y-1">
+                    <div className="text-3xl">👨</div>
+                    <div className="font-medium text-gray-900 text-sm">{t('home.popupMale')}</div>
                   </div>
                 </button>
 
                 <button
                   onClick={() => handleQuizPopupStart('female')}
-                  className="bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-[var(--brand-primary)] rounded-2xl p-6 transition-all hover:shadow-md"
+                  className="bg-white hover:bg-gray-50 border border-gray-200 rounded-2xl p-5 transition-all"
                 >
-                  <div className="text-center space-y-2">
-                    <div className="text-4xl mb-1">👩</div>
-                    <div className="font-semibold text-gray-900">{t('home.popupFemale')}</div>
+                  <div className="text-center space-y-1">
+                    <div className="text-3xl">👩</div>
+                    <div className="font-medium text-gray-900 text-sm">{t('home.popupFemale')}</div>
                   </div>
                 </button>
               </div>
 
               {/* Footer con bullet points */}
-              <div className="bg-gray-50/80 backdrop-blur-sm rounded-2xl p-5 border border-gray-200/50">
-                <div className="space-y-3 text-sm text-gray-700">
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-base">⏱️</span>
+              <div className="bg-gray-50 rounded-2xl p-4 mb-4">
+                <div className="space-y-2.5 text-xs text-gray-700">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">⏱️</span>
                     <span>{t('home.popupBullet1').replace('⏱️ ', '')}</span>
                   </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-base">🎯</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">🎯</span>
                     <span>{t('home.popupBullet2').replace('🎯 ', '')}</span>
                   </div>
-                  <div className="flex items-center justify-center gap-2">
-                    <span className="text-base">📊</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">📊</span>
                     <span>{t('home.popupBullet3').replace('📊 ', '')}</span>
                   </div>
                 </div>
