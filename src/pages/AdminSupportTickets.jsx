@@ -542,8 +542,20 @@ Output ONLY the translated text, nothing else.`,
     return filtered;
   };
 
-  const premiumTickets = filterTickets(tickets.filter(t => t.priority === 'premium' && !t.ai_resolved));
-  const normalTickets = filterTickets(tickets.filter(t => t.priority === 'normale' && !t.ai_resolved));
+  // 🔥 PRIORITARI = SOLO piani annuali (yearly)
+  const premiumTickets = filterTickets(tickets.filter(t => {
+    if (t.ai_resolved) return false;
+    
+    // Trova l'utente dal ticket
+    const ticketUserPlan = t.user_plan;
+    return ticketUserPlan === 'yearly';
+  }));
+  
+  const normalTickets = filterTickets(tickets.filter(t => {
+    if (t.ai_resolved) return false;
+    const ticketUserPlan = t.user_plan;
+    return ticketUserPlan !== 'yearly';
+  }));
   const allActiveTickets = filterTickets(tickets.filter(t => !t.ai_resolved));
   const aiResolvedTickets = filterTickets(tickets.filter(t => t.ai_resolved === true));
 

@@ -64,7 +64,7 @@ export const PLAN_FEATURES = {
     workout_tracking: true,
     workout_modification: true,
     progress_photo_analysis: true,
-    priority_support: true,
+    priority_support: false,
     calorie_balance: true,
     smartwatch_sync: true,
     meal_plan_generations_per_month: -1, // -1 = illimitato
