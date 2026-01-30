@@ -53,8 +53,11 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         const protectedPages = ['/dashboard', '/meals', '/workouts', '/settings'];
         const currentPath = location.pathname.toLowerCase();
         const isProtectedPage = protectedPages.some(p => currentPath.includes(p));
+        
+        // PostQuizSubscription non è una pagina protetta - è la pagina di selezione piano
+        const isPostQuizPage = currentPath.includes('postquizsubscription');
 
-        if (isProtectedPage && currentUser) {
+        if (isProtectedPage && !isPostQuizPage && currentUser) {
           // Admin e customer support hanno sempre accesso
           if (currentUser.role === 'admin' || currentUser.custom_role === 'customer_support') {
             // Accesso consentito
