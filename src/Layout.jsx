@@ -55,10 +55,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         const isProtectedPage = protectedPages.some(p => currentPath.includes(p));
 
         if (isProtectedPage && currentUser) {
-          const validStatuses = ['active', 'trial'];
-          if (!validStatuses.includes(currentUser.subscription_status)) {
-            console.log(`🚫 Access blocked: subscription_status = ${currentUser.subscription_status}`);
-            navigate(createLocalizedPageUrl('pricing', language), { replace: true });
+          // Admin e customer support hanno sempre accesso
+          if (currentUser.role === 'admin' || currentUser.custom_role === 'customer_support') {
+            // Accesso consentito
+          } else {
+            const validStatuses = ['active', 'trial'];
+            if (!validStatuses.includes(currentUser.subscription_status)) {
+              console.log(`🚫 Access blocked: subscription_status = ${currentUser.subscription_status}`);
+              navigate(createLocalizedPageUrl('pricing', language), { replace: true });
+            }
           }
         }
       } catch (error) {
