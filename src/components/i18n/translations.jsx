@@ -646,7 +646,7 @@ export const translations = {
       photoAnalyzerRebalanceButton: "Riequilibra Pasti Rimanenti",
       
       popupTitle1: "Scopri la tua",
-      popupTitle2: "massa grassa",
+      popupTitle2: "età biologica",
       popupSubtitle: "e costruisci il",
       popupSubtitle2: "piano nutrizionale",
       popupSubtitle3: "fatto su misura per te",
