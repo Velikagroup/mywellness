@@ -24,7 +24,7 @@ const CONTENT = {
       <h3>2.1 Information Provided by You</h3>
       <ul>
         <li><strong>Registration Data:</strong> first name, last name, email, password</li>
-        <li><strong>Payment Data:</strong> credit card information (securely processed by Stripe)</li>
+
         <li><strong>Billing Data:</strong> name/company name, address, tax ID/VAT number, PEC/SDI</li>
         <li><strong>Contact Data:</strong> phone number</li>
         <li><strong>Profile Data:</strong> date of birth, age, gender, height, weight, body measurements</li>
@@ -185,7 +185,7 @@ const CONTENT = {
       <h3>2.1 Informazioni Fornite da Te</h3>
       <ul>
         <li><strong>Dati di Registrazione:</strong> nome, cognome, email, password</li>
-        <li><strong>Dati di Pagamento:</strong> informazioni della carta di credito (elaborate in modo sicuro da Stripe)</li>
+
         <li><strong>Dati di Fatturazione:</strong> nome/ragione sociale, indirizzo, codice fiscale/partita IVA, PEC/SDI</li>
         <li><strong>Dati di Contatto:</strong> numero di telefono</li>
         <li><strong>Dati di Profilo:</strong> data di nascita, età, genere, altezza, peso, misure corporee</li>
@@ -346,7 +346,7 @@ const CONTENT = {
       <h3>2.1 Información Proporcionada por Ti</h3>
       <ul>
         <li><strong>Datos de Registro:</strong> nombre, apellido, correo electrónico, contraseña</li>
-        <li><strong>Datos de Pago:</strong> información de tarjeta de crédito (procesada de forma segura por Stripe)</li>
+
         <li><strong>Datos de Facturación:</strong> nombre/razón social, dirección, número de identificación fiscal</li>
         <li><strong>Datos de Contacto:</strong> número de teléfono</li>
         <li><strong>Datos de Perfil:</strong> fecha de nacimiento, edad, género, altura, peso, medidas corporales</li>
@@ -507,7 +507,7 @@ const CONTENT = {
       <h3>2.1 Informações Fornecidas por Você</h3>
       <ul>
         <li><strong>Dados de Registro:</strong> nome, sobrenome, e-mail, senha</li>
-        <li><strong>Dados de Pagamento:</strong> informações do cartão de crédito (processadas com segurança pela Stripe)</li>
+
         <li><strong>Dados de Faturamento:</strong> nome/razão social, endereço, número de identificação fiscal</li>
         <li><strong>Dados de Contato:</strong> número de telefone</li>
         <li><strong>Dados de Perfil:</strong> data de nascimento, idade, gênero, altura, peso, medidas corporais</li>
@@ -668,7 +668,7 @@ const CONTENT = {
       <h3>2.1 Von Ihnen bereitgestellte Informationen</h3>
       <ul>
         <li><strong>Registrierungsdaten:</strong> Vorname, Nachname, E-Mail, Passwort</li>
-        <li><strong>Zahlungsdaten:</strong> Kreditkarteninformationen (sicher verarbeitet durch Stripe)</li>
+
         <li><strong>Rechnungsdaten:</strong> Name/Firmenname, Adresse, Steuernummer</li>
         <li><strong>Kontaktdaten:</strong> Telefonnummer</li>
         <li><strong>Profildaten:</strong> Geburtsdatum, Alter, Geschlecht, Größe, Gewicht, Körpermaße</li>
@@ -829,7 +829,7 @@ const CONTENT = {
       <h3>2.1 Informations fournies par vous</h3>
       <ul>
         <li><strong>Données d'inscription:</strong> prénom, nom, e-mail, mot de passe</li>
-        <li><strong>Données de paiement:</strong> informations de carte de crédit (traitées en toute sécurité par Stripe)</li>
+
         <li><strong>Données de facturation:</strong> nom/raison sociale, adresse, numéro d'identification fiscale</li>
         <li><strong>Données de contact:</strong> numéro de téléphone</li>
         <li><strong>Données de profil:</strong> date de naissance, âge, genre, taille, poids, mesures corporelles</li>
@@ -1106,13 +1106,7 @@ export default function Privacy() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center space-y-2">
             <p className="text-sm font-semibold text-gray-700">
-              © VELIKA GROUP LLC. All Rights Reserved.
-            </p>
-            <p className="text-xs text-gray-500">
-              30 N Gould St 32651 Sheridan, WY 82801, United States
-            </p>
-            <p className="text-xs text-gray-500">
-              EIN: 36-5141800 - velika.03@outlook.it
+              © Copyright {new Date().getFullYear()}, All rights reserved
             </p>
           </div>
         </div>
