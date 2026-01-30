@@ -224,8 +224,7 @@ export default function PricingPageContent() {
         'Ribilanciamento automatico calorie',
         'Scansione etichette con Health Score',
         'Lista della spesa intelligente',
-        'Sincronizzazione smartwatch',
-        'Supporto prioritario'
+        'Sincronizzazione smartwatch'
       ] : language === 'en' ? [
         'AI nutrition and workout plans',
         'Body Scan with body composition analysis',
@@ -233,8 +232,7 @@ export default function PricingPageContent() {
         'Automatic calorie rebalancing',
         'Label scanning with Health Score',
         'Smart shopping list',
-        'Smartwatch synchronization',
-        'Priority support'
+        'Smartwatch synchronization'
       ] : language === 'es' ? [
         'Planes nutricionales y entrenamiento IA',
         'Body Scan con análisis composición corporal',
@@ -242,8 +240,7 @@ export default function PricingPageContent() {
         'Rebalanceo automático calorías',
         'Escaneo etiquetas con Health Score',
         'Lista de compras inteligente',
-        'Sincronización smartwatch',
-        'Soporte prioritario'
+        'Sincronización smartwatch'
       ] : language === 'pt' ? [
         'Planos nutricionais e treino IA',
         'Body Scan com análise composição corporal',
@@ -251,8 +248,7 @@ export default function PricingPageContent() {
         'Rebalanceamento automático calorias',
         'Escaneamento rótulos com Health Score',
         'Lista de compras inteligente',
-        'Sincronização smartwatch',
-        'Suporte prioritário'
+        'Sincronização smartwatch'
       ] : language === 'de' ? [
         'KI-Ernährungs- und Trainingspläne',
         'Body Scan mit Körperzusammensetzungsanalyse',
@@ -260,8 +256,7 @@ export default function PricingPageContent() {
         'Automatisches Kalorien-Rebalancing',
         'Etiketten-Scan mit Health Score',
         'Intelligente Einkaufsliste',
-        'Smartwatch-Synchronisierung',
-        'Prioritäts-Support'
+        'Smartwatch-Synchronisierung'
       ] : [
         'Plans nutritionnels et entraînement IA',
         'Body Scan avec analyse composition corporelle',
@@ -269,8 +264,7 @@ export default function PricingPageContent() {
         'Rééquilibrage automatique calories',
         'Scan étiquettes avec Health Score',
         'Liste de courses intelligente',
-        'Synchronisation smartwatch',
-        'Support prioritaire'
+        'Synchronisation smartwatch'
       ],
       cta: t('pricing.startFree'),
       popular: false
