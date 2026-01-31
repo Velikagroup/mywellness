@@ -809,39 +809,17 @@ function HomeContent() {
 
           {/* Step 1 - Quick Actions Button */}
           <motion.div
-            className="grid md:grid-cols-2 gap-12 items-center mb-32"
+            className="flex justify-center items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.7, ease: "easeOut" }}>
             <motion.div
-              className="order-1 md:order-2"
-              initial={{ opacity: 0, x: -40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
-                <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step1Badge')}</span>
-                </div>
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step1Title')}</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                {t('home.step1Desc')}
-              </p>
-              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step1Tag1')}</span>
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{t('home.step1Tag2')}</span>
-                <span className="px-4 py-2 bg-orange-50 text-orange-700 rounded-full text-sm font-medium">{t('home.step1Tag3') || 'AI Vision'}</span>
-              </div>
-            </motion.div>
-            <motion.div
-              className="order-2 md:order-1"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="max-w-md mx-auto flex items-center justify-center" style={{ minHeight: '400px' }}>
+              <div className="flex items-center justify-center" style={{ minHeight: '400px' }}>
                 <button
                   className="rounded-full text-[#26847F] flex items-center justify-center transition-all hover:scale-110 cursor-pointer"
                   style={{
