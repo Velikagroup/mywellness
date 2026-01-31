@@ -4,8 +4,14 @@ import { ScanLine, FlipHorizontal, X, Image, Camera } from 'lucide-react';
 export default function BodyScanCameraPreview() {
   return (
     <div className="relative w-full max-w-[340px] mx-auto aspect-[9/16] bg-black rounded-[40px] overflow-hidden shadow-2xl border-8 border-gray-900">
-      {/* Camera background simulation */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gray-800 via-gray-700 to-gray-900"></div>
+      {/* Camera background with body scan photo */}
+      <div className="absolute inset-0">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/7a925baab_360_F_531993310_X9av29FGPzWQ7rg0fs32wA3URBxfEKnu.jpg"
+          alt="Body Scan"
+          className="w-full h-full object-cover"
+        />
+      </div>
 
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-6 px-4">
