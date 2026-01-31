@@ -810,7 +810,7 @@ function HomeContent() {
           </div>
 
           {/* Camera Screenshots - 3 Features */}
-          <div className="w-full mb-24 px-4">
+          <div className="w-full mb-8 px-4">
             <motion.div
               className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
               initial={{ opacity: 0, y: 40 }}
@@ -860,7 +860,7 @@ function HomeContent() {
           </div>
 
           {/* Step 1 - Quick Actions Button */}
-          <div className="w-full flex justify-center mb-32">
+          <div className="w-full flex justify-center mb-24">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
