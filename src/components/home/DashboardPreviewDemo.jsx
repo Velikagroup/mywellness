@@ -74,7 +74,7 @@ export default function DashboardPreviewDemo() {
                 <p className="text-5xl font-bold text-green-700 leading-tight" style={{
                   filter: 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.18)) drop-shadow(0 0 16px rgba(34, 197, 94, 0.12))'
                 }}>
-                  -467
+                  +176
                 </p>
                 <p className="text-xl font-medium text-green-700">kcal</p>
               </div>
@@ -162,11 +162,11 @@ export default function DashboardPreviewDemo() {
               </div>
               <div className="flex items-center gap-3 mb-1">
                 <span className="font-medium text-gray-600 text-xs">
-                  {language === 'it' ? 'Target Calorico' : 'Calorie Target'}: <span className="font-bold text-red-500">2000 kcal</span>
+                  {language === 'it' ? 'Target Calorico' : 'Calorie Target'}: <span className="font-bold text-red-500">1709 kcal</span>
                 </span>
               </div>
               <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-red-400" style={{ width: '100%' }}></div>
+                <div className="h-full bg-red-400" style={{ width: '117%' }}></div>
               </div>
             </div>
 
@@ -177,21 +177,21 @@ export default function DashboardPreviewDemo() {
                   <Activity className="w-4 h-4 text-green-600" />
                   {language === 'it' ? 'Calorie Bruciate' : language === 'es' ? 'Calorías Quemadas' : language === 'pt' ? 'Calorias Queimadas' : language === 'de' ? 'Verbrannte Kalorien' : language === 'fr' ? 'Calories Brûlées' : 'Calories Burned'}
                 </span>
-                <span className="font-bold text-green-600">2467 kcal</span>
+                <span className="font-bold text-green-600">2176 kcal</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-medium text-gray-600 text-xs">
                   BMR: <span className="text-green-600">1800 kcal</span>
                 </span>
                 <span className="font-medium text-gray-600 text-xs">
-                  NEAT: <span className="text-green-400">667 kcal</span>
+                  NEAT: <span className="text-green-400">376 kcal</span>
                 </span>
               </div>
               <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
                 <div className="h-full flex">
-                  <div className="h-full bg-green-600" style={{ width: '73%' }}></div>
+                  <div className="h-full bg-green-600" style={{ width: '83%' }}></div>
                   <div className="w-[2px] h-full bg-white opacity-80"></div>
-                  <div className="h-full bg-green-400" style={{ width: '27%' }}></div>
+                  <div className="h-full bg-green-400" style={{ width: '17%' }}></div>
                 </div>
               </div>
             </div>
