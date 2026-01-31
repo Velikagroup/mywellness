@@ -181,6 +181,27 @@ export default function DashboardPreviewDemo() {
   const caloriesBurned = distanceCovered * targetCalories;
   const caloriesRemaining = totalCaloriesToBurn - caloriesBurned;
 
+  const meals = [
+    {
+      name: "Pranzo",
+      description: "Fritatine di Carne con Capuette e Nueces",
+      calories: 824,
+      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Snack Pomeridiano",
+      description: "Snack Torino de Arete con Llenage con Carne de Jeu y Queso",
+      calories: 557,
+      image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=200&fit=crop"
+    },
+    {
+      name: "Cena",
+      description: "Pesto de Merluza/Ripe Frito con Aguacate e Insalata Verde",
+      calories: 618,
+      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop"
+    }
+  ];
+
   return (
     <>
       <style>{`
@@ -198,9 +219,53 @@ export default function DashboardPreviewDemo() {
         }
       `}</style>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-      {/* Colonna Sinistra - 8 colonne */}
-      <div className="lg:col-span-8 space-y-4">
+      <Card className="water-glass-effect border-gray-200/40 shadow-2xl overflow-hidden">
+        <CardContent className="p-6">
+          {/* Header: Bilancio Calorico + Weight Box */}
+          <div className="relative flex items-start justify-between mb-6 pb-6">
+            {/* Left: Bilancio Calorico */}
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center">
+                  <span className="text-lg">🔥</span>
+                </div>
+                <p className="text-sm font-semibold text-gray-700">
+                  {language === 'it' ? 'Bilancio di oggi' : language === 'es' ? 'Balance de hoy' : language === 'pt' ? 'Balanço de hoje' : language === 'de' ? 'Heutiger Saldo' : language === 'fr' ? 'Bilan d\'aujourd\'hui' : 'Today\'s Balance'}
+                </p>
+              </div>
+              <div className="flex items-baseline gap-2 mb-3">
+                <p className="text-5xl font-bold text-green-700 leading-tight" style={{
+                  filter: 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.18)) drop-shadow(0 0 16px rgba(34, 197, 94, 0.12))'
+                }}>
+                  -1721
+                </p>
+                <p className="text-xl font-medium text-green-700">kcal</p>
+              </div>
+              <div className="px-3 py-1 rounded-full text-xs font-medium inline-block bg-green-100/70 text-green-700">
+                {language === 'it' ? 'In forte deficit' : language === 'es' ? 'En fuerte déficit' : language === 'pt' ? 'Em forte déficit' : language === 'de' ? 'Stark im Defizit' : language === 'fr' ? 'En fort déficit' : 'Strong deficit'}
+              </div>
+            </div>
+
+            {/* Right: Peso Attuale → Target */}
+            <div className="absolute top-0 right-0 flex items-center gap-1 border border-gray-200/60 rounded-lg px-2 py-1">
+              <div className="text-right">
+                <div className="flex items-baseline gap-0.5">
+                  <p className="font-bold bg-gradient-to-r from-green-600 to-emerald-500 bg-clip-text text-transparent" style={{ fontSize: '16px' }}>81.9</p>
+                  <p className="text-xs font-semibold text-green-600">kg</p>
+                </div>
+              </div>
+              <div className="font-light text-gray-400" style={{ fontSize: '16px' }}>&gt;</div>
+              <div className="text-left">
+                <div className="flex items-baseline gap-0.5">
+                  <p className="font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent" style={{ fontSize: '16px' }}>76.0</p>
+                  <p className="text-xs font-semibold text-teal-600">kg</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Weight Chart */}
+          <div className="h-64 w-full mb-6">
         {/* Top Stats Row */}
         <div className="grid grid-cols-3 gap-4">
           <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
