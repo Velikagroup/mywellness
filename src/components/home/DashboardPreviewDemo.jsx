@@ -27,9 +27,9 @@ export default function DashboardPreviewDemo() {
     },
     {
       name: "Afternoon Snack",
-      description: "Pancake con Frutti di Bosco",
+      description: "Yogurt Greco con Frutti di Bosco",
       calories: 315,
-      image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=200&fit=crop"
+      image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=200&h=200&fit=crop"
     },
     {
       name: "Dinner",
