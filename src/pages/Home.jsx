@@ -809,12 +809,13 @@ function HomeContent() {
 
           {/* Step 1 - Quick Actions Button */}
           <motion.div
-            className="flex justify-center items-center mb-32"
+            className="w-full flex justify-center items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.7, ease: "easeOut" }}>
             <motion.div
+              className="w-full flex justify-center"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
