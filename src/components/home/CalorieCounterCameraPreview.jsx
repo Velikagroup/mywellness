@@ -4,11 +4,11 @@ import { UtensilsCrossed, FlipHorizontal, X, Image } from 'lucide-react';
 export default function CalorieCounterCameraPreview() {
   return (
     <div className="relative w-full max-w-[340px] mx-auto aspect-[9/16] bg-black rounded-[40px] overflow-hidden shadow-2xl border-8 border-gray-900">
-      {/* Camera background with poke bowl photo */}
+      {/* Camera background with healthy meal photo */}
       <div className="absolute inset-0">
         <img 
-          src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&q=80"
-          alt="Poke Bowl"
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/cdfabeae8_composizione-del-pasto-piatto-ad-alto-contenuto-proteico_23-2149089617.jpg"
+          alt="Healthy Meal"
           className="w-full h-full object-cover"
         />
       </div>
