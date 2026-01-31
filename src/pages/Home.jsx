@@ -807,6 +807,74 @@ function HomeContent() {
             </motion.div>
           </div>
 
+          {/* Camera Screenshots - 3 Features */}
+          <div className="w-full mb-24 px-4">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              {/* Calorie Screenshot */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex flex-col items-center"
+              >
+                <div className="relative w-full max-w-[300px]">
+                  <img 
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/85504e9a2_image.png"
+                    alt="Calorie Counter"
+                    className="w-full h-auto rounded-[40px] shadow-2xl"
+                  />
+                </div>
+                <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.calorieCounter')}</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.calorieCounterDesc')}</p>
+              </motion.div>
+
+              {/* Nutrition Screenshot */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex flex-col items-center"
+              >
+                <div className="relative w-full max-w-[300px]">
+                  <img 
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8f027c702_image.png"
+                    alt="Nutrition Scanner"
+                    className="w-full h-auto rounded-[40px] shadow-2xl"
+                  />
+                </div>
+                <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.nutritionScanner')}</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.nutritionScannerDesc')}</p>
+              </motion.div>
+
+              {/* Body Scan Screenshot */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-col items-center"
+              >
+                <div className="relative w-full max-w-[300px]">
+                  <img 
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/a8adb81a8_image.png"
+                    alt="Body Scan"
+                    className="w-full h-auto rounded-[40px] shadow-2xl"
+                  />
+                </div>
+                <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.bodyScan')}</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.bodyScanDesc')}</p>
+              </motion.div>
+            </motion.div>
+          </div>
+
           {/* Step 1 - Quick Actions Button */}
           <div className="w-full flex justify-center mb-32">
             <motion.div
