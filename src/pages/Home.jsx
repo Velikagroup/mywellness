@@ -806,7 +806,7 @@ function HomeContent() {
             </motion.div>
           </div>
 
-          {/* Step 1 - Camera Features */}
+          {/* Step 1 - Quick Actions Button */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -840,8 +840,20 @@ function HomeContent() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="max-w-md mx-auto">
-                <CameraFeaturesPreviewDemo />
+              <div className="max-w-md mx-auto flex items-center justify-center" style={{ minHeight: '400px' }}>
+                <button
+                  className="rounded-full text-[#26847F] flex items-center justify-center transition-all hover:scale-110 cursor-pointer"
+                  style={{
+                    width: '200px',
+                    height: '200px',
+                    backdropFilter: 'blur(12px) saturate(180%)',
+                    background: 'linear-gradient(135deg, rgba(249, 250, 251, 0.75) 0%, rgba(243, 244, 246, 0.65) 50%, rgba(249, 250, 241, 0.75) 100%)',
+                    boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.4)'
+                  }}
+                >
+                  <Plus className="w-24 h-24" strokeWidth={2.5} />
+                </button>
               </div>
             </motion.div>
           </motion.div>
