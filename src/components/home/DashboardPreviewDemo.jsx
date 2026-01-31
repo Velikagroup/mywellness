@@ -21,19 +21,19 @@ export default function DashboardPreviewDemo() {
   const meals = [
     {
       name: "Pranzo",
-      description: "Bowl di Lenticchie e Avocado",
+      description: "Insalata Caprese con Mozzarella",
       calories: 796,
       image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop"
     },
     {
       name: "Afternoon Snack",
-      description: "Frutta Mista con Noci",
+      description: "Pancake con Frutti di Bosco",
       calories: 315,
       image: "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=200&fit=crop"
     },
     {
       name: "Dinner",
-      description: "Antipasto di Ceci e Verdure",
+      description: "Insalata Mista con Verdure Fresche",
       calories: 598,
       image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop"
     }
