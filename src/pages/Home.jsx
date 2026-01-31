@@ -46,6 +46,7 @@ import SportQuizPreviewDemo from "../components/home/SportQuizPreviewDemo";
 import CalorieCounterCameraPreview from "../components/home/CalorieCounterCameraPreview";
 import NutritionScannerCameraPreview from "../components/home/NutritionScannerCameraPreview";
 import BodyScanCameraPreview from "../components/home/BodyScanCameraPreview";
+import MobileCameraCarousel from "../components/home/MobileCameraCarousel";
 
 function HomeContent() {
   const navigate = useNavigate();
@@ -811,8 +812,9 @@ function HomeContent() {
 
           {/* Camera Screenshots - 3 Features */}
           <div className="w-full mb-8 px-4">
+            {/* Desktop Grid */}
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+              className="hidden md:grid grid-cols-3 gap-8 max-w-6xl mx-auto"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -857,6 +859,9 @@ function HomeContent() {
                 <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
               </motion.div>
             </motion.div>
+
+            {/* Mobile Carousel */}
+            <MobileCameraCarousel />
           </div>
 
           {/* Step 1 - Quick Actions Button */}
