@@ -1084,45 +1084,7 @@ function HomeContent() {
             </motion.div>
           </motion.div>
 
-        {/* Step 7 - Meal Tracking */}
-        <motion.div
-          className="grid md:grid-cols-2 gap-12 items-center mb-32"
-          initial={{ opacity: 0, y: 60 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: "easeOut" }}>
-          <motion.div
-            className="order-1 md:order-2"
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}>
-            <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
-              <div className="step-badge px-4 py-2 rounded-full">
-                <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step8Badge')}</span>
-              </div>
-            </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step8Title')}</h3>
-            <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-              {t('home.step8Desc')}
-            </p>
-            <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-              <span className="px-4 py-2 bg-teal-50 text-teal-700 rounded-full text-sm font-medium">{t('home.step8Tag1')}</span>
-              <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step8Tag2')}</span>
-              <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">{t('home.step8Tag3')}</span>
-            </div>
-          </motion.div>
-          <motion.div
-            className="order-2 md:order-1"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.3 }}>
-            <div className="max-w-md mx-auto">
-              <MealTrackingPreviewDemo />
-            </div>
-          </motion.div>
-        </motion.div>
+
 
         {/* Step 8 - Photo Analyzer */}
         <motion.div
