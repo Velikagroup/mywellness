@@ -24,7 +24,8 @@ import {
   RefreshCw,
   BrainCircuit,
   Users,
-  Globe
+  Globe,
+  Plus
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
 import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
