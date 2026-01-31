@@ -46,7 +46,7 @@ export default function MobileCameraCarousel() {
   };
 
   return (
-    <div className="md:hidden relative w-full overflow-visible" style={{ height: '720px' }}>
+    <div className="md:hidden relative w-full overflow-visible px-4" style={{ height: '820px' }}>
       <div className="relative w-full h-full flex items-start justify-center">
         {features.map((feature, index) => {
           const position = getPosition(index);
@@ -55,12 +55,12 @@ export default function MobileCameraCarousel() {
           return (
             <motion.div
               key={feature.id}
-              className="absolute top-0"
+              className="absolute top-0 w-full"
               initial={false}
               animate={{
-                x: position === 'center' ? '-50%' : position === 'left' ? 'calc(-50% - 380px)' : position === 'right' ? 'calc(-50% + 380px)' : 'calc(-50% + 800px)',
-                scale: position === 'center' ? 1.4 : 1,
-                opacity: position === 'center' ? 1 : position === 'hidden' ? 0 : 0.3,
+                x: position === 'center' ? '-50%' : position === 'left' ? 'calc(-50% - 100vw)' : position === 'right' ? 'calc(-50% + 100vw)' : 'calc(-50% + 200vw)',
+                scale: position === 'center' ? 1.15 : 0.7,
+                opacity: position === 'center' ? 1 : position === 'hidden' ? 0 : 0.25,
                 zIndex: position === 'center' ? 10 : 5
               }}
               transition={{
@@ -71,7 +71,7 @@ export default function MobileCameraCarousel() {
                 left: '50%'
               }}
             >
-              <div className="pointer-events-none">
+              <div className="pointer-events-none flex justify-center">
                 <Component />
               </div>
               {position === 'center' && (
@@ -82,7 +82,7 @@ export default function MobileCameraCarousel() {
                   className="text-center mt-6 px-4"
                 >
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-sm text-gray-600 max-w-[280px] mx-auto">{feature.description}</p>
+                  <p className="text-sm text-gray-600 max-w-[320px] mx-auto">{feature.description}</p>
                 </motion.div>
               )}
             </motion.div>
