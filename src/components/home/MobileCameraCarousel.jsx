@@ -58,8 +58,8 @@ export default function MobileCameraCarousel() {
               className="absolute top-0"
               initial={false}
               animate={{
-                x: position === 'center' ? '-50%' : position === 'left' ? 'calc(-50% - 280px)' : position === 'right' ? 'calc(-50% + 280px)' : 'calc(-50% + 600px)',
-                scale: position === 'center' ? 1 : 0.75,
+                x: position === 'center' ? '-50%' : position === 'left' ? 'calc(-50% - 380px)' : position === 'right' ? 'calc(-50% + 380px)' : 'calc(-50% + 800px)',
+                scale: position === 'center' ? 1.4 : 1,
                 opacity: position === 'center' ? 1 : position === 'hidden' ? 0 : 0.3,
                 zIndex: position === 'center' ? 10 : 5
               }}
