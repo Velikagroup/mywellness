@@ -811,8 +811,9 @@ function HomeContent() {
 
           {/* Camera Screenshots - 3 Features */}
           <div className="w-full mb-8 px-4">
+            {/* Desktop: Grid normale */}
             <motion.div
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto"
+              className="hidden md:grid grid-cols-3 gap-8 max-w-6xl mx-auto"
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -857,6 +858,53 @@ function HomeContent() {
                 <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
               </motion.div>
             </motion.div>
+
+            {/* Mobile: Scroll orizzontale */}
+            <div className="md:hidden overflow-x-auto pb-4 -mx-4">
+              <div className="flex gap-6 px-4" style={{ width: 'max-content' }}>
+                {/* Calorie Counter */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="flex flex-col items-center"
+                  style={{ width: '280px' }}
+                >
+                  <CalorieCounterCameraPreview />
+                  <h3 className="mt-6 text-xl font-bold text-gray-900">Calorie Counter</h3>
+                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scatta una foto al tuo piatto e ottieni calorie e macros istantanei</p>
+                </motion.div>
+
+                {/* Nutrition Scanner */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="flex flex-col items-center"
+                  style={{ width: '280px' }}
+                >
+                  <NutritionScannerCameraPreview />
+                  <h3 className="mt-6 text-xl font-bold text-gray-900">Nutrition Scanner</h3>
+                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scansiona etichette nutrizionali per valutare la qualità degli alimenti</p>
+                </motion.div>
+
+                {/* Body Scan */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                  className="flex flex-col items-center"
+                  style={{ width: '280px' }}
+                >
+                  <BodyScanCameraPreview />
+                  <h3 className="mt-6 text-xl font-bold text-gray-900">Body Scan</h3>
+                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
+                </motion.div>
+              </div>
+            </div>
           </div>
 
           {/* Step 1 - Quick Actions Button */}
