@@ -7,7 +7,7 @@ export default function NutritionScannerCameraPreview() {
       {/* Camera background with nutrition label */}
       <div className="absolute inset-0">
         <img 
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/f9ddb785e_shutterstock_1793012_0.jpg"
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/760b25ef0_AdobeStock_389889678-scaled.jpg"
           alt="Nutrition Label"
           className="w-full h-full object-cover"
         />
