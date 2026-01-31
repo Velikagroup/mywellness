@@ -166,7 +166,25 @@ export default function DashboardPreviewDemo() {
                 </span>
               </div>
               <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-red-400" style={{ width: '100%' }}></div>
+                <div className="h-full flex">
+                  <div className="h-full bg-red-400 relative overflow-hidden" style={{ width: '33.3%' }}>
+                    <div className="absolute inset-0" style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 8px)'
+                    }}></div>
+                  </div>
+                  <div className="w-[2px] h-full bg-white"></div>
+                  <div className="h-full bg-red-400 relative overflow-hidden" style={{ width: '33.3%' }}>
+                    <div className="absolute inset-0" style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 8px)'
+                    }}></div>
+                  </div>
+                  <div className="w-[2px] h-full bg-white"></div>
+                  <div className="h-full bg-red-400 relative overflow-hidden" style={{ width: '33.3%' }}>
+                    <div className="absolute inset-0" style={{
+                      backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.15) 4px, rgba(255,255,255,0.15) 8px)'
+                    }}></div>
+                  </div>
+                </div>
               </div>
             </div>
 
