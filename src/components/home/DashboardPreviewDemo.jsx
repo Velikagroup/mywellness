@@ -106,7 +106,7 @@ export default function DashboardPreviewDemo() {
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={weightData} margin={{ top: 25, right: 20, left: -10, bottom: 5 }}>
                 <defs>
-                  <linearGradient id="weightLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <linearGradient id="weightLineGradientDemo" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" stopColor="#26847F" stopOpacity={0.4}/>
                     <stop offset="50%" stopColor="#26847F" stopOpacity={1}/>
                     <stop offset="100%" stopColor="#26847F" stopOpacity={0.4}/>
@@ -139,7 +139,7 @@ export default function DashboardPreviewDemo() {
                 <Line 
                   type="monotone" 
                   dataKey="weight" 
-                  stroke="url(#weightLineGradient)" 
+                  stroke="url(#weightLineGradientDemo)" 
                   strokeWidth={3} 
                   dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
                   activeDot={{ r: 6, strokeWidth: 2 }} 
