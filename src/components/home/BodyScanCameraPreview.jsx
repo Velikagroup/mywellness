@@ -10,6 +10,7 @@ export default function BodyScanCameraPreview() {
           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/7a925baab_360_F_531993310_X9av29FGPzWQ7rg0fs32wA3URBxfEKnu.jpg"
           alt="Body Scan"
           className="w-full h-full object-cover"
+          style={{ objectPosition: '-10px center' }}
         />
       </div>
 
