@@ -42,6 +42,7 @@ import MealTrackingPreviewDemo from "../components/home/MealTrackingPreviewDemo"
 import ProgressPhotoPreviewDemo from "../components/home/ProgressPhotoPreviewDemo";
 import AppDemoFlow from "../components/home/AppDemoFlow";
 import SportQuizPreviewDemo from "../components/home/SportQuizPreviewDemo";
+import CameraFeaturesPreviewDemo from "../components/home/CameraFeaturesPreviewDemo";
 
 function HomeContent() {
   const navigate = useNavigate();
@@ -805,7 +806,7 @@ function HomeContent() {
             </motion.div>
           </div>
 
-          {/* Step 1 - Quiz */}
+          {/* Step 1 - Camera Features */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -830,6 +831,7 @@ function HomeContent() {
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step1Tag1')}</span>
                 <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{t('home.step1Tag2')}</span>
+                <span className="px-4 py-2 bg-orange-50 text-orange-700 rounded-full text-sm font-medium">{t('home.step1Tag3') || 'AI Vision'}</span>
               </div>
             </motion.div>
             <motion.div
@@ -839,7 +841,7 @@ function HomeContent() {
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
               <div className="max-w-md mx-auto">
-                <QuizPreviewDemo />
+                <CameraFeaturesPreviewDemo />
               </div>
             </motion.div>
           </motion.div>
