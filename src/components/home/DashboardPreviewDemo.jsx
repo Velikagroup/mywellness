@@ -74,7 +74,7 @@ export default function DashboardPreviewDemo() {
                 <p className="text-5xl font-bold text-green-700 leading-tight" style={{
                   filter: 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.18)) drop-shadow(0 0 16px rgba(34, 197, 94, 0.12))'
                 }}>
-                  +176
+                  -467
                 </p>
                 <p className="text-xl font-medium text-green-700">kcal</p>
               </div>
@@ -158,7 +158,7 @@ export default function DashboardPreviewDemo() {
                   <TrendingUp className="w-4 h-4 text-red-600" />
                   {language === 'it' ? 'Calorie Consumate' : language === 'es' ? 'Calorías Consumidas' : language === 'pt' ? 'Calorias Consumidas' : language === 'de' ? 'Verbrauchte Kalorien' : language === 'fr' ? 'Calories Consommées' : 'Calories Consumed'}
                 </span>
-                <span className="font-bold text-red-500">2000 kcal</span>
+                <span className="font-bold text-red-500">1709 kcal</span>
               </div>
               <div className="flex items-center gap-3 mb-1">
                 <span className="font-medium text-gray-600 text-xs">
@@ -166,7 +166,7 @@ export default function DashboardPreviewDemo() {
                 </span>
               </div>
               <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full bg-red-400" style={{ width: '117%' }}></div>
+                <div className="h-full bg-red-400" style={{ width: '100%' }}></div>
               </div>
             </div>
 
