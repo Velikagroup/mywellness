@@ -43,7 +43,9 @@ import MealTrackingPreviewDemo from "../components/home/MealTrackingPreviewDemo"
 import ProgressPhotoPreviewDemo from "../components/home/ProgressPhotoPreviewDemo";
 import AppDemoFlow from "../components/home/AppDemoFlow";
 import SportQuizPreviewDemo from "../components/home/SportQuizPreviewDemo";
-import CameraFeaturesPreviewDemo from "../components/home/CameraFeaturesPreviewDemo";
+import CalorieCounterCameraPreview from "../components/home/CalorieCounterCameraPreview";
+import NutritionScannerCameraPreview from "../components/home/NutritionScannerCameraPreview";
+import BodyScanCameraPreview from "../components/home/BodyScanCameraPreview";
 
 function HomeContent() {
   const navigate = useNavigate();
@@ -816,7 +818,7 @@ function HomeContent() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              {/* Calorie Screenshot */}
+              {/* Calorie Counter */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -824,18 +826,12 @@ function HomeContent() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="flex flex-col items-center"
               >
-                <div className="relative w-full max-w-[300px]">
-                  <img 
-                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/85504e9a2_image.png"
-                    alt="Calorie Counter"
-                    className="w-full h-auto rounded-[40px] shadow-2xl"
-                  />
-                </div>
-                <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.calorieCounter')}</h3>
-                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.calorieCounterDesc')}</p>
+                <CalorieCounterCameraPreview />
+                <h3 className="mt-6 text-xl font-bold text-gray-900">Calorie Counter</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scatta una foto al tuo piatto e ottieni calorie e macros istantanei</p>
               </motion.div>
 
-              {/* Nutrition Screenshot */}
+              {/* Nutrition Scanner */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -843,18 +839,12 @@ function HomeContent() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="flex flex-col items-center"
               >
-                <div className="relative w-full max-w-[300px]">
-                  <img 
-                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8f027c702_image.png"
-                    alt="Nutrition Scanner"
-                    className="w-full h-auto rounded-[40px] shadow-2xl"
-                  />
-                </div>
-                <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.nutritionScanner')}</h3>
-                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.nutritionScannerDesc')}</p>
+                <NutritionScannerCameraPreview />
+                <h3 className="mt-6 text-xl font-bold text-gray-900">Nutrition Scanner</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scansiona etichette nutrizionali per valutare la qualità degli alimenti</p>
               </motion.div>
 
-              {/* Body Scan Screenshot */}
+              {/* Body Scan */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -862,15 +852,9 @@ function HomeContent() {
                 transition={{ duration: 0.5, delay: 0.3 }}
                 className="flex flex-col items-center"
               >
-                <div className="relative w-full max-w-[300px]">
-                  <img 
-                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/a8adb81a8_image.png"
-                    alt="Body Scan"
-                    className="w-full h-auto rounded-[40px] shadow-2xl"
-                  />
-                </div>
-                <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.bodyScan')}</h3>
-                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.bodyScanDesc')}</p>
+                <BodyScanCameraPreview />
+                <h3 className="mt-6 text-xl font-bold text-gray-900">Body Scan</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
               </motion.div>
             </motion.div>
           </div>
