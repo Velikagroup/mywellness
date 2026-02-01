@@ -1549,7 +1549,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
+                  style={{ height: '100vh', minHeight: '100vh', maxHeight: '100vh', width: '100vw', left: 0, top: 0 }}
                 >
                   <div className="mb-3">
                     <div className="flex items-center justify-between mb-3">
