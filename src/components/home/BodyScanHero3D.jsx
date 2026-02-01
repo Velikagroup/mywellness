@@ -20,55 +20,143 @@ export default function BodyScanHero3D() {
     renderer.setSize(300, 400);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-    // Figura umana stilizzata con geometrie semplici
+    // Figura umana realistica con proporzioni anatomiche
     const bodyMaterial = new THREE.MeshPhongMaterial({ 
       color: 0x26847F,
       transparent: true,
       opacity: 0.85,
-      shininess: 30
+      shininess: 40,
+      emissive: 0x1a5753,
+      emissiveIntensity: 0.1
+    });
+
+    const skinMaterial = new THREE.MeshPhongMaterial({ 
+      color: 0xf4a460,
+      transparent: true,
+      opacity: 0.9,
+      shininess: 25
     });
 
     const group = new THREE.Group();
 
-    // Testa
-    const headGeometry = new THREE.SphereGeometry(0.4, 16, 16);
-    const head = new THREE.Mesh(headGeometry, bodyMaterial);
-    head.position.y = 3.2;
+    // Testa realistica
+    const headGeometry = new THREE.IcosahedronGeometry(0.35, 4);
+    const head = new THREE.Mesh(headGeometry, skinMaterial);
+    head.position.y = 3.4;
+    head.scale.set(1, 1.1, 0.95);
     group.add(head);
 
     // Collo
-    const neckGeometry = new THREE.CylinderGeometry(0.15, 0.2, 0.4, 12);
-    const neck = new THREE.Mesh(neckGeometry, bodyMaterial);
-    neck.position.y = 2.8;
+    const neckGeometry = new THREE.CylinderGeometry(0.18, 0.22, 0.35, 16);
+    const neck = new THREE.Mesh(neckGeometry, skinMaterial);
+    neck.position.y = 3;
     group.add(neck);
 
-    // Torso
-    const torsoGeometry = new THREE.CylinderGeometry(0.6, 0.5, 1.8, 12);
-    const torso = new THREE.Mesh(torsoGeometry, bodyMaterial);
-    torso.position.y = 1.7;
-    group.add(torso);
+    // Spalle (larghezza realistica)
+    const shoulderGeometry = new THREE.SphereGeometry(0.22, 12, 12);
+    const leftShoulder = new THREE.Mesh(shoulderGeometry, bodyMaterial);
+    leftShoulder.position.set(-0.7, 2.65, 0);
+    leftShoulder.scale.set(1.2, 0.8, 0.9);
+    group.add(leftShoulder);
 
-    // Braccia
-    const armGeometry = new THREE.CylinderGeometry(0.12, 0.1, 1.2, 12);
-    const leftArm = new THREE.Mesh(armGeometry, bodyMaterial);
-    leftArm.position.set(-0.75, 2, 0);
-    leftArm.rotation.z = 0.3;
-    group.add(leftArm);
+    const rightShoulder = new THREE.Mesh(shoulderGeometry, bodyMaterial);
+    rightShoulder.position.set(0.7, 2.65, 0);
+    rightShoulder.scale.set(1.2, 0.8, 0.9);
+    group.add(rightShoulder);
 
-    const rightArm = new THREE.Mesh(armGeometry, bodyMaterial);
-    rightArm.position.set(0.75, 2, 0);
-    rightArm.rotation.z = -0.3;
-    group.add(rightArm);
+    // Petto
+    const chestGeometry = new THREE.CylinderGeometry(0.55, 0.5, 1.1, 16);
+    const chest = new THREE.Mesh(chestGeometry, bodyMaterial);
+    chest.position.y = 2.1;
+    group.add(chest);
 
-    // Gambe
-    const legGeometry = new THREE.CylinderGeometry(0.18, 0.15, 1.8, 12);
-    const leftLeg = new THREE.Mesh(legGeometry, bodyMaterial);
-    leftLeg.position.set(-0.25, -0.1, 0);
-    group.add(leftLeg);
+    // Addome
+    const abdominalGeometry = new THREE.CylinderGeometry(0.52, 0.48, 1, 16);
+    const abdomen = new THREE.Mesh(abdominalGeometry, bodyMaterial);
+    abdomen.position.y = 1;
+    group.add(abdomen);
 
-    const rightLeg = new THREE.Mesh(legGeometry, bodyMaterial);
-    rightLeg.position.set(0.25, -0.1, 0);
-    group.add(rightLeg);
+    // Bacino/Fianchi
+    const pelvisGeometry = new THREE.CylinderGeometry(0.5, 0.42, 0.8, 16);
+    const pelvis = new THREE.Mesh(pelvisGeometry, bodyMaterial);
+    pelvis.position.y = 0.15;
+    group.add(pelvis);
+
+    // Braccia sinistre (superiore)
+    const upperArmLGeometry = new THREE.CylinderGeometry(0.14, 0.11, 1, 12);
+    const upperArmL = new THREE.Mesh(upperArmLGeometry, skinMaterial);
+    upperArmL.position.set(-0.9, 2.3, 0);
+    upperArmL.rotation.z = 0.4;
+    group.add(upperArmL);
+
+    // Braccia sinistre (inferiore)
+    const forearmLGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.95, 12);
+    const forearmL = new THREE.Mesh(forearmLGeometry, skinMaterial);
+    forearmL.position.set(-1.35, 1.5, 0);
+    forearmL.rotation.z = 0.6;
+    group.add(forearmL);
+
+    // Braccia destra (superiore)
+    const upperArmRGeometry = new THREE.CylinderGeometry(0.14, 0.11, 1, 12);
+    const upperArmR = new THREE.Mesh(upperArmRGeometry, skinMaterial);
+    upperArmR.position.set(0.9, 2.3, 0);
+    upperArmR.rotation.z = -0.4;
+    group.add(upperArmR);
+
+    // Braccia destra (inferiore)
+    const forearmRGeometry = new THREE.CylinderGeometry(0.1, 0.08, 0.95, 12);
+    const forearmR = new THREE.Mesh(forearmRGeometry, skinMaterial);
+    forearmR.position.set(1.35, 1.5, 0);
+    forearmR.rotation.z = -0.6;
+    group.add(forearmR);
+
+    // Mani
+    const handGeometry = new THREE.SphereGeometry(0.08, 10, 10);
+    const leftHand = new THREE.Mesh(handGeometry, skinMaterial);
+    leftHand.position.set(-1.5, 1, 0);
+    leftHand.scale.set(1, 1.2, 0.8);
+    group.add(leftHand);
+
+    const rightHand = new THREE.Mesh(handGeometry, skinMaterial);
+    rightHand.position.set(1.5, 1, 0);
+    rightHand.scale.set(1, 1.2, 0.8);
+    group.add(rightHand);
+
+    // Gambe sinistre (coscia)
+    const thighLGeometry = new THREE.CylinderGeometry(0.2, 0.17, 1.2, 12);
+    const thighL = new THREE.Mesh(thighLGeometry, skinMaterial);
+    thighL.position.set(-0.3, -0.7, 0);
+    group.add(thighL);
+
+    // Gambe sinistre (polpaccio)
+    const calfLGeometry = new THREE.CylinderGeometry(0.14, 0.1, 1.1, 12);
+    const calfL = new THREE.Mesh(calfLGeometry, skinMaterial);
+    calfL.position.set(-0.3, -1.95, 0);
+    group.add(calfL);
+
+    // Piede sinistro
+    const footLGeometry = new THREE.BoxGeometry(0.12, 0.08, 0.25);
+    const footL = new THREE.Mesh(footLGeometry, skinMaterial);
+    footL.position.set(-0.3, -2.7, 0.1);
+    group.add(footL);
+
+    // Gambe destre (coscia)
+    const thighRGeometry = new THREE.CylinderGeometry(0.2, 0.17, 1.2, 12);
+    const thighR = new THREE.Mesh(thighRGeometry, skinMaterial);
+    thighR.position.set(0.3, -0.7, 0);
+    group.add(thighR);
+
+    // Gambe destre (polpaccio)
+    const calfRGeometry = new THREE.CylinderGeometry(0.14, 0.1, 1.1, 12);
+    const calfR = new THREE.Mesh(calfRGeometry, skinMaterial);
+    calfR.position.set(0.3, -1.95, 0);
+    group.add(calfR);
+
+    // Piede destro
+    const footRGeometry = new THREE.BoxGeometry(0.12, 0.08, 0.25);
+    const footR = new THREE.Mesh(footRGeometry, skinMaterial);
+    footR.position.set(0.3, -2.7, 0.1);
+    group.add(footR);
 
     // Griglia di scansione
     const gridMaterial = new THREE.LineBasicMaterial({ 
