@@ -194,9 +194,9 @@ export default function BodyScanAnimatedPreview() {
                   </div>
                   </div>
 
-                  {/* Critical Areas */}
-                  <div className="mt-4 bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-400 rounded-3xl p-4">
-                  <div className="text-xs font-bold text-yellow-700 mb-2 flex items-center gap-1">
+                  {/* Areas To Focus */}
+                  <div className="mt-4 bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-400 rounded-3xl p-4">
+                  <div className="text-xs font-bold text-red-700 mb-2 flex items-center gap-1">
                     ⚡ AREAS TO FOCUS
                   </div>
                   <div className="text-xs text-gray-700">Glutes, lower abs</div>
