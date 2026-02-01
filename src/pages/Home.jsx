@@ -755,15 +755,15 @@ function HomeContent() {
             {t('home.heroSubtitle')}
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-2">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-2 relative">
+            <div className="rounded-full bg-red-500 flex items-center justify-center flex-shrink-0 absolute sm:relative left-0 sm:left-auto" style={{ width: '60px', height: '60px' }}>
+              <ScanLine className="w-7 h-7 text-white" strokeWidth={2.5} />
+            </div>
             <Button
               ref={heroQuizButtonRef}
               onClick={handleGetStarted}
               disabled={isLoading}
-              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-5 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto flex items-center gap-3">
-              <div className="rounded-full bg-red-500 flex items-center justify-center flex-shrink-0" style={{ width: '60px', height: '60px', marginLeft: '-8px', marginRight: '-8px' }}>
-                <ScanLine className="w-7 h-7 text-white" strokeWidth={2.5} />
-              </div>
+              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-3 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto flex items-center gap-3 sm:pl-4">
               {t('home.freeQuiz')}
             </Button>
             <Button
