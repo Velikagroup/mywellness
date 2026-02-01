@@ -1,7 +1,9 @@
 import React from 'react';
 import { UtensilsCrossed, FlipHorizontal, X, Image } from 'lucide-react';
+import { useLanguage } from '@/components/i18n/LanguageContext';
 
 export default function CalorieCounterCameraPreview() {
+  const { t } = useLanguage();
   return (
     <div className="relative w-full max-w-[340px] mx-auto aspect-[9/16] bg-black rounded-[40px] overflow-hidden shadow-2xl border-8 border-gray-900">
       {/* Camera background with healthy meal photo */}
@@ -31,7 +33,7 @@ export default function CalorieCounterCameraPreview() {
           <div className="absolute inset-0 border-2 border-white/80 rounded-3xl"></div>
           <div className="flex flex-col items-center gap-3 z-10">
             <UtensilsCrossed className="w-12 h-12 text-white/90" strokeWidth={1.5} />
-            <p className="text-white text-xs font-semibold text-center px-4">Centra il piatto</p>
+            <p className="text-white text-xs font-semibold text-center px-4">{t('home.calorieCounterCenter')}</p>
           </div>
 
           {/* Corner markers */}

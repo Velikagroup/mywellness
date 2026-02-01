@@ -1,7 +1,9 @@
 import React from 'react';
 import { ScanLine, FlipHorizontal, X, Image, Camera } from 'lucide-react';
+import { useLanguage } from '@/components/i18n/LanguageContext';
 
 export default function BodyScanCameraPreview() {
+  const { t } = useLanguage();
   return (
     <div className="relative w-full max-w-[340px] mx-auto aspect-[9/16] bg-black rounded-[40px] overflow-hidden shadow-2xl border-8 border-gray-900">
       {/* Camera background with body scan photo */}
@@ -32,7 +34,7 @@ export default function BodyScanCameraPreview() {
           <div className="w-12 h-16 rounded-lg border-2 border-white/50 flex items-center justify-center">
             <Camera className="w-5 h-5 text-white" />
           </div>
-          <span className="text-[10px] text-white font-medium">Fronte</span>
+          <span className="text-[10px] text-white font-medium">{t('home.bodyScanFront')}</span>
         </div>
 
         {/* Side - Not active */}
@@ -40,7 +42,7 @@ export default function BodyScanCameraPreview() {
           <div className="w-12 h-16 rounded-lg border-2 border-white/50 flex items-center justify-center">
             <Camera className="w-5 h-5 text-white/60" />
           </div>
-          <span className="text-[10px] text-white/60 font-medium">Lato</span>
+          <span className="text-[10px] text-white/60 font-medium">{t('home.bodyScanSide')}</span>
         </div>
 
         {/* Back - Not active */}
@@ -48,7 +50,7 @@ export default function BodyScanCameraPreview() {
           <div className="w-12 h-16 rounded-lg border-2 border-white/50 flex items-center justify-center">
             <Camera className="w-5 h-5 text-white/60" />
           </div>
-          <span className="text-[10px] text-white/60 font-medium">Retro</span>
+          <span className="text-[10px] text-white/60 font-medium">{t('home.bodyScanBack')}</span>
         </div>
       </div>
 
@@ -72,7 +74,7 @@ export default function BodyScanCameraPreview() {
             <line x1="38" y1="180" x2="35" y2="200" stroke="white" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.6" />
             <line x1="62" y1="180" x2="65" y2="200" stroke="white" strokeWidth="1.5" strokeDasharray="4 4" opacity="0.6" />
           </svg>
-          <p className="absolute bottom-0 left-1/2 -translate-x-1/2 text-white text-xs font-semibold text-center">Posizionati al centro</p>
+          <p className="absolute bottom-0 left-1/2 -translate-x-1/2 text-white text-xs font-semibold text-center">{t('home.bodyScanPosition')}</p>
         </div>
       </div>
 

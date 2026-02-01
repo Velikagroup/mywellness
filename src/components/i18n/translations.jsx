@@ -662,7 +662,13 @@ export const translations = {
       calorieCounterTitle: "Calorie Counter",
       calorieCounterDesc: "Scatta una foto al tuo piatto e ottieni calorie e macros istantanei",
       nutritionScannerTitle: "Nutrition Scanner",
-      nutritionScannerDesc: "Scansiona etichette nutrizionali per valutare la qualità degli alimenti"
+      nutritionScannerDesc: "Scansiona etichette nutrizionali per valutare la qualità degli alimenti",
+      bodyScanFront: "Fronte",
+      bodyScanSide: "Lato",
+      bodyScanBack: "Retro",
+      bodyScanPosition: "Posizionati al centro",
+      calorieCounterCenter: "Centra il piatto",
+      nutritionScannerFrame: "Inquadra tabella"
     },
     quiz: {
       quizIntroTitle: "Scopri la tua",
@@ -3311,7 +3317,13 @@ export const translations = {
       calorieCounterTitle: "Calorie Counter",
       calorieCounterDesc: "Take a photo of your plate and get instant calories and macros",
       nutritionScannerTitle: "Nutrition Scanner",
-      nutritionScannerDesc: "Scan nutrition labels to evaluate food quality"
+      nutritionScannerDesc: "Scan nutrition labels to evaluate food quality",
+      bodyScanFront: "Front",
+      bodyScanSide: "Side",
+      bodyScanBack: "Back",
+      bodyScanPosition: "Position yourself in center",
+      calorieCounterCenter: "Center the plate",
+      nutritionScannerFrame: "Frame the label"
     },
     nav: {
       dashboard: "Dashboard",
@@ -5423,7 +5435,13 @@ export const translations = {
       calorieCounterTitle: "Contador de Calorías",
       calorieCounterDesc: "Toma una foto de tu plato y obtén calorías y macros al instante",
       nutritionScannerTitle: "Escáner Nutricional",
-      nutritionScannerDesc: "Escanea etiquetas nutricionales para evaluar la calidad de los alimentos"
+      nutritionScannerDesc: "Escanea etiquetas nutricionales para evaluar la calidad de los alimentos",
+      bodyScanFront: "Frente",
+      bodyScanSide: "Lado",
+      bodyScanBack: "Atrás",
+      bodyScanPosition: "Colócate en el centro",
+      calorieCounterCenter: "Centra el plato",
+      nutritionScannerFrame: "Encuadra la tabla"
     },
     nav: {
       dashboard: "Panel",
@@ -7661,7 +7679,13 @@ export const translations = {
       calorieCounterTitle: "Contador de Calorias",
       calorieCounterDesc: "Tire uma foto do seu prato e obtenha calorias e macros instantâneos",
       nutritionScannerTitle: "Scanner Nutricional",
-      nutritionScannerDesc: "Escaneie rótulos nutricionais para avaliar a qualidade dos alimentos"
+      nutritionScannerDesc: "Escaneie rótulos nutricionais para avaliar a qualidade dos alimentos",
+      bodyScanFront: "Frente",
+      bodyScanSide: "Lado",
+      bodyScanBack: "Atrás",
+      bodyScanPosition: "Posicione-se no centro",
+      calorieCounterCenter: "Centre o prato",
+      nutritionScannerFrame: "Enquadre a tabela"
     },
     nav: {
       dashboard: "Painel",
@@ -10001,7 +10025,13 @@ export const translations = {
       calorieCounterTitle: "Kalorienzähler",
       calorieCounterDesc: "Fotografieren Sie Ihren Teller und erhalten Sie sofort Kalorien und Makros",
       nutritionScannerTitle: "Ernährungs-Scanner",
-      nutritionScannerDesc: "Scannen Sie Nährwertetiketten um die Lebensmittelqualität zu bewerten"
+      nutritionScannerDesc: "Scannen Sie Nährwertetiketten um die Lebensmittelqualität zu bewerten",
+      bodyScanFront: "Vorne",
+      bodyScanSide: "Seite",
+      bodyScanBack: "Hinten",
+      bodyScanPosition: "Positionieren Sie sich in der Mitte",
+      calorieCounterCenter: "Teller zentrieren",
+      nutritionScannerFrame: "Tabelle einrahmen"
     },
     nav: {
       dashboard: "Dashboard",
@@ -12340,7 +12370,13 @@ export const translations = {
       calorieCounterTitle: "Compteur de Calories",
       calorieCounterDesc: "Prenez une photo de votre assiette et obtenez calories et macros instantanés",
       nutritionScannerTitle: "Scanner Nutritionnel",
-      nutritionScannerDesc: "Scannez les étiquettes nutritionnelles pour évaluer la qualité des aliments"
+      nutritionScannerDesc: "Scannez les étiquettes nutritionnelles pour évaluer la qualité des aliments",
+      bodyScanFront: "Face",
+      bodyScanSide: "Côté",
+      bodyScanBack: "Dos",
+      bodyScanPosition: "Positionnez-vous au centre",
+      calorieCounterCenter: "Centrez l'assiette",
+      nutritionScannerFrame: "Cadrez le tableau"
     },
     nav: {
       dashboard: "Tableau de bord",
