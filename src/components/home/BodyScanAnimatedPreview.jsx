@@ -165,7 +165,7 @@ export default function BodyScanAnimatedPreview() {
                     <div className="text-xs font-bold text-emerald-700 mb-2 flex items-center gap-1">
                       👤 BIOLOGICAL AGE
                     </div>
-                    <div className="text-3xl font-black text-emerald-600">23</div>
+                    <div className="text-3xl font-black text-emerald-600">21</div>
                     <div className="text-xs text-emerald-600 font-semibold">years</div>
                   </div>
 
@@ -174,7 +174,7 @@ export default function BodyScanAnimatedPreview() {
                     <div className="text-xs font-bold text-purple-700 mb-2 flex items-center gap-1">
                       👤 SOMATOTYPE
                     </div>
-                    <div className="text-lg font-black text-purple-600">Mesomorph</div>
+                    <div className="text-lg font-black text-purple-600">Ectomorph</div>
                   </div>
 
                   {/* Body Fat - Orange */}
@@ -182,7 +182,7 @@ export default function BodyScanAnimatedPreview() {
                     <div className="text-xs font-bold text-orange-700 mb-2 flex items-center gap-1">
                       📊 BODY FAT %
                     </div>
-                    <div className="text-3xl font-black text-orange-600">20%</div>
+                    <div className="text-3xl font-black text-orange-600">19%</div>
                   </div>
 
                   {/* Definition - Blue */}
@@ -190,27 +190,27 @@ export default function BodyScanAnimatedPreview() {
                     <div className="text-xs font-bold text-blue-700 mb-2 flex items-center gap-1">
                       📐 DEFINITION
                     </div>
-                    <div className="text-2xl font-black text-blue-600">65<span className="text-sm">/100</span></div>
+                    <div className="text-2xl font-black text-blue-600">78<span className="text-sm">/100</span></div>
                   </div>
-                </div>
-
-                {/* Critical Areas */}
-                <div className="mt-4 bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-400 rounded-3xl p-4">
-                  <div className="text-xs font-bold text-red-700 mb-2 flex items-center gap-1">
-                    ⚠️ CRITICAL AREAS
                   </div>
-                  <div className="text-xs text-gray-700">Lower back, knees</div>
-                </div>
 
-                {/* Strengths */}
-                <div className="mt-3 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-3xl p-4">
+                  {/* Critical Areas */}
+                  <div className="mt-4 bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-400 rounded-3xl p-4">
+                  <div className="text-xs font-bold text-yellow-700 mb-2 flex items-center gap-1">
+                    ⚡ AREAS TO FOCUS
+                  </div>
+                  <div className="text-xs text-gray-700">Glutes, lower abs</div>
+                  </div>
+
+                  {/* Strengths */}
+                  <div className="mt-3 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-3xl p-4">
                   <div className="text-xs font-bold text-green-700 mb-2 flex items-center gap-1">
                     📈 STRENGTHS
                   </div>
                   <div className="text-xs text-gray-700">
-                    • Upper body<br/>• Core stability<br/>• Posture
+                    • Toned legs<br/>• Shoulder definition<br/>• Core strength
                   </div>
-                </div>
+                  </div>
               </div>
             </div>
           </motion.div>
