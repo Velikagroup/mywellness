@@ -668,7 +668,13 @@ export const translations = {
       bodyScanBack: "Retro",
       bodyScanPosition: "Posizionati al centro",
       calorieCounterCenter: "Centra il piatto",
-      nutritionScannerFrame: "Inquadra tabella"
+      nutritionScannerFrame: "Inquadra tabella",
+      dashboardMeal1Name: "Pranzo",
+      dashboardMeal1Desc: "Insalata Caprese con Mozzarella",
+      dashboardMeal2Name: "Snack Pomeridiano",
+      dashboardMeal2Desc: "Yogurt Greco con Frutti di Bosco",
+      dashboardMeal3Name: "Cena",
+      dashboardMeal3Desc: "Insalata Mista con Verdure Fresche"
     },
     quiz: {
       quizIntroTitle: "Scopri la tua",
@@ -3323,7 +3329,13 @@ export const translations = {
       bodyScanBack: "Back",
       bodyScanPosition: "Position yourself in center",
       calorieCounterCenter: "Center the plate",
-      nutritionScannerFrame: "Frame the label"
+      nutritionScannerFrame: "Frame the label",
+      dashboardMeal1Name: "Lunch",
+      dashboardMeal1Desc: "Caprese Salad with Mozzarella",
+      dashboardMeal2Name: "Afternoon Snack",
+      dashboardMeal2Desc: "Greek Yogurt with Berries",
+      dashboardMeal3Name: "Dinner",
+      dashboardMeal3Desc: "Mixed Salad with Fresh Vegetables"
     },
     nav: {
       dashboard: "Dashboard",
@@ -5441,7 +5453,13 @@ export const translations = {
       bodyScanBack: "Atrás",
       bodyScanPosition: "Colócate en el centro",
       calorieCounterCenter: "Centra el plato",
-      nutritionScannerFrame: "Encuadra la tabla"
+      nutritionScannerFrame: "Encuadra la tabla",
+      dashboardMeal1Name: "Almuerzo",
+      dashboardMeal1Desc: "Ensalada Caprese con Mozzarella",
+      dashboardMeal2Name: "Snack de la Tarde",
+      dashboardMeal2Desc: "Yogur Griego con Frutos del Bosque",
+      dashboardMeal3Name: "Cena",
+      dashboardMeal3Desc: "Ensalada Mixta con Verduras Frescas"
     },
     nav: {
       dashboard: "Panel",
@@ -7685,7 +7703,13 @@ export const translations = {
       bodyScanBack: "Atrás",
       bodyScanPosition: "Posicione-se no centro",
       calorieCounterCenter: "Centre o prato",
-      nutritionScannerFrame: "Enquadre a tabela"
+      nutritionScannerFrame: "Enquadre a tabela",
+      dashboardMeal1Name: "Almoço",
+      dashboardMeal1Desc: "Salada Caprese com Mussarela",
+      dashboardMeal2Name: "Lanche da Tarde",
+      dashboardMeal2Desc: "Iogurte Grego com Frutas Vermelhas",
+      dashboardMeal3Name: "Jantar",
+      dashboardMeal3Desc: "Salada Mista com Vegetais Frescos"
     },
     nav: {
       dashboard: "Painel",
@@ -10031,7 +10055,13 @@ export const translations = {
       bodyScanBack: "Hinten",
       bodyScanPosition: "Positionieren Sie sich in der Mitte",
       calorieCounterCenter: "Teller zentrieren",
-      nutritionScannerFrame: "Tabelle einrahmen"
+      nutritionScannerFrame: "Tabelle einrahmen",
+      dashboardMeal1Name: "Mittagessen",
+      dashboardMeal1Desc: "Caprese-Salat mit Mozzarella",
+      dashboardMeal2Name: "Nachmittags-Snack",
+      dashboardMeal2Desc: "Griechischer Joghurt mit Beeren",
+      dashboardMeal3Name: "Abendessen",
+      dashboardMeal3Desc: "Gemischter Salat mit frischem Gemüse"
     },
     nav: {
       dashboard: "Dashboard",
@@ -12376,7 +12406,13 @@ export const translations = {
       bodyScanBack: "Dos",
       bodyScanPosition: "Positionnez-vous au centre",
       calorieCounterCenter: "Centrez l'assiette",
-      nutritionScannerFrame: "Cadrez le tableau"
+      nutritionScannerFrame: "Cadrez le tableau",
+      dashboardMeal1Name: "Déjeuner",
+      dashboardMeal1Desc: "Salade Caprese avec Mozzarella",
+      dashboardMeal2Name: "Collation de l'après-midi",
+      dashboardMeal2Desc: "Yaourt Grec aux Fruits Rouges",
+      dashboardMeal3Name: "Dîner",
+      dashboardMeal3Desc: "Salade Mixte aux Légumes Frais"
     },
     nav: {
       dashboard: "Tableau de bord",

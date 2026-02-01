@@ -9,7 +9,7 @@ import { useLanguage } from '../i18n/LanguageContext';
  * Replica ESATTAMENTE il layout della dashboard reale
  */
 export default function DashboardPreviewDemo() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   
   const weightData = React.useMemo(() => [
     { date: '06 Jan', weight: 83.0 },
@@ -18,26 +18,26 @@ export default function DashboardPreviewDemo() {
     { date: '11 Jan', weight: 81.9 }
   ], []);
 
-  const meals = [
+  const meals = React.useMemo(() => [
     {
-      name: "Pranzo",
-      description: "Insalata Caprese con Mozzarella",
+      name: t('home.dashboardMeal1Name'),
+      description: t('home.dashboardMeal1Desc'),
       calories: 796,
       image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop"
     },
     {
-      name: "Afternoon Snack",
-      description: "Yogurt Greco con Frutti di Bosco",
+      name: t('home.dashboardMeal2Name'),
+      description: t('home.dashboardMeal2Desc'),
       calories: 315,
       image: "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=200&h=200&fit=crop"
     },
     {
-      name: "Dinner",
-      description: "Insalata Mista con Verdure Fresche",
+      name: t('home.dashboardMeal3Name'),
+      description: t('home.dashboardMeal3Desc'),
       calories: 598,
       image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&h=200&fit=crop"
     }
-  ];
+  ], [t]);
 
   return (
     <>
