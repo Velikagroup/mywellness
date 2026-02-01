@@ -121,7 +121,7 @@ export default function AdminEmails() {
     return null;
   };
 
-  const buildEmailCategories = () => {
+  const emailCategories = React.useMemo(() => {
     const categoryDefs = {
       critical: { name: 'Critical', icon: AlertCircle, color: 'red' },
       engagement: { name: 'Engagement', icon: TrendingUp, color: 'green' },
@@ -133,7 +133,15 @@ export default function AdminEmails() {
     const categories = {};
     
     emailTemplates.forEach(template => {
-      const category = getCategoryForTemplate(template.template_id);
+      const baseId = template.template_id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
+      
+      let category = null;
+      if (baseId.includes('welcome')) category = 'critical';
+      else if (baseId.includes('goal_weight')) category = 'engagement';
+      else if (baseId.includes('password_reset')) category = 'technical';
+      else if (baseId.includes('weekly_report')) category = 'reporting';
+      else if (baseId.includes('cart_abandoned') || baseId.includes('checkout_abandoned')) category = 'abandonment';
+      
       if (!category) return;
       
       if (!categories[category]) {
@@ -152,9 +160,7 @@ export default function AdminEmails() {
     });
 
     return categories;
-  };
-
-  const emailCategories = buildEmailCategories();
+  }, [emailTemplates]);
 
   const loadBroadcasts = async () => {
     try {
