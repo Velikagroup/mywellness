@@ -741,8 +741,13 @@ function HomeContent() {
           </div>
 
           {/* iPhone 16 Pro Max con Body Scan Dashboard */}
-          <div className="mb-12 flex justify-center">
-            <div className="relative" style={{ width: '300px', height: '650px' }}>
+          <div className="mb-12 flex justify-center px-4 md:px-0">
+            <div className="relative w-full md:w-auto" style={{ width: 'calc(100% - 2rem)', maxWidth: '440px', height: '650px' }}>
+              <style>{`
+                @media (min-width: 768px) {
+                  .iphone-container { width: 440px !important; }
+                }
+              `}</style>
               {/* iPhone Frame */}
               <div className="absolute inset-0 rounded-[60px] bg-gradient-to-br from-gray-900 to-gray-700 shadow-2xl p-3">
                 <div className="w-full h-full rounded-[48px] bg-black overflow-hidden relative">
