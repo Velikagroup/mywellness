@@ -110,6 +110,52 @@ export default function AdminEmails() {
     }
   };
 
+  const getCategoryForTemplate = (templateId) => {
+    const baseId = templateId.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
+    
+    if (baseId.includes('welcome')) return 'critical';
+    if (baseId.includes('goal_weight')) return 'engagement';
+    if (baseId.includes('password_reset')) return 'technical';
+    if (baseId.includes('weekly_report')) return 'reporting';
+    if (baseId.includes('cart_abandoned') || baseId.includes('checkout_abandoned')) return 'abandonment';
+    return null;
+  };
+
+  const buildEmailCategories = () => {
+    const categoryDefs = {
+      critical: { name: 'Critical', icon: AlertCircle, color: 'red' },
+      engagement: { name: 'Engagement', icon: TrendingUp, color: 'green' },
+      technical: { name: 'Technical', icon: Shield, color: 'blue' },
+      reporting: { name: 'Reporting', icon: BarChart3, color: 'indigo' },
+      abandonment: { name: 'Abbandono', icon: ShoppingCart, color: 'amber' }
+    };
+
+    const categories = {};
+    
+    emailTemplates.forEach(template => {
+      const category = getCategoryForTemplate(template.template_id);
+      if (!category) return;
+      
+      if (!categories[category]) {
+        categories[category] = {
+          ...categoryDefs[category],
+          emails: []
+        };
+      }
+
+      categories[category].emails.push({
+        id: template.template_id,
+        name: template.name,
+        trigger: template.trigger_source || 'Automatico',
+        function: 'sendEmailUnified'
+      });
+    });
+
+    return categories;
+  };
+
+  const emailCategories = buildEmailCategories();
+
   const loadBroadcasts = async () => {
     try {
       const allBroadcasts = await base44.entities.BroadcastEmail.list(['-created_date']);
