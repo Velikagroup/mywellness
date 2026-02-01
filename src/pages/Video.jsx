@@ -5,6 +5,7 @@ import { createPageUrl } from '@/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play } from 'lucide-react';
 import AppDemoFlow from '@/components/home/AppDemoFlow';
+import { LanguageProvider } from '@/components/i18n/LanguageContext';
 
 export default function Video() {
   const navigate = useNavigate();
@@ -78,6 +79,7 @@ export default function Video() {
   }
 
   return (
+    <LanguageProvider>
     <div className="min-h-screen flex items-center justify-center p-4 md:p-8">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&display=swap');
@@ -259,12 +261,15 @@ export default function Video() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="w-full h-full flex items-center justify-center"
+          className="absolute inset-0 flex items-center justify-center overflow-hidden"
           >
-            <AppDemoFlow />
+            <div className="w-full h-full">
+              <AppDemoFlow />
+            </div>
           </motion.div>
           )}
           </div>
           </div>
+          </LanguageProvider>
           );
 }
