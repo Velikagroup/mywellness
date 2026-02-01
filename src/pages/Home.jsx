@@ -25,7 +25,8 @@ import {
   BrainCircuit,
   Users,
   Globe,
-  Plus
+  Plus,
+  ScanLine
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
 import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
@@ -759,7 +760,10 @@ function HomeContent() {
               ref={heroQuizButtonRef}
               onClick={handleGetStarted}
               disabled={isLoading}
-              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-5 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto">
+              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-5 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center flex-shrink-0">
+                <ScanLine className="w-4 h-4 text-white" strokeWidth={2.5} />
+              </div>
               {t('home.freeQuiz')}
             </Button>
             <Button
