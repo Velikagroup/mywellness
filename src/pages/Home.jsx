@@ -46,6 +46,7 @@ import SportQuizPreviewDemo from "../components/home/SportQuizPreviewDemo";
 import CalorieCounterCameraPreview from "../components/home/CalorieCounterCameraPreview";
 import NutritionScannerCameraPreview from "../components/home/NutritionScannerCameraPreview";
 import BodyScanCameraPreview from "../components/home/BodyScanCameraPreview";
+import BodyScanHero3D from "../components/home/BodyScanHero3D";
 
 function HomeContent() {
   const navigate = useNavigate();
@@ -719,28 +720,30 @@ function HomeContent() {
       <section className="pt-32 pb-20 px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-transparent border-2 border-transparent rounded-full text-sm shadow-lg" style={{
-              backgroundImage: 'linear-gradient(white, white), linear-gradient(90deg, #3b82f6 0%, #8b5cf6 25%, #a855f7 50%, #ec4899 75%, #3b82f6 100%)',
-              backgroundOrigin: 'border-box',
-              backgroundClip: 'padding-box, border-box',
-              backgroundSize: '100%, 300%',
-              animation: 'borderGradientFlow 8s linear infinite'
-            }}>
-              <Sparkles className="w-4 h-4 text-purple-500" />
-              <span className="font-semibold" style={{
-                background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 25%, #a855f7 50%, #ec4899 75%, #3b82f6 100%)',
-                backgroundSize: '300% 100%',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-transparent border-2 border-transparent rounded-full text-sm shadow-lg" style={{
+                backgroundImage: 'linear-gradient(white, white), linear-gradient(90deg, #3b82f6 0%, #8b5cf6 25%, #a855f7 50%, #ec4899 75%, #3b82f6 100%)',
+                backgroundOrigin: 'border-box',
+                backgroundClip: 'padding-box, border-box',
+                backgroundSize: '100%, 300%',
                 animation: 'borderGradientFlow 8s linear infinite'
               }}>
-                {t('home.aiPowered')}
-              </span>
+                <Sparkles className="w-4 h-4 text-purple-500" />
+                <span className="font-semibold" style={{
+                  background: 'linear-gradient(90deg, #3b82f6 0%, #8b5cf6 25%, #a855f7 50%, #ec4899 75%, #3b82f6 100%)',
+                  backgroundSize: '300% 100%',
+                  backgroundClip: 'text',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  animation: 'borderGradientFlow 8s linear infinite'
+                }}>
+                  {t('home.aiPowered')}
+                </span>
+              </div>
             </div>
-          </div>
-          
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
+
+            <BodyScanHero3D />
+
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
             {t('home.heroTitle1')} <span className="animated-text-gradient">{t('home.heroTitle2')}</span>
           </h1>
           
