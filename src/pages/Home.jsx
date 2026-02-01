@@ -917,15 +917,6 @@ function HomeContent() {
               </motion.svg>
             </motion.div>
 
-            {/* Testo esplicativo sotto il pulsante */}
-            <motion.p
-              initial={{ opacity: 0, y: -10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="absolute top-[240px] left-1/2 transform -translate-x-1/2 text-sm text-gray-600 font-medium whitespace-nowrap">
-              Tocca il pulsante per accedere a:
-            </motion.p>
           </div>
 
           {/* Camera Screenshots - 3 Features */}
