@@ -756,16 +756,18 @@ function HomeContent() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-2">
-            <Button
-              ref={heroQuizButtonRef}
-              onClick={handleGetStarted}
-              disabled={isLoading}
-              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-3 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto flex items-center gap-3">
-              <div className="rounded-full bg-red-500 flex items-center justify-center flex-shrink-0 md:-ml-[20px] -ml-[110px]" style={{ width: '60px', height: '60px', marginRight: '4px' }}>
+            <div className="flex flex-col items-center gap-2">
+              <div className="rounded-full bg-red-500 flex items-center justify-center" style={{ width: '80px', height: '80px' }}>
                 <ScanLine className="w-[100px] h-[100px] text-white" strokeWidth={2.5} />
               </div>
-              {t('home.freeQuiz')}
-            </Button>
+              <Button
+                ref={heroQuizButtonRef}
+                onClick={handleGetStarted}
+                disabled={isLoading}
+                className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-3 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto border-2 border-[var(--brand-primary)] hover:border-[var(--brand-primary-hover)]">
+                {t('home.freeQuiz')}
+              </Button>
+            </div>
             <Button
               onClick={handleWatchDemo}
               variant="outline"

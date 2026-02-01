@@ -63,7 +63,6 @@ import BlogArticle from './pages/BlogArticle';
 import BodyScan from './pages/BodyScan';
 import Checkout from './pages/Checkout';
 import Dashboard from './pages/Dashboard';
-import Home from './pages/Home';
 import Landing from './pages/Landing';
 import LandingCheckout from './pages/LandingCheckout';
 import Meals from './pages/Meals';
@@ -120,6 +119,7 @@ import ptcheckout from './pages/ptcheckout';
 import ptpostquizsubscription from './pages/ptpostquizsubscription';
 import ptpricing from './pages/ptpricing';
 import ptquiz from './pages/ptquiz';
+import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
@@ -140,7 +140,6 @@ export const PAGES = {
     "BodyScan": BodyScan,
     "Checkout": Checkout,
     "Dashboard": Dashboard,
-    "Home": Home,
     "Landing": Landing,
     "LandingCheckout": LandingCheckout,
     "Meals": Meals,
@@ -197,6 +196,7 @@ export const PAGES = {
     "ptpostquizsubscription": ptpostquizsubscription,
     "ptpricing": ptpricing,
     "ptquiz": ptquiz,
+    "Home": Home,
 }
 
 export const pagesConfig = {
