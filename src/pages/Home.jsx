@@ -840,73 +840,81 @@ function HomeContent() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 1, delay: 0.6 }}
-              style={{ width: '100%', maxWidth: '1100px', height: '200px', zIndex: 1 }}>
-              
+              style={{ width: '100%', maxWidth: '900px', height: '200px', zIndex: 1 }}>
               {/* Linea sinistra - Calorie Counter */}
-              <svg className="absolute top-0 left-0" width="100%" height="100%" viewBox="0 0 1100 200" preserveAspectRatio="none">
+              <motion.svg
+                className="absolute top-0 left-0"
+                width="100%"
+                height="100%"
+                initial={{ pathLength: 0 }}
+                whileInView={{ pathLength: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.5, delay: 0.7, ease: "easeInOut" }}>
                 <defs>
                   <linearGradient id="gradient1" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" stopColor="#26847F" stopOpacity="0.8" />
                     <stop offset="100%" stopColor="#26847F" stopOpacity="0.2" />
                   </linearGradient>
                 </defs>
-                <motion.path
-                  d="M 550 0 Q 360 100, 170 200"
+                <path
+                  d="M 450 0 Q 300 100, 150 200"
                   stroke="url(#gradient1)"
-                  strokeWidth="3"
+                  strokeWidth="2"
                   fill="none"
-                  strokeDasharray="8,8"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.7, ease: "easeInOut" }}
+                  strokeDasharray="5,5"
                   style={{ filter: 'drop-shadow(0 2px 4px rgba(38, 132, 127, 0.3))' }}
                 />
-              </svg>
+              </motion.svg>
 
               {/* Linea centrale - Nutrition Scanner */}
-              <svg className="absolute top-0 left-0" width="100%" height="100%" viewBox="0 0 1100 200" preserveAspectRatio="none">
+              <motion.svg
+                className="absolute top-0 left-0"
+                width="100%"
+                height="100%"
+                initial={{ pathLength: 0 }}
+                whileInView={{ pathLength: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.5, delay: 0.8, ease: "easeInOut" }}>
                 <defs>
                   <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" stopColor="#26847F" stopOpacity="0.8" />
                     <stop offset="100%" stopColor="#26847F" stopOpacity="0.2" />
                   </linearGradient>
                 </defs>
-                <motion.path
-                  d="M 550 0 L 550 200"
+                <path
+                  d="M 450 0 L 450 200"
                   stroke="url(#gradient2)"
-                  strokeWidth="3"
+                  strokeWidth="2"
                   fill="none"
-                  strokeDasharray="8,8"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.8, ease: "easeInOut" }}
+                  strokeDasharray="5,5"
                   style={{ filter: 'drop-shadow(0 2px 4px rgba(38, 132, 127, 0.3))' }}
                 />
-              </svg>
+              </motion.svg>
 
               {/* Linea destra - Body Scan */}
-              <svg className="absolute top-0 left-0" width="100%" height="100%" viewBox="0 0 1100 200" preserveAspectRatio="none">
+              <motion.svg
+                className="absolute top-0 left-0"
+                width="100%"
+                height="100%"
+                initial={{ pathLength: 0 }}
+                whileInView={{ pathLength: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.5, delay: 0.9, ease: "easeInOut" }}>
                 <defs>
                   <linearGradient id="gradient3" x1="0%" y1="0%" x2="0%" y2="100%">
                     <stop offset="0%" stopColor="#26847F" stopOpacity="0.8" />
                     <stop offset="100%" stopColor="#26847F" stopOpacity="0.2" />
                   </linearGradient>
                 </defs>
-                <motion.path
-                  d="M 550 0 Q 740 100, 930 200"
+                <path
+                  d="M 450 0 Q 600 100, 750 200"
                   stroke="url(#gradient3)"
-                  strokeWidth="3"
+                  strokeWidth="2"
                   fill="none"
-                  strokeDasharray="8,8"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.9, ease: "easeInOut" }}
+                  strokeDasharray="5,5"
                   style={{ filter: 'drop-shadow(0 2px 4px rgba(38, 132, 127, 0.3))' }}
                 />
-              </svg>
+              </motion.svg>
             </motion.div>
 
             {/* Testo esplicativo sotto il pulsante */}
