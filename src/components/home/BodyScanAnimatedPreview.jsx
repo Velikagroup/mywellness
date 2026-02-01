@@ -74,7 +74,7 @@ export default function BodyScanAnimatedPreview() {
               </div>
 
               {/* Side - Not active */}
-              <div className="relative flex flex-col items-center gap-2 p-2 rounded-xl bg-white/20 backdrop-blur-sm">
+              <div className="relative flex flex-col items-center gap-2 p-2 rounded-xl bg-white/40 backdrop-blur-sm">
                 <div className="w-12 h-16 rounded-lg border-2 border-white/50 flex items-center justify-center">
                   <Camera className="w-5 h-5 text-white/60" />
                 </div>
