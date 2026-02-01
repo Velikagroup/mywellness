@@ -739,6 +739,65 @@ function HomeContent() {
               </span>
             </div>
           </div>
+
+          {/* iPhone 16 Pro Max con Body Scan Dashboard */}
+          <div className="mb-12 flex justify-center">
+            <div className="relative" style={{ width: '300px', height: '650px' }}>
+              {/* iPhone Frame */}
+              <div className="absolute inset-0 rounded-[60px] bg-gradient-to-br from-gray-900 to-gray-700 shadow-2xl p-3">
+                <div className="w-full h-full rounded-[48px] bg-black overflow-hidden relative">
+                  {/* Dynamic Island */}
+                  <div className="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-8 bg-black rounded-full z-10" />
+                  
+                  {/* Screenshot Dashboard Body Scan */}
+                  <div className="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 overflow-y-auto">
+                    <div className="p-6 space-y-6">
+                      {/* Header */}
+                      <div className="text-center pt-4">
+                        <h2 className="text-2xl font-bold text-gray-900">Body Scan</h2>
+                        <p className="text-sm text-gray-500 mt-1">Risultati analisi AI</p>
+                      </div>
+
+                      {/* Età Biologica - Hero Card */}
+                      <div className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-3xl p-6 text-white shadow-xl">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2">
+                            <Activity className="w-5 h-5" />
+                            <span className="text-sm font-medium opacity-90">Età Biologica</span>
+                          </div>
+                          <span className="text-xs bg-white/20 px-3 py-1 rounded-full">Ottimo</span>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-6xl font-black mb-2">28</div>
+                          <div className="text-sm opacity-90">anni (età reale: 32)</div>
+                        </div>
+                      </div>
+
+                      {/* Stats Grid */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-white rounded-2xl p-4 shadow-sm">
+                          <div className="text-xs text-gray-500 mb-1">Somatotipo</div>
+                          <div className="text-lg font-bold text-gray-900">Mesomorfo</div>
+                        </div>
+                        <div className="bg-white rounded-2xl p-4 shadow-sm">
+                          <div className="text-xs text-gray-500 mb-1">Body Fat</div>
+                          <div className="text-lg font-bold text-teal-600">14.2%</div>
+                        </div>
+                        <div className="bg-white rounded-2xl p-4 shadow-sm">
+                          <div className="text-xs text-gray-500 mb-1">Definizione</div>
+                          <div className="text-lg font-bold text-gray-900">8.5/10</div>
+                        </div>
+                        <div className="bg-white rounded-2xl p-4 shadow-sm">
+                          <div className="text-xs text-gray-500 mb-1">Postura</div>
+                          <div className="text-lg font-bold text-emerald-600">Buona</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
           
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
             {t('home.heroTitle1')} <span className="animated-text-gradient">{t('home.heroTitle2')}</span>
