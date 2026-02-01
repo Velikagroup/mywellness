@@ -758,7 +758,7 @@ function HomeContent() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-2">
             <div className="flex flex-col items-center gap-2">
               <div className="rounded-full bg-red-500 flex items-center justify-center" style={{ width: '80px', height: '80px' }}>
-                <ScanLine className="w-[100px] h-[100px] text-white" strokeWidth={2.5} />
+                <ScanLine className="w-[70px] h-[70px] text-white" strokeWidth={2.5} />
               </div>
               <Button
                 ref={heroQuizButtonRef}
