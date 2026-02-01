@@ -750,7 +750,7 @@ function HomeContent() {
               `}</style>
               {/* iPhone Frame */}
               <div className="iphone-container absolute inset-0 rounded-[56px] bg-gradient-to-br from-gray-900 to-gray-700 shadow-2xl p-2">
-                <div className="w-full h-full rounded-[52px] bg-black overflow-hidden relative">
+                <div className="w-full h-full rounded-[48px] bg-black overflow-hidden relative">
                   {/* Dynamic Island */}
                   <div className="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-8 bg-black rounded-full z-10" />
                   
