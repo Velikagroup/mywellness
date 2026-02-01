@@ -740,11 +740,7 @@ function HomeContent() {
             </div>
           </div>
           
-          <div className="mb-12" style={{ height: '700px', minHeight: '700px', maxHeight: '700px' }}>
-            <AppDemoFlow />
-          </div>
-          
-          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2 mt-16 md:-mt-48">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
             {t('home.heroTitle1')} <span className="animated-text-gradient">{t('home.heroTitle2')}</span> {t('home.heroTitle3')}{language === 'it' ? '' : ' '}<span className="animated-text-gradient">{t('home.heroTitle4')}</span>
           </h1>
           
@@ -970,10 +966,22 @@ function HomeContent() {
                 <DashboardPreviewDemo />
               </div>
             </motion.div>
-          </motion.div>
+            </motion.div>
 
-          {/* Step 3 - Meal Plan */}
-          <motion.div
+            {/* Video Demo Section */}
+            <motion.div
+            className="mb-32"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}>
+            <div style={{ height: '700px', minHeight: '700px', maxHeight: '700px' }}>
+              <AppDemoFlow />
+            </div>
+            </motion.div>
+
+            {/* Step 3 - Meal Plan */}
+            <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
