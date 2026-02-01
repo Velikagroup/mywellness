@@ -269,8 +269,7 @@ export default function PantryPreviewDemo() {
 
       <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-2xl overflow-hidden">
         <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200/50 pb-4">
-          <CardTitle className="text-lg sm:text-xl font-bold text-gray-900 flex items-center justify-center sm:justify-start gap-2">
-            <Package className="w-5 h-5 text-indigo-600" />
+          <CardTitle className="text-lg sm:text-xl font-bold text-gray-900 flex items-center justify-center sm:justify-start">
             {tr.title}
           </CardTitle>
           <p className="text-xs sm:text-sm text-gray-600 mt-2 text-center sm:text-left">
