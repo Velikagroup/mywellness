@@ -148,14 +148,14 @@ export default function BodyScanAnimatedPreview() {
               {/* Header */}
               <div className="text-center">
                 <h2 className="text-3xl font-black text-gray-900">Body <span className="text-teal-500">Scan</span></h2>
-                <p className="text-xs text-gray-600 mt-2">Monitor your physical progress over time</p>
+                <p className="text-xs text-gray-600 mt-2">{t('home.bodyScanSubtitle')}</p>
               </div>
 
               {/* Body Composition Analysis Title */}
               <div className="mt-4">
                 <h3 className="text-xs font-bold text-gray-700 mb-3 flex items-center gap-2">
                   <BarChart3 className="w-4 h-4" />
-                  Body Composition Analysis
+                  {t('home.bodyScanComposition')}
                 </h3>
 
                 {/* Stats Grid 2x2 */}
@@ -163,16 +163,16 @@ export default function BodyScanAnimatedPreview() {
                   {/* Biological Age - Green */}
                   <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-400 rounded-3xl p-4">
                     <div className="text-xs font-bold text-emerald-700 mb-2 flex items-center gap-1">
-                      👤 BIOLOGICAL AGE
+                      👤 {t('home.bodyScanBiologicalAge').toUpperCase()}
                     </div>
                     <div className="text-3xl font-black text-emerald-600">21</div>
-                    <div className="text-xs text-emerald-600 font-semibold">years</div>
+                    <div className="text-xs text-emerald-600 font-semibold">{t('home.bodyScanYears')}</div>
                   </div>
 
                   {/* Somatotype - Purple */}
                   <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-400 rounded-3xl p-4">
                     <div className="text-xs font-bold text-purple-700 mb-2 flex items-center gap-1">
-                      👤 SOMATOTYPE
+                      👤 {t('home.bodyScanSomatotype').toUpperCase()}
                     </div>
                     <div className="text-lg font-black text-purple-600">Ectomorph</div>
                   </div>
@@ -180,7 +180,7 @@ export default function BodyScanAnimatedPreview() {
                   {/* Body Fat - Orange */}
                   <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-400 rounded-3xl p-4">
                     <div className="text-xs font-bold text-orange-700 mb-2 flex items-center gap-1">
-                      📊 BODY FAT %
+                      📊 {t('home.bodyScanBodyFat').toUpperCase()}
                     </div>
                     <div className="text-3xl font-black text-orange-600">19%</div>
                   </div>
@@ -188,7 +188,7 @@ export default function BodyScanAnimatedPreview() {
                   {/* Definition - Blue */}
                   <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-400 rounded-3xl p-4">
                     <div className="text-xs font-bold text-blue-700 mb-2 flex items-center gap-1">
-                      📐 DEFINITION
+                      📐 {t('home.bodyScanDefinition').toUpperCase()}
                     </div>
                     <div className="text-2xl font-black text-blue-600">78<span className="text-sm">/100</span></div>
                   </div>
@@ -197,7 +197,7 @@ export default function BodyScanAnimatedPreview() {
                   {/* Areas To Focus */}
                   <div className="mt-4 bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-400 rounded-3xl p-4">
                   <div className="text-xs font-bold text-red-700 mb-2 flex items-center gap-1">
-                    ⚡ AREAS TO FOCUS
+                    ⚡ {t('home.bodyScanAreasToFocus').toUpperCase()}
                   </div>
                   <div className="text-xs text-gray-700">Glutes, lower abs</div>
                   </div>
@@ -205,7 +205,7 @@ export default function BodyScanAnimatedPreview() {
                   {/* Strengths */}
                   <div className="mt-3 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-3xl p-4">
                   <div className="text-xs font-bold text-green-700 mb-2 flex items-center gap-1">
-                    📈 STRENGTHS
+                    📈 {t('home.bodyScanStrengths').toUpperCase()}
                   </div>
                   <div className="text-xs text-gray-700">
                     • Toned legs<br/>• Shoulder definition<br/>• Core strength
