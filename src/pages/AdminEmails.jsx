@@ -1459,8 +1459,6 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
     { code: 'fr', flag: '🇫🇷', name: 'Français' }
   ];
 
-  const emailCategories = {};
-
   const getCategoryColor = (color) => {
     const colors = {
       red: 'bg-red-100 text-red-700 border-red-200',
