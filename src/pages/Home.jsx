@@ -844,12 +844,25 @@ function HomeContent() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              {/* Calorie Counter */}
+              {/* Body Scan */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex flex-col items-center"
+              >
+                <BodyScanCameraPreview />
+                <h3 className="mt-6 text-xl font-bold text-gray-900">Body Scan</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
+              </motion.div>
+
+              {/* Calorie Counter */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
                 className="flex flex-col items-center"
               >
                 <CalorieCounterCameraPreview />
@@ -862,37 +875,38 @@ function HomeContent() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
                 className="flex flex-col items-center"
               >
                 <NutritionScannerCameraPreview />
                 <h3 className="mt-6 text-xl font-bold text-gray-900">Nutrition Scanner</h3>
                 <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scansiona etichette nutrizionali per valutare la qualità degli alimenti</p>
               </motion.div>
-
-              {/* Body Scan */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="flex flex-col items-center"
-              >
-                <BodyScanCameraPreview />
-                <h3 className="mt-6 text-xl font-bold text-gray-900">Body Scan</h3>
-                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
-              </motion.div>
             </motion.div>
 
             {/* Mobile: Scroll orizzontale */}
             <div className="md:hidden overflow-x-auto pb-4 -mx-4">
               <div className="flex gap-6 px-4" style={{ width: 'max-content' }}>
-                {/* Calorie Counter */}
+                {/* Body Scan */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5 }}
+                  className="flex flex-col items-center"
+                  style={{ width: '280px' }}
+                >
+                  <BodyScanCameraPreview />
+                  <h3 className="mt-6 text-xl font-bold text-gray-900">Body Scan</h3>
+                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
+                </motion.div>
+
+                {/* Calorie Counter */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
                   className="flex flex-col items-center"
                   style={{ width: '280px' }}
                 >
@@ -906,27 +920,13 @@ function HomeContent() {
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
                   className="flex flex-col items-center"
                   style={{ width: '280px' }}
                 >
                   <NutritionScannerCameraPreview />
                   <h3 className="mt-6 text-xl font-bold text-gray-900">Nutrition Scanner</h3>
                   <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scansiona etichette nutrizionali per valutare la qualità degli alimenti</p>
-                </motion.div>
-
-                {/* Body Scan */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 0.2 }}
-                  className="flex flex-col items-center"
-                  style={{ width: '280px' }}
-                >
-                  <BodyScanCameraPreview />
-                  <h3 className="mt-6 text-xl font-bold text-gray-900">Body Scan</h3>
-                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
                 </motion.div>
               </div>
             </div>
