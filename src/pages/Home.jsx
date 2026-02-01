@@ -854,7 +854,7 @@ function HomeContent() {
                 transition={{ duration: 0.5, delay: 0.1 }}
                 className="flex flex-col items-center"
               >
-                <BodyScanAnimatedPreview />
+                <BodyScanCameraPreview />
                 <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.bodyScanTitle')}</h3>
                 <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.bodyScanDesc')}</p>
               </motion.div>
