@@ -810,7 +810,7 @@ function HomeContent() {
           </div>
 
           {/* Step 1 - Quick Actions Button */}
-          <div className="w-full flex justify-center mb-12">
+          <div className="w-full flex justify-center mb-6">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
