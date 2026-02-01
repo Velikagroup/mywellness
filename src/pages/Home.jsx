@@ -750,46 +750,58 @@ function HomeContent() {
                   <div className="absolute top-2 left-1/2 -translate-x-1/2 w-32 h-8 bg-black rounded-full z-10" />
                   
                   {/* Screenshot Dashboard Body Scan */}
-                  <div className="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 overflow-y-auto">
-                    <div className="p-6 space-y-6">
+                  <div className="w-full h-full bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 overflow-y-auto">
+                    <div className="p-5 space-y-4">
+                      {/* Status Bar */}
+                      <div className="text-xs text-gray-600 text-center pt-2">2:41</div>
+
                       {/* Header */}
-                      <div className="text-center pt-4">
-                        <h2 className="text-2xl font-bold text-gray-900">Body Scan</h2>
-                        <p className="text-sm text-gray-500 mt-1">Risultati analisi AI</p>
+                      <div className="text-center">
+                        <h2 className="text-3xl font-black text-gray-900">Body <span className="text-teal-500">Scan</span></h2>
+                        <p className="text-xs text-gray-600 mt-2">Monitor your physical progress over time</p>
                       </div>
 
-                      {/* Età Biologica - Hero Card */}
-                      <div className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-3xl p-6 text-white shadow-xl">
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="flex items-center gap-2">
-                            <Activity className="w-5 h-5" />
-                            <span className="text-sm font-medium opacity-90">Età Biologica</span>
+                      {/* Body Composition Analysis Title */}
+                      <div className="mt-4">
+                        <h3 className="text-xs font-bold text-gray-700 mb-3 flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4" />
+                          Body Composition Analysis
+                        </h3>
+
+                        {/* Stats Grid 2x2 */}
+                        <div className="grid grid-cols-2 gap-3">
+                          {/* Biological Age - Green */}
+                          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-400 rounded-3xl p-4">
+                            <div className="text-xs font-bold text-emerald-700 mb-2 flex items-center gap-1">
+                              👤 BIOLOGICAL AGE
+                            </div>
+                            <div className="text-3xl font-black text-emerald-600">23</div>
+                            <div className="text-xs text-emerald-600 font-semibold">years</div>
                           </div>
-                          <span className="text-xs bg-white/20 px-3 py-1 rounded-full">Ottimo</span>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-6xl font-black mb-2">28</div>
-                          <div className="text-sm opacity-90">anni (età reale: 32)</div>
-                        </div>
-                      </div>
 
-                      {/* Stats Grid */}
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="bg-white rounded-2xl p-4 shadow-sm">
-                          <div className="text-xs text-gray-500 mb-1">Somatotipo</div>
-                          <div className="text-lg font-bold text-gray-900">Mesomorfo</div>
-                        </div>
-                        <div className="bg-white rounded-2xl p-4 shadow-sm">
-                          <div className="text-xs text-gray-500 mb-1">Body Fat</div>
-                          <div className="text-lg font-bold text-teal-600">14.2%</div>
-                        </div>
-                        <div className="bg-white rounded-2xl p-4 shadow-sm">
-                          <div className="text-xs text-gray-500 mb-1">Definizione</div>
-                          <div className="text-lg font-bold text-gray-900">8.5/10</div>
-                        </div>
-                        <div className="bg-white rounded-2xl p-4 shadow-sm">
-                          <div className="text-xs text-gray-500 mb-1">Postura</div>
-                          <div className="text-lg font-bold text-emerald-600">Buona</div>
+                          {/* Somatotype - Purple */}
+                          <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-400 rounded-3xl p-4">
+                            <div className="text-xs font-bold text-purple-700 mb-2 flex items-center gap-1">
+                              👤 SOMATOTYPE
+                            </div>
+                            <div className="text-lg font-black text-purple-600">Mesomorph</div>
+                          </div>
+
+                          {/* Body Fat - Orange */}
+                          <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-400 rounded-3xl p-4">
+                            <div className="text-xs font-bold text-orange-700 mb-2 flex items-center gap-1">
+                              📊 BODY FAT %
+                            </div>
+                            <div className="text-3xl font-black text-orange-600">20%</div>
+                          </div>
+
+                          {/* Definition - Blue */}
+                          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-400 rounded-3xl p-4">
+                            <div className="text-xs font-bold text-blue-700 mb-2 flex items-center gap-1">
+                              📐 DEFINITION
+                            </div>
+                            <div className="text-2xl font-black text-blue-600">65<span className="text-sm">/100</span></div>
+                          </div>
                         </div>
                       </div>
                     </div>
