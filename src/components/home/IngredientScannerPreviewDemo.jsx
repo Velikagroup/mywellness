@@ -197,10 +197,7 @@ export default function IngredientScannerPreviewDemo() {
 
       <Card className="w-full max-w-md mx-auto water-glass-effect border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
         {/* Header */}
-        <div className="px-6 py-5 border-b border-gray-100" style={{
-          backdropFilter: 'blur(12px) saturate(180%)',
-          background: 'linear-gradient(135deg, rgba(249, 250, 251, 0.4) 0%, rgba(243, 244, 246, 0.3) 50%, rgba(249, 250, 241, 0.4) 100%)'
-        }}>
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h2 className="text-xl font-bold text-gray-900">{tr.title}</h2>
