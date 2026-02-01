@@ -796,7 +796,7 @@ function HomeContent() {
 
       <section className="py-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-24">
+          <div className="text-center mb-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -810,7 +810,7 @@ function HomeContent() {
           </div>
 
           {/* Step 1 - Quick Actions Button */}
-          <div className="w-full flex justify-center mb-12">
+          <div className="w-full flex justify-center mb-8">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
