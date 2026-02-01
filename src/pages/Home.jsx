@@ -761,8 +761,8 @@ function HomeContent() {
               onClick={handleGetStarted}
               disabled={isLoading}
               className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-5 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center flex-shrink-0">
-                <ScanLine className="w-5 h-5 text-white" strokeWidth={2.5} />
+              <div className="w-15 h-15 rounded-full bg-red-500 flex items-center justify-center flex-shrink-0 -ml-2 -mr-2">
+                <ScanLine className="w-7 h-7 text-white" strokeWidth={2.5} />
               </div>
               {t('home.freeQuiz')}
             </Button>
