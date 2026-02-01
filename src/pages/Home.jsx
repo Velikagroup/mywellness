@@ -834,71 +834,55 @@ function HomeContent() {
             </motion.div>
 
             {/* Linee di connessione animate - Desktop */}
-            <motion.div
-              className="hidden md:block absolute top-[200px] left-1/2 transform -translate-x-1/2"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1, delay: 0.6 }}
-              style={{ width: '1200px', height: '200px', zIndex: 1, pointerEvents: 'none' }}>
-              <motion.svg
-                width="100%"
-                height="100%"
-                viewBox="0 0 1200 200"
-                initial={{ pathLength: 0 }}
-                whileInView={{ pathLength: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.5, delay: 0.7, ease: "easeInOut" }}>
+            <div className="hidden md:block absolute top-[200px] left-1/2 transform -translate-x-1/2" style={{ width: '100%', maxWidth: '1100px', height: '220px', zIndex: 1, pointerEvents: 'none' }}>
+              <svg width="100%" height="100%" viewBox="0 0 1100 220" preserveAspectRatio="xMidYMid meet" style={{ overflow: 'visible' }}>
                 <defs>
                   <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#26847F" stopOpacity="0.8" />
+                    <stop offset="0%" stopColor="#26847F" stopOpacity="0.6" />
                     <stop offset="100%" stopColor="#26847F" stopOpacity="0.2" />
                   </linearGradient>
                 </defs>
                 
                 {/* Linea sinistra - Calorie Counter */}
                 <motion.path
-                  d="M 600 0 Q 400 100, 250 200"
+                  d="M 550 10 Q 350 100, 200 210"
                   stroke="url(#lineGradient)"
-                  strokeWidth="2"
+                  strokeWidth="3"
                   fill="none"
-                  strokeDasharray="5,5"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
+                  strokeDasharray="8 6"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  whileInView={{ pathLength: 1, opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.7, ease: "easeInOut" }}
-                  style={{ filter: 'drop-shadow(0 2px 4px rgba(38, 132, 127, 0.3))' }}
+                  transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
                 />
                 
                 {/* Linea centrale - Nutrition Scanner */}
                 <motion.path
-                  d="M 600 0 L 600 200"
+                  d="M 550 10 L 550 210"
                   stroke="url(#lineGradient)"
-                  strokeWidth="2"
+                  strokeWidth="3"
                   fill="none"
-                  strokeDasharray="5,5"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
+                  strokeDasharray="8 6"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  whileInView={{ pathLength: 1, opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.8, ease: "easeInOut" }}
-                  style={{ filter: 'drop-shadow(0 2px 4px rgba(38, 132, 127, 0.3))' }}
+                  transition={{ duration: 1.2, delay: 0.6, ease: "easeOut" }}
                 />
                 
                 {/* Linea destra - Body Scan */}
                 <motion.path
-                  d="M 600 0 Q 800 100, 950 200"
+                  d="M 550 10 Q 750 100, 900 210"
                   stroke="url(#lineGradient)"
-                  strokeWidth="2"
+                  strokeWidth="3"
                   fill="none"
-                  strokeDasharray="5,5"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
+                  strokeDasharray="8 6"
+                  initial={{ pathLength: 0, opacity: 0 }}
+                  whileInView={{ pathLength: 1, opacity: 1 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.9, ease: "easeInOut" }}
-                  style={{ filter: 'drop-shadow(0 2px 4px rgba(38, 132, 127, 0.3))' }}
+                  transition={{ duration: 1.2, delay: 0.7, ease: "easeOut" }}
                 />
-              </motion.svg>
-            </motion.div>
+              </svg>
+            </div>
 
           </div>
 
