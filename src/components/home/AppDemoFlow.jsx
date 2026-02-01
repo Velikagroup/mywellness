@@ -270,10 +270,10 @@ export default function AppDemoFlow() {
   return (
     <div className="w-full flex items-center justify-center px-4">
       <div className="relative" style={{ 
-        width: isDesktop ? '900px' : '450px',
-        height: isDesktop ? '680px' : '810px',
-        minHeight: isDesktop ? '680px' : '810px',
-        maxHeight: isDesktop ? '680px' : '810px',
+        width: isDesktop ? '1024px' : '450px',
+        height: isDesktop ? '775px' : '810px',
+        minHeight: isDesktop ? '775px' : '810px',
+        maxHeight: isDesktop ? '775px' : '810px',
         margin: '0 auto',
         maxWidth: '100%'
       }}>
@@ -284,16 +284,16 @@ export default function AppDemoFlow() {
           }
         `}</style>
 
-        <div className="relative w-full h-full" style={{ minHeight: isDesktop ? '680px' : '810px', maxHeight: isDesktop ? '680px' : '810px' }}>
+        <div className="relative w-full h-full" style={{ minHeight: isDesktop ? '775px' : '810px', maxHeight: isDesktop ? '775px' : '810px' }}>
           <div
             className="absolute bg-white"
             style={{
               top: isDesktop ? 'calc(3.5% - 3px)' : '1.5%',
               left: '50%',
-              width: isDesktop ? '845px' : '96.5%',
-              height: isDesktop ? '638px' : '720px',
-              minHeight: isDesktop ? '638px' : '720px',
-              maxHeight: isDesktop ? '638px' : '720px',
+              width: isDesktop ? '970px' : '96.5%',
+              height: isDesktop ? '728px' : '720px',
+              minHeight: isDesktop ? '728px' : '720px',
+              maxHeight: isDesktop ? '728px' : '720px',
               transform: isDesktop ? 'translateX(calc(-50% - 3px))' : 'translateX(-50%)',
               borderRadius: isDesktop ? '18px' : '44px',
               zIndex: 1,

@@ -975,7 +975,7 @@ function HomeContent() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.7, ease: "easeOut" }}>
-              <div className="max-w-5xl mx-auto" style={{ height: '700px', minHeight: '700px', maxHeight: '700px' }}>
+              <div className="max-w-5xl mx-auto" style={{ height: '800px', minHeight: '800px', maxHeight: '800px' }}>
                 <AppDemoFlow />
               </div>
             </motion.div>
