@@ -762,7 +762,7 @@ function HomeContent() {
               disabled={isLoading}
               className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-3 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto flex items-center gap-3">
               <div className="rounded-full bg-red-500 flex items-center justify-center flex-shrink-0 md:-ml-[20px] -ml-[110px]" style={{ width: '60px', height: '60px', marginRight: '4px' }}>
-                <ScanLine className="w-[68px] h-[68px] text-white" strokeWidth={2.5} />
+                <ScanLine className="w-[80px] h-[80px] text-white" strokeWidth={2.5} />
               </div>
               {t('home.freeQuiz')}
             </Button>
