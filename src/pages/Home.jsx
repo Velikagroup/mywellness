@@ -766,14 +766,8 @@ function HomeContent() {
                         <p className="text-xs text-gray-600 mt-2">AI Analysis Complete</p>
                       </div>
 
-                      {/* Body Scan Image */}
-                      <div className="w-full aspect-square bg-gradient-to-b from-orange-300 to-orange-200 rounded-2xl overflow-hidden relative flex items-center justify-center">
-                        <img 
-                          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/e43615f9f_IMG_3069.png"
-                          alt="Body Scan"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
+                      {/* Body Scan Animation */}
+                      <BodyScanAnimation />
 
                       {/* Body Composition Analysis Title */}
                       <div className="mt-4">
