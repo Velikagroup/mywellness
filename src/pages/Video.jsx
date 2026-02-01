@@ -130,7 +130,7 @@ export default function Video() {
         }
       `}</style>
 
-      <div className="relative w-full max-w-7xl bg-black rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '16/9' }}>
+      <div className="relative w-full max-w-7xl overflow-visible" style={{ minHeight: '600px' }}>
         <AnimatePresence key={animationKey} mode="wait">
           {showIntro && (
             <motion.div
@@ -261,11 +261,9 @@ export default function Video() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="absolute inset-0 flex items-center justify-center overflow-hidden"
+          className="w-full flex items-center justify-center"
           >
-            <div className="w-full h-full">
-              <AppDemoFlow />
-            </div>
+            <AppDemoFlow />
           </motion.div>
           )}
           </div>
