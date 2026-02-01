@@ -288,12 +288,12 @@ export default function AppDemoFlow() {
           <div
             className="absolute bg-white"
             style={{
-              top: isDesktop ? 'calc(3.5% - 3px)' : '1.5%',
+              top: isDesktop ? '0' : '1.5%',
               left: '50%',
               width: isDesktop ? '970px' : '96.5%',
-              height: isDesktop ? '470px' : '720px',
-              minHeight: isDesktop ? '470px' : '720px',
-              maxHeight: isDesktop ? '470px' : '720px',
+              height: isDesktop ? '500px' : '720px',
+              minHeight: isDesktop ? '500px' : '720px',
+              maxHeight: isDesktop ? '500px' : '720px',
               transform: isDesktop ? 'translateX(calc(-50% - 3px))' : 'translateX(-50%)',
               borderRadius: isDesktop ? '18px' : '44px',
               zIndex: 1,
