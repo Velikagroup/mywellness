@@ -46,6 +46,7 @@ import SportQuizPreviewDemo from "../components/home/SportQuizPreviewDemo";
 import CalorieCounterCameraPreview from "../components/home/CalorieCounterCameraPreview";
 import NutritionScannerCameraPreview from "../components/home/NutritionScannerCameraPreview";
 import BodyScanCameraPreview from "../components/home/BodyScanCameraPreview";
+import BodyScanAnimatedPreview from "../components/home/BodyScanAnimatedPreview";
 
 function HomeContent() {
   const navigate = useNavigate();
