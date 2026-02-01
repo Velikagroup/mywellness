@@ -759,7 +759,7 @@ function HomeContent() {
               ref={heroQuizButtonRef}
               onClick={handleGetStarted}
               disabled={isLoading}
-              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-6 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto">
+              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-5 text-base font-semibold shadow-xl hover:shadow-2xl transition-all h-auto">
               {t('home.freeQuiz')}
             </Button>
             <Button
