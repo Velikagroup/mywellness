@@ -95,7 +95,7 @@ export default function ShoppingListPreviewDemo() {
 
       <Card className="w-full max-w-md mx-auto water-glass-effect border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
         {/* Header */}
-        <div className="bg-gradient-to-br from-green-50 to-teal-50 px-6 py-5 border-b border-gray-100">
+        <div className="water-glass-effect px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-xl font-bold text-gray-900">{tr.title}</h2>
