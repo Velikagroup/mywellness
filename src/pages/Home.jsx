@@ -810,14 +810,14 @@ function HomeContent() {
           </div>
 
           {/* Step 1 - Quick Actions Button */}
-          <div className="w-full flex justify-center mb-8 relative">
+          <div className="w-full flex justify-center mb-8">
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}
               style={{ minHeight: '400px' }}
-              className="flex items-center justify-center relative z-10">
+              className="flex items-center justify-center">
               <button
                 className="rounded-full text-[#26847F] flex items-center justify-center transition-all hover:scale-110 cursor-pointer"
                 style={{
@@ -832,69 +832,6 @@ function HomeContent() {
                 <Plus className="w-24 h-24" strokeWidth={2.5} />
               </button>
             </motion.div>
-
-            {/* Linee di connessione animate - Desktop */}
-            <div className="hidden md:block absolute" style={{ 
-              top: '200px', 
-              left: '50%', 
-              transform: 'translateX(-50%)',
-              width: '1000px',
-              height: '250px',
-              zIndex: 1,
-              pointerEvents: 'none'
-            }}>
-              <svg width="1000" height="250" viewBox="0 0 1000 250" style={{ position: 'absolute', top: 0, left: 0 }}>
-                <defs>
-                  <linearGradient id="dashGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#26847F" stopOpacity="0.7" />
-                    <stop offset="100%" stopColor="#26847F" stopOpacity="0.15" />
-                  </linearGradient>
-                </defs>
-                
-                {/* Linea SINISTRA - Calorie Counter */}
-                <motion.path
-                  d="M 500 0 Q 300 120, 170 240"
-                  stroke="url(#dashGradient)"
-                  strokeWidth="2.5"
-                  fill="none"
-                  strokeDasharray="10 8"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.5, ease: "easeInOut" }}
-                />
-                
-                {/* Linea CENTRALE - Nutrition Scanner */}
-                <motion.path
-                  d="M 500 0 L 500 240"
-                  stroke="url(#dashGradient)"
-                  strokeWidth="2.5"
-                  fill="none"
-                  strokeDasharray="10 8"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.6, ease: "easeInOut" }}
-                />
-                
-                {/* Linea DESTRA - Body Scan */}
-                <motion.path
-                  d="M 500 0 Q 700 120, 830 240"
-                  stroke="url(#dashGradient)"
-                  strokeWidth="2.5"
-                  fill="none"
-                  strokeDasharray="10 8"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0 }}
-                  whileInView={{ pathLength: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 1.5, delay: 0.7, ease: "easeInOut" }}
-                />
-              </svg>
-            </div>
-
           </div>
 
           {/* Camera Screenshots - 3 Features */}
