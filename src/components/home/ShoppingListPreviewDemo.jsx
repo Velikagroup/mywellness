@@ -97,14 +97,9 @@ export default function ShoppingListPreviewDemo() {
         {/* Header */}
         <div className="bg-gradient-to-br from-green-50 to-teal-50 px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-teal-500 flex items-center justify-center">
-                <ShoppingCart className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">{tr.title}</h2>
-                <p className="text-xs text-gray-600">{tr.subtitle}</p>
-              </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">{tr.title}</h2>
+              <p className="text-xs text-gray-600">{tr.subtitle}</p>
             </div>
           </div>
 
