@@ -656,7 +656,13 @@ export const translations = {
       popupOther: "Altro",
       popupBullet1: "⏱️ Richiede solo 3 minuti",
       popupBullet2: "🎯 Calcoli scientifici precisi",
-      popupBullet3: "📊 I tuoi dati sono privati e sicuri"
+      popupBullet3: "📊 I tuoi dati sono privati e sicuri",
+      bodyScanTitle: "Body Scan",
+      bodyScanDesc: "Analisi completa del corpo con AI per tracciare i tuoi progressi",
+      calorieCounterTitle: "Calorie Counter",
+      calorieCounterDesc: "Scatta una foto al tuo piatto e ottieni calorie e macros istantanei",
+      nutritionScannerTitle: "Nutrition Scanner",
+      nutritionScannerDesc: "Scansiona etichette nutrizionali per valutare la qualità degli alimenti"
     },
     quiz: {
       quizIntroTitle: "Scopri la tua",
@@ -3299,7 +3305,13 @@ export const translations = {
       popupOther: "Other",
       popupBullet1: "⏱️ Takes only 3 minutes",
       popupBullet2: "🎯 Precise scientific calculations",
-      popupBullet3: "📊 Your data is private and secure"
+      popupBullet3: "📊 Your data is private and secure",
+      bodyScanTitle: "Body Scan",
+      bodyScanDesc: "Complete body analysis with AI to track your progress",
+      calorieCounterTitle: "Calorie Counter",
+      calorieCounterDesc: "Take a photo of your plate and get instant calories and macros",
+      nutritionScannerTitle: "Nutrition Scanner",
+      nutritionScannerDesc: "Scan nutrition labels to evaluate food quality"
     },
     nav: {
       dashboard: "Dashboard",
@@ -5405,7 +5417,13 @@ export const translations = {
       popupOther: "Otro",
       popupBullet1: "⏱️ Solo toma 3 minutos",
       popupBullet2: "🎯 Cálculos científicos precisos",
-      popupBullet3: "📊 Tus datos son privados y seguros"
+      popupBullet3: "📊 Tus datos son privados y seguros",
+      bodyScanTitle: "Body Scan",
+      bodyScanDesc: "Análisis completo del cuerpo con IA para seguir tu progreso",
+      calorieCounterTitle: "Contador de Calorías",
+      calorieCounterDesc: "Toma una foto de tu plato y obtén calorías y macros al instante",
+      nutritionScannerTitle: "Escáner Nutricional",
+      nutritionScannerDesc: "Escanea etiquetas nutricionales para evaluar la calidad de los alimentos"
     },
     nav: {
       dashboard: "Panel",
@@ -7637,7 +7655,13 @@ export const translations = {
       popupOther: "Outro",
       popupBullet1: "⏱️ Leva apenas 3 minutos",
       popupBullet2: "🎯 Cálculos científicos precisos",
-      popupBullet3: "📊 Seus dados são privados e seguros"
+      popupBullet3: "📊 Seus dados são privados e seguros",
+      bodyScanTitle: "Body Scan",
+      bodyScanDesc: "Análise completa do corpo com IA para acompanhar seu progresso",
+      calorieCounterTitle: "Contador de Calorias",
+      calorieCounterDesc: "Tire uma foto do seu prato e obtenha calorias e macros instantâneos",
+      nutritionScannerTitle: "Scanner Nutricional",
+      nutritionScannerDesc: "Escaneie rótulos nutricionais para avaliar a qualidade dos alimentos"
     },
     nav: {
       dashboard: "Painel",
@@ -9971,7 +9995,13 @@ export const translations = {
       popupOther: "Andere",
       popupBullet1: "⏱️ Dauert nur 3 Minuten",
       popupBullet2: "🎯 Präzise wissenschaftliche Berechnungen",
-      popupBullet3: "📊 Ihre Daten sind privat und sicher"
+      popupBullet3: "📊 Ihre Daten sind privat und sicher",
+      bodyScanTitle: "Body Scan",
+      bodyScanDesc: "Vollständige Körperanalyse mit KI zur Verfolgung Ihres Fortschritts",
+      calorieCounterTitle: "Kalorienzähler",
+      calorieCounterDesc: "Fotografieren Sie Ihren Teller und erhalten Sie sofort Kalorien und Makros",
+      nutritionScannerTitle: "Ernährungs-Scanner",
+      nutritionScannerDesc: "Scannen Sie Nährwertetiketten um die Lebensmittelqualität zu bewerten"
     },
     nav: {
       dashboard: "Dashboard",
@@ -12304,7 +12334,13 @@ export const translations = {
       popupOther: "Autre",
       popupBullet1: "⏱️ Ne prend que 3 minutes",
       popupBullet2: "🎯 Calculs scientifiques précis",
-      popupBullet3: "📊 Vos données sont privées et sécurisées"
+      popupBullet3: "📊 Vos données sont privées et sécurisées",
+      bodyScanTitle: "Body Scan",
+      bodyScanDesc: "Analyse complète du corps avec IA pour suivre vos progrès",
+      calorieCounterTitle: "Compteur de Calories",
+      calorieCounterDesc: "Prenez une photo de votre assiette et obtenez calories et macros instantanés",
+      nutritionScannerTitle: "Scanner Nutritionnel",
+      nutritionScannerDesc: "Scannez les étiquettes nutritionnelles pour évaluer la qualité des aliments"
     },
     nav: {
       dashboard: "Tableau de bord",

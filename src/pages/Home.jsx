@@ -849,8 +849,8 @@ function HomeContent() {
                 className="flex flex-col items-center"
               >
                 <BodyScanCameraPreview />
-                <h3 className="mt-6 text-xl font-bold text-gray-900">Body Scan</h3>
-                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
+                <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.bodyScanTitle')}</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.bodyScanDesc')}</p>
               </motion.div>
 
               {/* Calorie Counter */}
@@ -862,8 +862,8 @@ function HomeContent() {
                 className="flex flex-col items-center"
               >
                 <CalorieCounterCameraPreview />
-                <h3 className="mt-6 text-xl font-bold text-gray-900">Calorie Counter</h3>
-                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scatta una foto al tuo piatto e ottieni calorie e macros istantanei</p>
+                <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.calorieCounterTitle')}</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.calorieCounterDesc')}</p>
               </motion.div>
 
               {/* Nutrition Scanner */}
@@ -875,8 +875,8 @@ function HomeContent() {
                 className="flex flex-col items-center"
               >
                 <NutritionScannerCameraPreview />
-                <h3 className="mt-6 text-xl font-bold text-gray-900">Nutrition Scanner</h3>
-                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scansiona etichette nutrizionali per valutare la qualità degli alimenti</p>
+                <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.nutritionScannerTitle')}</h3>
+                <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.nutritionScannerDesc')}</p>
               </motion.div>
             </motion.div>
 
@@ -893,8 +893,8 @@ function HomeContent() {
                   style={{ width: '280px' }}
                 >
                   <BodyScanCameraPreview />
-                  <h3 className="mt-6 text-xl font-bold text-gray-900">Body Scan</h3>
-                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Analisi completa del corpo con AI per tracciare i tuoi progressi</p>
+                  <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.bodyScanTitle')}</h3>
+                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.bodyScanDesc')}</p>
                 </motion.div>
 
                 {/* Calorie Counter */}
@@ -907,8 +907,8 @@ function HomeContent() {
                   style={{ width: '280px' }}
                 >
                   <CalorieCounterCameraPreview />
-                  <h3 className="mt-6 text-xl font-bold text-gray-900">Calorie Counter</h3>
-                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scatta una foto al tuo piatto e ottieni calorie e macros istantanei</p>
+                  <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.calorieCounterTitle')}</h3>
+                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.calorieCounterDesc')}</p>
                 </motion.div>
 
                 {/* Nutrition Scanner */}
@@ -921,8 +921,8 @@ function HomeContent() {
                   style={{ width: '280px' }}
                 >
                   <NutritionScannerCameraPreview />
-                  <h3 className="mt-6 text-xl font-bold text-gray-900">Nutrition Scanner</h3>
-                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">Scansiona etichette nutrizionali per valutare la qualità degli alimenti</p>
+                  <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.nutritionScannerTitle')}</h3>
+                  <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.nutritionScannerDesc')}</p>
                 </motion.div>
               </div>
             </div>
