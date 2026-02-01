@@ -987,7 +987,7 @@ function HomeContent() {
                   className="flex flex-col items-center"
                   style={{ width: '280px' }}
                 >
-                  <BodyScanCameraPreview />
+                  <BodyScanAnimatedPreview />
                   <h3 className="mt-6 text-xl font-bold text-gray-900">{t('home.bodyScanTitle')}</h3>
                   <p className="mt-2 text-sm text-gray-600 text-center max-w-[280px]">{t('home.bodyScanDesc')}</p>
                 </motion.div>
