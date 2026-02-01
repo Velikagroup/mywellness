@@ -807,13 +807,31 @@ function HomeContent() {
                             </div>
                             <div className="text-2xl font-black text-blue-600">65<span className="text-sm">/100</span></div>
                           </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+                          </div>
+
+                          {/* Critical Areas */}
+                          <div className="mt-4 bg-gradient-to-br from-red-50 to-pink-50 border-2 border-red-400 rounded-3xl p-4">
+                          <div className="text-xs font-bold text-red-700 mb-2 flex items-center gap-1">
+                            ⚠️ CRITICAL AREAS
+                          </div>
+                          <div className="text-xs text-gray-700">Lower back, knees</div>
+                          </div>
+
+                          {/* Strengths */}
+                          <div className="mt-3 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-3xl p-4">
+                          <div className="text-xs font-bold text-green-700 mb-2 flex items-center gap-1">
+                            📈 STRENGTHS
+                          </div>
+                          <div className="text-xs text-gray-700">
+                            • Upper body<br/>• Core stability<br/>• Posture
+                          </div>
+                          </div>
+                          </div>
+                          </div>
+                          </div>
+                          </div>
+                          </div>
+                          </div>
           </div>
           
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
