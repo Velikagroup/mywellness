@@ -38,8 +38,8 @@ export const translations = {
     },
     home: {
       aiPowered: "Alimentato dall'Intelligenza Artificiale",
-      heroTitle1: "Il tuo percorso",
-      heroTitle2: "Wellness",
+      heroTitle1: "Scopri la tua vera",
+      heroTitle2: "età biologica",
       heroTitle3: "guidato dall'",
       heroTitle4: "AI",
       heroSubtitle: "Un'analisi avanzata basata su AI che rivela il tuo somatotipo, i tuoi punti di forza e di debolezza, la qualità della postura, della pelle e lo stato reale del tuo corpo.",
