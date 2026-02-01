@@ -968,17 +968,7 @@ function HomeContent() {
             </motion.div>
             </motion.div>
 
-            {/* Video Demo Section */}
-            <motion.div
-              className="mb-32"
-              initial={{ opacity: 0, y: 60 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.7, ease: "easeOut" }}>
-              <div className="max-w-5xl mx-auto" style={{ height: '500px', minHeight: '500px', maxHeight: '500px' }}>
-                <AppDemoFlow />
-              </div>
-            </motion.div>
+
 
             {/* Step 3 - Meal Plan */}
             <motion.div

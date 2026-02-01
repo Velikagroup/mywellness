@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Play } from 'lucide-react';
+import AppDemoFlow from '@/components/home/AppDemoFlow';
 
 export default function Video() {
   const navigate = useNavigate();
@@ -258,15 +259,9 @@ export default function Video() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="w-full h-full flex items-center justify-center bg-white"
+          className="w-full h-full flex items-center justify-center"
           >
-          <button
-            onClick={restartAnimation}
-            className="bg-[#26847F] hover:bg-[#1f6b66] text-white rounded-full p-8 shadow-2xl transition-all hover:scale-110"
-            aria-label="Riavvia animazione"
-          >
-            <Play className="w-20 h-20" fill="currentColor" />
-          </button>
+            <AppDemoFlow />
           </motion.div>
           )}
           </div>
