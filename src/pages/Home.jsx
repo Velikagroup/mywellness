@@ -757,7 +757,7 @@ function HomeContent() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-2">
             <div className="flex flex-col items-center gap-2">
-              <div className="rounded-full bg-red-500 flex items-center justify-center border-6 border-[var(--brand-primary)]" style={{ width: '80px', height: '80px' }}>
+              <div className="rounded-full bg-red-500 flex items-center justify-center border-4 border-[var(--brand-primary)]" style={{ width: '80px', height: '80px' }}>
                 <ScanLine className="w-[40px] h-[40px] text-white" strokeWidth={2.5} />
               </div>
               <Button
