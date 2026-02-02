@@ -367,13 +367,31 @@ Deno.serve(async (req) => {
                         }
                     }
 
+                    // ✅ Safe date conversion
+                    let lastPaymentDate = null;
+                    try {
+                        if (invoice.created && typeof invoice.created === 'number' && invoice.created > 0) {
+                            const dateObj = new Date(invoice.created * 1000);
+                            if (!isNaN(dateObj.getTime())) {
+                                lastPaymentDate = dateObj.toISOString();
+                            }
+                        }
+                    } catch (dateError) {
+                        console.warn('⚠️ Error parsing payment date:', dateError.message);
+                    }
+
                     // Update user payment info + subscription_plan
-                    await base44.asServiceRole.entities.User.update(user.id, {
-                        last_payment_date: new Date(invoice.created * 1000).toISOString(),
-                        last_payment_amount: amount,
+                    const updatePayload = {
                         subscription_status: 'active',
-                        subscription_plan: planFromSubscription
-                    });
+                        subscription_plan: planFromSubscription,
+                        last_payment_amount: amount
+                    };
+                    
+                    if (lastPaymentDate) {
+                        updatePayload.last_payment_date = lastPaymentDate;
+                    }
+
+                    await base44.asServiceRole.entities.User.update(user.id, updatePayload);
 
                     // Create transaction record
                     const transaction = await base44.asServiceRole.entities.Transaction.create({
