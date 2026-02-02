@@ -66,8 +66,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
               if (!currentUser.quiz_completed) {
                 navigate(createLocalizedPageUrl('Quiz', language), { replace: true });
               } else {
-                // Se ha completato il quiz ma non è abbonato, manda a pricing
-                navigate(createLocalizedPageUrl('pricing', language), { replace: true });
+                // Se ha completato il quiz ma non è abbonato, manda a PostQuizSubscription
+                navigate(createLocalizedPageUrl('PostQuizSubscription', language), { replace: true });
               }
             }
           }
