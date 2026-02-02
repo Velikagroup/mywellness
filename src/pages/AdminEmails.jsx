@@ -642,6 +642,7 @@ ${ctaHtml}
 <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
 <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+<p style="margin: 5px 0; font-size: 11px;"><a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: #26847F; text-decoration: none; font-weight: 600;">Stripe Portal</a></p>
 </td>
 </tr>
 </table>
@@ -879,6 +880,7 @@ ${ctaText}
 <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
 <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+<p style="margin: 5px 0; font-size: 11px;"><a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: #26847F; text-decoration: none; font-weight: 600;">Stripe Portal</a></p>
 </td>
 </tr>
 </table>
@@ -1113,6 +1115,7 @@ ${ctaText}
 <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
 <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+<p style="margin: 5px 0; font-size: 11px;"><a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: #26847F; text-decoration: none; font-weight: 600;">Stripe Portal</a></p>
 </td>
 </tr>
 </table>
@@ -1296,6 +1299,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
 <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
 <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+<p style="margin: 5px 0; font-size: 11px;"><a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: #26847F; text-decoration: none; font-weight: 600;">Stripe Portal</a></p>
 </td>
 </tr>
 </table>
