@@ -676,9 +676,9 @@ Deno.serve(async (req) => {
                     if (subscription.items?.data?.[0]?.price) {
                         const priceId = subscription.items.data[0].price.id;
                         const PRICE_MAP = {
-                            // Nuovi prezzi 2025 (trial solo su annuale)
-                            'price_REPLACE_MONTHLY': 'base',
-                            'price_REPLACE_ANNUAL': 'base',
+                            // Nuovi prezzi 2025
+                            'price_1SubPS2OXBs6ZYwlbjszSDt9': 'base',      // Monthly €9.99
+                            'price_1SubPS2OXBs6ZYwlrhculB4e': 'base',      // Yearly €49.99
                             // Vecchi prezzi (per retrocompatibilità)
                             'price_1SXADj2OXBs6ZYwlY8id3Yhy': 'base',
                             'price_1SXADj2OXBs6ZYwlywQCp6oR': 'base',
