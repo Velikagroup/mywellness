@@ -395,7 +395,7 @@ ${JSON.stringify(editingContent, null, 2)}`,
         const baseId = previewEmail.id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
         const currentLangNew = previewEmail.id.match(/_(it|en|es|pt|de|fr)$/)?.[1] || 'it';
         const isMultilingualNew = ['weekly_report', 'cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h',
-                                     'base_welcome', 'pro_welcome', 'premium_welcome', 'standard_free_welcome',
+                                     'base_welcome', 'pro_welcome', 'premium_welcome', 'standard_free_welcome', 'welcome',
                                      'landing_new_user', 'landing_existing_user', 'password_reset_confirmed',
                                      'plan_upgrade', 'plan_downgrade', 'cancellation_confirmation', 'quiz_completed_abandoned'].includes(baseId);
         
