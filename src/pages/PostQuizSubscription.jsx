@@ -270,7 +270,7 @@ export default function PostQuizSubscription() {
                    clearInterval(pollInterval);
                    navigate(createPageUrl('Dashboard'), { replace: true });
                  }
-               }, 1000);
+               }, 500);
              }
           });
         }).catch(() => {
