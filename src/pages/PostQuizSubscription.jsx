@@ -25,8 +25,14 @@ export default function PostQuizSubscription() {
         setUser(currentUser);
         
         console.log('PostQuizSubscription - User subscription_status:', currentUser.subscription_status);
+        console.log('PostQuizSubscription - User stripe_subscription_id:', currentUser.stripe_subscription_id);
         
-        if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
+        // ✅ Controlla ENTRAMBI: subscription_status O se ha uno stripe_subscription_id (ha pagato)
+        const hasActiveSubscription = currentUser.subscription_status === 'active' || 
+                                      currentUser.subscription_status === 'trial' ||
+                                      (currentUser.stripe_subscription_id && currentUser.stripe_subscription_id.length > 0);
+        
+        if (hasActiveSubscription) {
           console.log('✅ User has valid subscription, navigating to Dashboard');
           navigate(createPageUrl('Dashboard'), { replace: true });
           return;
