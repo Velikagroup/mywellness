@@ -230,9 +230,18 @@ export default function PostQuizSubscription() {
               setIsLoading(false);
             } else {
                e.complete('success');
-               setTimeout(() => {
-                 navigate(createPageUrl('Dashboard'), { replace: true });
-               }, 2000);
+               console.log('✅ Payment successful, waiting for subscription to activate...');
+               // Aspetta e ricarica i dati utente per confermare l'abbonamento
+               setTimeout(async () => {
+                 try {
+                   const updatedUser = await base44.auth.me();
+                   console.log('Updated user subscription_status:', updatedUser.subscription_status);
+                   navigate(createPageUrl('Dashboard'), { replace: true });
+                 } catch (err) {
+                   console.error('Error reloading user:', err);
+                   navigate(createPageUrl('Dashboard'), { replace: true });
+                 }
+               }, 2500);
              }
           });
         }).catch(() => {
