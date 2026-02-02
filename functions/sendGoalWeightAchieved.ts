@@ -43,15 +43,41 @@ Deno.serve(async (req) => {
         const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
 
         // 🔐 GENERA COUPON PERSONALIZZATO
-        const couponResponse = await base44.asServiceRole.functions.invoke('generatePersonalCoupon', {
-            userId: user.id,
-            baseCode: 'WINNER30',
-            discountValue: 30,
-            emailTrigger: 'goal_weight_achieved'
+        function generatePersonalCode(userId, baseCode) {
+            const hash = userId.split('').reduce((acc, char) => {
+                return ((acc << 5) - acc) + char.charCodeAt(0);
+            }, 0);
+            const shortHash = Math.abs(hash).toString(36).toUpperCase().slice(0, 6);
+            return `${baseCode}_${shortHash}`;
+        }
+
+        const personalCouponCode = generatePersonalCode(user.id, 'WINNER30');
+
+        // Verifica se il coupon esiste già, altrimenti crealo
+        const existingCoupons = await base44.asServiceRole.entities.Coupon.filter({
+            code: personalCouponCode
         });
 
-        const personalCouponCode = couponResponse.coupon_code;
-        console.log(`🎫 Generated personal coupon: ${personalCouponCode}`);
+        if (existingCoupons.length === 0) {
+            await base44.asServiceRole.entities.Coupon.create({
+                code: personalCouponCode,
+                discount_type: "percentage",
+                discount_value: 30,
+                is_active: true,
+                expires_at: null
+            });
+            console.log(`✅ Created coupon: ${personalCouponCode}`);
+        } else {
+            console.log(`ℹ️ Coupon already exists: ${personalCouponCode}`);
+        }
+
+        // Marca come inviata
+        await base44.asServiceRole.entities.User.update(user.id, {
+            goal_achieved_email_sent: true,
+            goal_achieved_date: new Date().toISOString()
+        });
+
+        console.log(`🎫 Using coupon: ${personalCouponCode}`);
 
         const emailBody = generateGoalEmail(user, weightLost, daysToGoal, personalCouponCode, appUrl);
 
