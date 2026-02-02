@@ -322,6 +322,7 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                                 </tr>
                             </table>
                             ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>` : ''}
+                            ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
                         </td>
                     </tr>
                 </table>
