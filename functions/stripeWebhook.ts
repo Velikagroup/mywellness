@@ -177,6 +177,14 @@ Deno.serve(async (req) => {
 
                     console.log(`✅ Transaction recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
 
+                    // ✅ UPDATE USER SUBSCRIPTION STATUS AND PLAN
+                    await base44.asServiceRole.entities.User.update(user.id, {
+                        subscription_status: 'active',
+                        subscription_plan: plan,
+                        stripe_subscription_id: session.subscription || user.stripe_subscription_id
+                    });
+                    console.log(`✅ User subscription updated: status=active, plan=${plan}`);
+
                     // Send welcome email if not landing offer
                     if (!isLandingOffer && ['base', 'pro', 'premium'].includes(plan)) {
                         try {
