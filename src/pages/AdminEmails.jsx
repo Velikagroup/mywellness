@@ -1032,6 +1032,7 @@ ${ctaText}
     const ctaText = template.call_to_action_text || '🚀 Riprendi il Tuo Percorso Ora';
     const ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`).replace('{app_url}', appUrl);
     const footerQuote = template.footer_quote || '"Il miglior momento per iniziare era ieri. Il secondo miglior momento è adesso."';
+    const footerText = safeRenderField(template.footer_text) || '';
 
     // Determine colors based on email type
     let boxBg, boxBorder, boxTextColor, boxSubtitleColor, buttonGradient;
