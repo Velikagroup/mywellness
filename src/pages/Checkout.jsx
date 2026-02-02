@@ -674,20 +674,20 @@ export default function Checkout() {
       }
 
       console.log('✅ Subscription created successfully!');
-      
+
       // Aggiorna lo stato utente in tempo reale prima di reindirizzare
       try {
-        const updatedUser = await base44.auth.me();
         await base44.auth.updateMe({ 
-          subscription_status: 'active',
-          ...updatedUser
+          subscription_status: 'active'
         });
       } catch (e) {
-        console.log('Aggiornamento locale subscription:', e);
+        console.log('Aggiornamento subscription:', e);
       }
-      
-      // Redirect to dashboard
-      window.location.href = createPageUrl('Dashboard');
+
+      // Reload page to refresh user state, then redirect to dashboard
+      setTimeout(() => {
+        window.location.href = createPageUrl('Dashboard');
+      }, 500);
 
     } catch (error) {
       console.error('💥 Setup error:', error);
