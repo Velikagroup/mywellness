@@ -718,6 +718,22 @@ Deno.serve(async (req) => {
                         }
                     }
 
+                    // 📧 Invia email benvenuto piano se è una nuova subscription PAGATA (non trial)
+                    if (event.type === 'customer.subscription.created' && subscription.status === 'active') {
+                        try {
+                            console.log(`📧 Sending ${updateData.subscription_plan} plan welcome email...`);
+                            await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
+                                userId: user.id,
+                                userEmail: user.email,
+                                userName: user.full_name,
+                                plan: updateData.subscription_plan || 'base'
+                            });
+                            console.log('✅ Plan welcome email sent');
+                        } catch (emailError) {
+                            console.error('⚠️ Plan welcome email failed:', emailError.message);
+                        }
+                    }
+
                     // 📧 Se passa da trial ad attivo, invia email conferma
                     if (event.type === 'customer.subscription.updated' && 
                         subscription.status === 'active' && 
