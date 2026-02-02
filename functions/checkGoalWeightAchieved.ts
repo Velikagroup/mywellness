@@ -20,12 +20,11 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
         }
 
-        // Ottieni tutti gli utenti con subscription attiva
+        // Ottieni tutti gli utenti con subscription attiva o trial
         const allUsers = await base44.asServiceRole.entities.User.list();
         const activeUsers = allUsers.filter(u => 
-            u.subscription_status === 'active' && 
+            (u.subscription_status === 'active' || u.subscription_status === 'trial') && 
             u.target_weight && 
-            u.current_weight &&
             !u.goal_achieved_email_sent // Flag per non inviare più volte
         );
 
@@ -36,7 +35,19 @@ Deno.serve(async (req) => {
         for (const user of activeUsers) {
             try {
                 const targetWeight = parseFloat(user.target_weight);
-                const currentWeight = parseFloat(user.current_weight);
+                
+                // Prendi il peso più recente dallo storico
+                const weightHistory = await base44.asServiceRole.entities.WeightHistory.filter(
+                    { user_id: user.id },
+                    ['-date'],
+                    1
+                );
+                
+                if (weightHistory.length === 0) {
+                    continue; // Nessun peso registrato
+                }
+                
+                const currentWeight = parseFloat(weightHistory[0].weight);
 
                 // Tolleranza di 0.5 kg per raggiungimento obiettivo
                 const hasReachedGoal = currentWeight <= targetWeight + 0.5;
