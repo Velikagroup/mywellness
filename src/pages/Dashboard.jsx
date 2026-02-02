@@ -363,7 +363,7 @@ export default function Dashboard() {
   };
 
   const handlePhotoAnalyze = (meal, initialFile = null) => {
-    if (!hasFeatureAccess(user.subscription_plan, 'meal_photo_analysis')) {
+    if (!hasFeatureAccess(user.subscription_plan, 'meal_photo_analysis', user.subscription_status)) {
       setShowUpgradeModal(true);
       return;
     }
