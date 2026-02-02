@@ -1,4 +1,4 @@
-import { Base44 } from 'npm:@base44/sdk@0.8.4';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 import Stripe from 'npm:stripe';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
@@ -22,11 +22,8 @@ Deno.serve(async (req) => {
         const body = await req.text();
         console.log('📦 Request body length:', body.length);
         
-        // ✅ Initialize Base44 SDK with service role BEFORE using the request body
-        const base44 = new Base44({
-            appId: Deno.env.get('BASE44_APP_ID'),
-            serviceRole: true
-        });
+        // ✅ Initialize Base44 SDK with service role from request
+        const base44 = createClientFromRequest(req);
         console.log('✅ Base44 SDK initialized');
 
         // Validate Stripe signature
