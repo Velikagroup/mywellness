@@ -257,7 +257,8 @@ export default function AdminEmails() {
       const isMultilingualEmail = ['weekly_report', 'cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h', 
                                     'base_welcome', 'pro_welcome', 'premium_welcome', 'standard_free_welcome', 'welcome',
                                     'landing_new_user', 'landing_existing_user', 'password_reset_confirmed',
-                                    'plan_upgrade', 'plan_downgrade', 'cancellation_confirmation', 'quiz_completed_abandoned'].includes(baseTemplateId);
+                                    'plan_upgrade', 'plan_downgrade', 'cancellation_confirmation', 'quiz_completed_abandoned',
+                                    'goal_weight_achieved'].includes(baseTemplateId);
       
       if (previewEmail?.template?.id) {
         // Update del template corrente
@@ -397,7 +398,8 @@ ${JSON.stringify(editingContent, null, 2)}`,
         const isMultilingualNew = ['weekly_report', 'cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h',
                                      'base_welcome', 'pro_welcome', 'premium_welcome', 'standard_free_welcome', 'welcome',
                                      'landing_new_user', 'landing_existing_user', 'password_reset_confirmed',
-                                     'plan_upgrade', 'plan_downgrade', 'cancellation_confirmation', 'quiz_completed_abandoned'].includes(baseId);
+                                     'plan_upgrade', 'plan_downgrade', 'cancellation_confirmation', 'quiz_completed_abandoned',
+                                     'goal_weight_achieved'].includes(baseId);
         
         if (isMultilingualNew) {
           const otherLangsNew = languages.filter(lang => lang !== currentLangNew);
