@@ -693,8 +693,9 @@ Deno.serve(async (req) => {
                         }
                     }
 
+                    updateData.stripe_customer_id = customerId;  // 🔗 SALVA il stripe_customer_id
                     await base44.asServiceRole.entities.User.update(user.id, updateData);
-                    console.log(`✅ Subscription updated for user ${user.id}`);
+                    console.log(`✅ Subscription updated for user ${user.id} with stripe_customer_id: ${customerId}`);
 
                     // 📧 Invia email benvenuto trial se è una nuova subscription con trial
                     if (event.type === 'customer.subscription.created' && subscription.status === 'trialing') {
