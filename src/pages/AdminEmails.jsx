@@ -131,19 +131,21 @@ export default function AdminEmails() {
     };
 
     const categories = {};
-    const addedBaseIds = new Set();
+    const processedBaseIds = new Set();
     
+    // Prima raggruppa tutti i template per baseId
+    const templatesByBaseId = {};
     emailTemplates.forEach(template => {
       const baseId = template.template_id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
-      
-      // Se questo base ID è già stato aggiunto, salta
-      const currentLangSuffix = `_${selectedLanguage}`;
-      const isCurrentLangTemplate = template.template_id.endsWith(currentLangSuffix);
-      
-      // Aggiungi solo la versione della lingua corrente
-      if (!isCurrentLangTemplate && addedBaseIds.has(baseId)) {
-        return;
+      if (!templatesByBaseId[baseId]) {
+        templatesByBaseId[baseId] = [];
       }
+      templatesByBaseId[baseId].push(template);
+    });
+    
+    // Poi processa ogni gruppo mostrando solo la versione nella lingua selezionata
+    Object.entries(templatesByBaseId).forEach(([baseId, templates]) => {
+      if (processedBaseIds.has(baseId)) return;
       
       let category = null;
       if (baseId.includes('welcome')) category = 'critical';
@@ -154,6 +156,11 @@ export default function AdminEmails() {
       
       if (!category) return;
       
+      // Trova la versione nella lingua selezionata
+      const langTemplate = templates.find(t => t.template_id === `${baseId}_${selectedLanguage}`) ||
+                          templates.find(t => t.template_id === baseId) ||
+                          templates[0];
+      
       if (!categories[category]) {
         categories[category] = {
           ...categoryDefs[category],
@@ -161,22 +168,14 @@ export default function AdminEmails() {
         };
       }
 
-      // Cerca la versione nella lingua corrente
-      const langTemplate = emailTemplates.find(t => 
-        t.template_id === `${baseId}_${selectedLanguage}` || 
-        (t.template_id === baseId && !t.template_id.match(/_it$|_en$|_es$|_pt$|_de$|_fr$/))
-      );
-      
-      const templateToUse = langTemplate || template;
-      
       categories[category].emails.push({
-        id: templateToUse.template_id,
-        name: templateToUse.name,
-        trigger: templateToUse.trigger_source || 'Automatico',
+        id: langTemplate.template_id,
+        name: langTemplate.name,
+        trigger: langTemplate.trigger_source || 'Automatico',
         function: 'sendEmailUnified'
       });
       
-      addedBaseIds.add(baseId);
+      processedBaseIds.add(baseId);
     });
 
     return categories;
