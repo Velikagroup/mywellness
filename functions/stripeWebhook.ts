@@ -336,11 +336,43 @@ Deno.serve(async (req) => {
                     console.log('✅ User found:', user.id);
                     const trafficSource = invoice.metadata?.traffic_source || user.traffic_source || 'direct';
 
-                    // Update user payment info
+                    // ✅ Determina il piano dalla subscription
+                    let planFromSubscription = user.subscription_plan || 'base';
+                    if (subscriptionId) {
+                        try {
+                            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+                            if (subscription.items?.data?.[0]?.price) {
+                                const priceId = subscription.items.data[0].price.id;
+                                const PRICE_MAP = {
+                                    'price_1SXADj2OXBs6ZYwlY8id3Yhy': 'base',
+                                    'price_1SXADj2OXBs6ZYwlywQCp6oR': 'base',
+                                    'price_1SXADj2OXBs6ZYwlqdFI6aUU': 'pro',
+                                    'price_1SXADk2OXBs6ZYwl0zZsxETJ': 'pro',
+                                    'price_1SXADk2OXBs6ZYwlxiqqQqVA': 'premium',
+                                    'price_1SXADl2OXBs6ZYwl0PlnAeX9': 'premium',
+                                    'price_1SNDMW2OXBs6ZYwlp5UgCO8Y': 'base',
+                                    'price_1SNDMW2OXBs6ZYwlUfiZP4Su': 'base',
+                                    'price_1SNDMX2OXBs6ZYwlx6jXOgFf': 'pro',
+                                    'price_1SNDMX2OXBs6ZYwlvGtzkQKA': 'pro',
+                                    'price_1SNDMX2OXBs6ZYwlKR7FIudX': 'premium',
+                                    'price_1SNDMY2OXBs6ZYwlcZzmNSnk': 'premium'
+                                };
+                                if (PRICE_MAP[priceId]) {
+                                    planFromSubscription = PRICE_MAP[priceId];
+                                    console.log(`✅ Plan determined from subscription price: ${planFromSubscription}`);
+                                }
+                            }
+                        } catch (subError) {
+                            console.warn('⚠️ Could not retrieve subscription to determine plan:', subError.message);
+                        }
+                    }
+
+                    // Update user payment info + subscription_plan
                     await base44.asServiceRole.entities.User.update(user.id, {
                         last_payment_date: new Date(invoice.created * 1000).toISOString(),
                         last_payment_amount: amount,
-                        subscription_status: 'active'
+                        subscription_status: 'active',
+                        subscription_plan: planFromSubscription
                     });
 
                     // Create transaction record
