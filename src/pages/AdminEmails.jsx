@@ -1501,11 +1501,17 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
     return colors[color] || 'bg-gray-100 text-gray-700 border-gray-200';
   };
 
-  const filteredCategories = selectedCategory === 'all' 
-    ? emailCategories 
-    : { [selectedCategory]: emailCategories[selectedCategory] };
+  const filteredCategories = React.useMemo(() => {
+    return selectedCategory === 'all' 
+      ? emailCategories 
+      : { [selectedCategory]: emailCategories[selectedCategory] };
+  }, [selectedCategory, emailCategories]);
 
-  const totalEmails = Object.values(emailCategories).reduce((sum, cat) => sum + cat.emails.length, 0);
+  const totalEmails = React.useMemo(() => 
+    Object.values(emailCategories).reduce((sum, cat) => sum + cat.emails.length, 0),
+    [emailCategories]
+  );
+  
   const activeEmails = totalEmails;
 
   const draftBroadcasts = broadcasts.filter(b => b.status === 'draft');
