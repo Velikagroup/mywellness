@@ -255,7 +255,7 @@ export default function AdminEmails() {
       
       // Determina quali email devono essere tradotte (solo quelle multilingua)
       const isMultilingualEmail = ['weekly_report', 'cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h', 
-                                    'base_welcome', 'pro_welcome', 'premium_welcome', 'standard_free_welcome',
+                                    'base_welcome', 'pro_welcome', 'premium_welcome', 'standard_free_welcome', 'welcome',
                                     'landing_new_user', 'landing_existing_user', 'password_reset_confirmed',
                                     'plan_upgrade', 'plan_downgrade', 'cancellation_confirmation', 'quiz_completed_abandoned'].includes(baseTemplateId);
       
