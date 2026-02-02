@@ -3,8 +3,9 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 /**
  * 📧 SEND WELCOME EMAIL ON PURCHASE
  * 
- * Triggered quando l'utente completa un pagamento (Transaction creata)
- * Invia automaticamente la mail di benvenuto con dettagli del piano
+ * Triggered quando:
+ * - L'utente completa un pagamento (Transaction creata con status=succeeded)
+ * - L'utente inizia il trial (UserOnboarding creato)
  */
 
 Deno.serve(async (req) => {
@@ -17,20 +18,38 @@ Deno.serve(async (req) => {
         // Payload da entity automation
         const { event, data } = body;
         
-        if (!event || event.type !== 'create') {
+        if (!event) {
+            return Response.json({ success: false, message: 'No event' });
+        }
+        
+        if (event.type !== 'create') {
             return Response.json({ success: false, message: 'Not a create event' });
         }
         
-        const transaction = data;
-        const userId = transaction.user_id;
-        const status = transaction.status;
+        let userId, userEmail;
         
-        console.log(`💳 New transaction for user ${userId}, status: ${status}`);
-        
-        // Solo invia se il pagamento è riuscito
-        if (status !== 'succeeded') {
-            console.log('⏭️ Transaction not succeeded, skipping welcome email');
-            return Response.json({ success: true, message: 'Payment not succeeded' });
+        // Caso 1: Transaction (pagamento)
+        if (event.entity_name === 'Transaction') {
+            const transaction = data;
+            userId = transaction.user_id;
+            const status = transaction.status;
+            
+            console.log(`💳 New transaction for user ${userId}, status: ${status}`);
+            
+            // Solo invia se il pagamento è riuscito
+            if (status !== 'succeeded') {
+                console.log('⏭️ Transaction not succeeded, skipping welcome email');
+                return Response.json({ success: true, message: 'Payment not succeeded' });
+            }
+        } 
+        // Caso 2: UserOnboarding (trial)
+        else if (event.entity_name === 'UserOnboarding') {
+            const onboarding = data;
+            userId = onboarding.user_id;
+            console.log(`🎯 UserOnboarding created for user ${userId}`);
+        }
+        else {
+            return Response.json({ success: false, message: 'Unknown entity type' });
         }
         
         // Ottieni dati utente
@@ -41,44 +60,32 @@ Deno.serve(async (req) => {
             return Response.json({ success: false, message: 'User not found' });
         }
         
+        userEmail = user.email;
+        
         // Recupera lingua preferita
         const userLang = user.preferred_language || 'it';
         const templateId = `welcome_${userLang}`;
         
-        // Calcola data di fine abbonamento
-        let subscriptionEndDate = 'N/A';
-        if (transaction.billing_period === 'monthly') {
-            const endDate = new Date();
-            endDate.setMonth(endDate.getMonth() + 1);
-            subscriptionEndDate = endDate.toLocaleDateString(userLang === 'it' ? 'it-IT' : userLang === 'en' ? 'en-US' : userLang === 'es' ? 'es-ES' : 'pt-BR');
-        } else if (transaction.billing_period === 'yearly') {
-            const endDate = new Date();
-            endDate.setFullYear(endDate.getFullYear() + 1);
-            subscriptionEndDate = endDate.toLocaleDateString(userLang === 'it' ? 'it-IT' : userLang === 'en' ? 'en-US' : userLang === 'es' ? 'es-ES' : 'pt-BR');
-        }
-        
-        console.log(`📧 Sending welcome email to ${user.email} (${templateId})`);
+        console.log(`📧 Sending welcome email to ${userEmail} (${templateId})`);
         
         // Invia email tramite sistema unificato
         await base44.asServiceRole.functions.invoke('sendEmailUnified', {
             userId: user.id,
-            userEmail: user.email,
+            userEmail: userEmail,
             templateId: templateId,
             variables: {
-                user_name: user.full_name || 'Utente',
-                subscription_plan: transaction.plan || 'Piano',
-                subscription_end_date: subscriptionEndDate
+                user_name: user.full_name || 'Utente'
             },
             language: userLang,
             triggerSource: 'sendWelcomeEmailOnPurchase'
         });
         
-        console.log(`✅ Welcome email sent to ${user.email}`);
+        console.log(`✅ Welcome email sent to ${userEmail}`);
         
         return Response.json({ 
             success: true,
             message: 'Welcome email sent',
-            email: user.email
+            email: userEmail
         });
         
     } catch (error) {
