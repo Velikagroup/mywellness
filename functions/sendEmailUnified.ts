@@ -159,6 +159,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                                 </tr>
                             </table>` : ''}
                             ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
+                            ${stripePortalLink}
                         </td>
                     </tr>
                 </table>
