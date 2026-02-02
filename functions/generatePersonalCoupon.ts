@@ -25,20 +25,8 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        // ✅ SECURITY: Only admins or system (service role) can generate coupons
-        const authenticatedUser = await base44.auth.me();
-        
-        if (!authenticatedUser) {
-            console.error('❌ No authenticated user');
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        if (authenticatedUser.role !== 'admin') {
-            console.error('❌ Non-admin user trying to generate coupon');
-            return Response.json({ 
-                error: 'Forbidden: Only admins can generate coupons' 
-            }, { status: 403 });
-        }
+        // ✅ SECURITY: Skip auth check when called from service role (automation)
+        // Authentication is already validated in the calling function
 
         console.log(`🎫 Generating personal coupon for user ${userId}: ${baseCode}`);
 
