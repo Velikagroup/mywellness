@@ -62,7 +62,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             const validStatuses = ['active', 'trial'];
             if (!validStatuses.includes(currentUser.subscription_status)) {
               console.log(`🚫 Access blocked: subscription_status = ${currentUser.subscription_status}`);
-              navigate(createLocalizedPageUrl('pricing', language), { replace: true });
+              // Se l'utente non ha mai completato il quiz, manda al quiz
+              if (!currentUser.quiz_completed) {
+                navigate(createLocalizedPageUrl('Quiz', language), { replace: true });
+              } else {
+                // Se ha completato il quiz ma non è abbonato, manda a pricing
+                navigate(createLocalizedPageUrl('pricing', language), { replace: true });
+              }
             }
           }
         }
