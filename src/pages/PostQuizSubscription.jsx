@@ -240,18 +240,37 @@ export default function PostQuizSubscription() {
               setIsLoading(false);
             } else {
                e.complete('success');
-               console.log('✅ Payment successful, waiting for subscription to activate...');
-               // Aspetta e ricarica i dati utente per confermare l'abbonamento
-               setTimeout(async () => {
+               console.log('✅ Payment successful, polling for subscription update...');
+
+               // Polling: aspetta fino a 10 secondi che il webhook aggiorni l'utente
+               let attempts = 0;
+               const maxAttempts = 10;
+               const pollInterval = setInterval(async () => {
+                 attempts++;
+                 console.log(`⏳ Polling attempt ${attempts}/${maxAttempts}...`);
+
                  try {
                    const updatedUser = await base44.auth.me();
-                   console.log('Updated user subscription_status:', updatedUser.subscription_status);
-                   navigate(createPageUrl('Dashboard'), { replace: true });
+                   console.log('Check:', updatedUser.subscription_status, updatedUser.subscription_plan);
+
+                   const validStatuses = ['active', 'trial'];
+                   const validPlans = ['premium', 'standard', 'base', 'pro'];
+                   const hasValidSubscription = validStatuses.includes(updatedUser.subscription_status) || validPlans.includes(updatedUser.subscription_plan);
+
+                   if (hasValidSubscription) {
+                     clearInterval(pollInterval);
+                     navigate(createPageUrl('Dashboard'), { replace: true });
+                     return;
+                   }
                  } catch (err) {
-                   console.error('Error reloading user:', err);
+                   console.error('Poll error:', err);
+                 }
+
+                 if (attempts >= maxAttempts) {
+                   clearInterval(pollInterval);
                    navigate(createPageUrl('Dashboard'), { replace: true });
                  }
-               }, 2500);
+               }, 1000);
              }
           });
         }).catch(() => {
