@@ -402,11 +402,12 @@ Deno.serve(async (req) => {
                         console.warn('⚠️ Error parsing payment date:', dateError.message);
                     }
 
-                    // Update user payment info + subscription_plan
+                    // Update user payment info + subscription_plan + stripe_customer_id
                     const updatePayload = {
                         subscription_status: 'active',
                         subscription_plan: planFromSubscription,
-                        last_payment_amount: amount
+                        last_payment_amount: amount,
+                        stripe_customer_id: customerId  // 🔗 SALVA il stripe_customer_id
                     };
                     
                     if (lastPaymentDate) {
@@ -414,6 +415,7 @@ Deno.serve(async (req) => {
                     }
 
                     await base44.asServiceRole.entities.User.update(user.id, updatePayload);
+                    console.log(`✅ User updated with stripe_customer_id: ${customerId}`);
 
                     // Create transaction record
                     const transaction = await base44.asServiceRole.entities.Transaction.create({
