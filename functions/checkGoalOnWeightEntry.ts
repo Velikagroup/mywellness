@@ -64,6 +64,10 @@ Deno.serve(async (req) => {
                 ? Math.floor((new Date(weightHistory[0].date) - new Date(weightHistory[weightHistory.length - 1].date)) / (1000 * 60 * 60 * 24))
                 : 0;
 
+            // Recupera lingua preferita utente
+            const userLang = user.preferred_language || 'it';
+            const templateId = `goal_weight_achieved_${userLang}`;
+
             // Marca come inviata sul profilo utente
             await base44.asServiceRole.entities.User.update(user.id, {
                 goal_achieved_email_sent: true,
@@ -74,13 +78,13 @@ Deno.serve(async (req) => {
             await base44.asServiceRole.functions.invoke('sendEmailUnified', {
                 userId: user.id,
                 userEmail: user.email,
-                templateId: 'goal_weight_achieved_it',
+                templateId: templateId,
                 variables: {
                     user_name: user.full_name || 'Campione',
                     weight_lost: weightLost,
                     days_to_goal: daysToGoal
                 },
-                language: 'it',
+                language: userLang,
                 triggerSource: 'checkGoalOnWeightEntry'
             });
             
