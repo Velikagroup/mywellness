@@ -131,9 +131,19 @@ export default function AdminEmails() {
     };
 
     const categories = {};
+    const addedBaseIds = new Set();
     
     emailTemplates.forEach(template => {
       const baseId = template.template_id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
+      
+      // Se questo base ID è già stato aggiunto, salta
+      const currentLangSuffix = `_${currentLang}`;
+      const isCurrentLangTemplate = template.template_id.endsWith(currentLangSuffix);
+      
+      // Aggiungi solo la versione della lingua corrente
+      if (!isCurrentLangTemplate && addedBaseIds.has(baseId)) {
+        return;
+      }
       
       let category = null;
       if (baseId.includes('welcome')) category = 'critical';
@@ -151,16 +161,26 @@ export default function AdminEmails() {
         };
       }
 
+      // Cerca la versione nella lingua corrente
+      const langTemplate = emailTemplates.find(t => 
+        t.template_id === `${baseId}_${currentLang}` || 
+        (t.template_id === baseId && !t.template_id.match(/_it$|_en$|_es$|_pt$|_de$|_fr$/))
+      );
+      
+      const templateToUse = langTemplate || template;
+      
       categories[category].emails.push({
-        id: template.template_id,
-        name: template.name,
-        trigger: template.trigger_source || 'Automatico',
+        id: templateToUse.template_id,
+        name: templateToUse.name,
+        trigger: templateToUse.trigger_source || 'Automatico',
         function: 'sendEmailUnified'
       });
+      
+      addedBaseIds.add(baseId);
     });
 
     return categories;
-  }, [emailTemplates]);
+  }, [emailTemplates, currentLang]);
 
   const loadBroadcasts = async () => {
     try {
