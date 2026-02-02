@@ -169,20 +169,43 @@ function generateEmailHtml(template, variables, language = 'it') {
 
 function generateCartAbandonedHtml(template, variables, appUrl, emailType, language = 'it') {
     const userName = variables.user_name || 'Utente';
-    const greeting = template.greeting ? template.greeting.replace(/{user_name}/g, userName) : '';
-    const introText = template.intro_text || '';
-    const secondParagraph = template.second_paragraph || '';
+    
+    // Sostituisci placeholder in tutti i campi
+    let greeting = template.greeting || '';
+    let introText = template.intro_text || '';
+    let secondParagraph = template.second_paragraph || '';
+    let featuresTitle = template.features_section_title || '❌ Ecco cosa ti stai perdendo:';
+    let closingText = template.closing_text || '';
+    let urgencyTitle = template.urgency_title || '⏰ Il momento è ADESSO';
+    let urgencySubtitle = template.urgency_subtitle || '';
+    let ctaText = template.call_to_action_text || '🚀 Completa il Checkout Ora';
+    let ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`);
+    let footerQuote = template.footer_quote || '';
+    let footerText = template.footer_text || '';
+    
+    // Sostituisci tutte le variabili in tutti i campi
+    Object.keys(variables).forEach(key => {
+        const value = variables[key] || '';
+        const regex = new RegExp(`\\{${key}\\}`, 'g');
+        greeting = greeting.replace(regex, value);
+        introText = introText.replace(regex, value);
+        secondParagraph = secondParagraph.replace(regex, value);
+        featuresTitle = featuresTitle.replace(regex, value);
+        closingText = closingText.replace(regex, value);
+        urgencyTitle = urgencyTitle.replace(regex, value);
+        urgencySubtitle = urgencySubtitle.replace(regex, value);
+        ctaText = ctaText.replace(regex, value);
+        ctaUrl = ctaUrl.replace(regex, value);
+        footerQuote = footerQuote.replace(regex, value);
+        footerText = footerText.replace(regex, value);
+    });
+    
+    // Sostituisci {app_url}
+    ctaUrl = ctaUrl.replace(/\{app_url\}/g, appUrl);
+    
     const showFeatures = template.show_features_section !== false;
-    const featuresTitle = template.features_section_title || '❌ Ecco cosa ti stai perdendo:';
-    const closingText = template.closing_text || '';
     const showUrgency = template.show_urgency_box !== false;
-    const urgencyTitle = template.urgency_title || '⏰ Il momento è ADESSO';
-    const urgencySubtitle = template.urgency_subtitle || '';
     const showTrustBadges = template.show_trust_badges !== false;
-    const ctaText = template.call_to_action_text || '🚀 Completa il Checkout Ora';
-    const ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`).replace(/{app_url}/g, appUrl);
-    const footerQuote = template.footer_quote || '';
-    const footerText = template.footer_text || '';
     
     // Trust badges translations
     const trustBadgeTranslations = {
