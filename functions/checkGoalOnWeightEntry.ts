@@ -68,12 +68,6 @@ Deno.serve(async (req) => {
             const userLang = user.preferred_language || 'it';
             const templateId = `goal_weight_achieved_${userLang}`;
 
-            // Marca come inviata sul profilo utente
-            await base44.asServiceRole.entities.User.update(user.id, {
-                goal_achieved_email_sent: true,
-                goal_achieved_date: new Date().toISOString()
-            });
-
             // Invia email tramite sistema unificato
             await base44.asServiceRole.functions.invoke('sendEmailUnified', {
                 userId: user.id,
@@ -89,6 +83,12 @@ Deno.serve(async (req) => {
             });
             
             console.log(`✅ Goal achievement email sent to ${user.email}`);
+            
+            // Reset flag subito dopo l'invio per permettere email future
+            await base44.asServiceRole.entities.User.update(user.id, {
+                goal_achieved_email_sent: false,
+                goal_achieved_date: new Date().toISOString()
+            });
             
             return Response.json({ 
                 success: true,
