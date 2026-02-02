@@ -226,23 +226,38 @@ export default function Dashboard() {
       // 1. Check if user has accepted terms
       if (!user.terms_accepted) {
         setShowTermsModal(true);
-        return; // Don't show onboarding until terms are accepted
+        return;
       }
 
-      // 2. Check onboarding status - guarda SEMPRE il database
+      // 2. Check localStorage first - se è già stato completato in questa sessione, skip
+      const onboardingCompletedKey = `onboarding_completed_${user.id}`;
+      if (localStorage.getItem(onboardingCompletedKey) === 'true') {
+        console.log('✅ Onboarding already completed in this session');
+        return;
+      }
+
+      // 3. Query il DB per verificare stato reale
       try {
+        console.log('🔍 Checking onboarding status in DB for user:', user.id);
         const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
-        // Mostra modal solo se non c'è record nel DB o il record dice non completato
-        if (onboardingRecords.length === 0 || !onboardingRecords[0].onboarding_completed) {
-          setShowOnboarding(true);
+        console.log('📋 Onboarding records found:', onboardingRecords.length);
+        
+        if (onboardingRecords.length > 0) {
+          console.log('✅ Record exists - onboarding_completed:', onboardingRecords[0].onboarding_completed);
+          if (onboardingRecords[0].onboarding_completed) {
+            // Salva in localStorage per evitare query ripetute
+            localStorage.setItem(onboardingCompletedKey, 'true');
+            return;
+          }
         }
-        // Se il DB dice completato, non mostra il modal (ignora user.onboarding_completed)
+
+        // Se non esiste record o non è completato, mostra modal
+        console.log('📍 Showing onboarding modal');
+        setShowOnboarding(true);
       } catch (error) {
         console.error('Error checking onboarding:', error);
-        // Se c'è errore e il user flag dice non completato, mostra il modal
-        if (!user.onboarding_completed) {
-          setShowOnboarding(true);
-        }
+        // Se c'è errore, non mostrare il modal (evita spam)
+        localStorage.setItem(onboardingCompletedKey, 'true');
       }
     };
 
