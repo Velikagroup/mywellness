@@ -93,9 +93,10 @@ export default function OnboardingTour({ user, onComplete }) {
 
   const handleSourceSelect = async () => {
     if (!selectedSource) return;
-    
+
     setIsSaving(true);
     try {
+      // Crea il record nel DB
       await base44.entities.UserOnboarding.create({
         user_id: user.id,
         discovery_source: selectedSource,
@@ -104,11 +105,18 @@ export default function OnboardingTour({ user, onComplete }) {
         onboarding_completed: true,
         completed_date: new Date().toISOString()
       });
-      
+
+      // IMPORTANTE: Aggiorna il user flag per evitare ricariche
       await base44.auth.updateMe({ onboarding_completed: true });
+
+      // Attendi un attimo che il flag sia propagato
+      await new Promise(resolve => setTimeout(resolve, 500));
+
       onComplete();
     } catch (error) {
       console.error('Error saving discovery source:', error);
+      // Anche in caso di errore, marca come completato per evitare loop
+      await base44.auth.updateMe({ onboarding_completed: true });
       onComplete();
     }
     setIsSaving(false);
