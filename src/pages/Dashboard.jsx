@@ -229,10 +229,11 @@ export default function Dashboard() {
         return; // Don't show onboarding until terms are accepted
       }
 
-      // 2. Check onboarding status
+      // 2. Check onboarding status - BOTH user flag AND database
       if (!user.onboarding_completed) {
         try {
           const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
+          // Solo mostra se non c'è record nel DB oppure il record dice non completato
           if (onboardingRecords.length === 0 || !onboardingRecords[0].onboarding_completed) {
             setShowOnboarding(true);
           }
