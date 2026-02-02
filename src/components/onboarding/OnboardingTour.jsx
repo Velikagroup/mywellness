@@ -96,8 +96,10 @@ export default function OnboardingTour({ user, onComplete }) {
 
     setIsSaving(true);
     try {
+      console.log('💾 Saving onboarding data for user:', user.id);
+
       // Crea il record nel DB
-      await base44.entities.UserOnboarding.create({
+      const result = await base44.entities.UserOnboarding.create({
         user_id: user.id,
         discovery_source: selectedSource,
         discovery_details: sourceDetails,
@@ -105,18 +107,23 @@ export default function OnboardingTour({ user, onComplete }) {
         onboarding_completed: true,
         completed_date: new Date().toISOString()
       });
+      console.log('✅ Onboarding record created:', result.id);
 
-      // IMPORTANTE: Aggiorna il user flag per evitare ricariche
+      // Salva il flag in localStorage immediatamente
+      const onboardingCompletedKey = `onboarding_completed_${user.id}`;
+      localStorage.setItem(onboardingCompletedKey, 'true');
+      console.log('💾 Saved to localStorage');
+
+      // Aggiorna il user flag
       await base44.auth.updateMe({ onboarding_completed: true });
-
-      // Attendi un attimo che il flag sia propagato
-      await new Promise(resolve => setTimeout(resolve, 500));
+      console.log('✅ User flag updated');
 
       onComplete();
     } catch (error) {
-      console.error('Error saving discovery source:', error);
-      // Anche in caso di errore, marca come completato per evitare loop
-      await base44.auth.updateMe({ onboarding_completed: true });
+      console.error('❌ Error saving discovery source:', error);
+      // Salva in localStorage comunque per evitare loop
+      const onboardingCompletedKey = `onboarding_completed_${user.id}`;
+      localStorage.setItem(onboardingCompletedKey, 'true');
       onComplete();
     }
     setIsSaving(false);
