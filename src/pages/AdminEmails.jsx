@@ -973,15 +973,7 @@ ${ctaText}
 
                             <div style="color: #374151; line-height: 1.6; font-size: 16px;">${mainContent}</div>
 
-                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
-                                <h2 style="color: #92400e; margin: 0 0 15px 0; font-size: 28px;">${urgencyTitle}</h2>
-                                <p style="margin: 0 0 15px 0; color: #92400e; font-size: 16px;">${urgencySubtitle}</p>
-                                <div style="background: white; padding: 15px 25px; border-radius: 8px; display: inline-block; margin-top: 10px;">
-                                    <p style="margin: 0; font-size: 28px; font-weight: bold; color: #26847F; letter-spacing: 2px;">${couponCode}</p>
-                                </div>
-                            </div>
-
-                            ${closingText ? `<p style="color: #374151; line-height: 1.6; font-size: 16px;">${closingText}</p>` : ''}
+                            ${closingText ? `<p style="color: #374151; line-height: 1.6; font-size: 16px; margin-top: 30px;">${closingText}</p>` : ''}
 
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
                                 <tr>
