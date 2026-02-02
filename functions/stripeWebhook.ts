@@ -599,6 +599,12 @@ Deno.serve(async (req) => {
                 console.log('Current period end:', subscription.current_period_end);
                 console.log('Trial end:', subscription.trial_end);
 
+                // 🚫 SKIP if subscription is "incomplete" - it will be updated when payment succeeds
+                if (subscription.status === 'incomplete') {
+                    console.log('⏭️ Skipping subscription.created with incomplete status - waiting for payment to complete');
+                    break;
+                }
+
                 const customerId = subscription.customer;
                 const userIdFromMetadata = subscription.metadata?.user_id;
 
