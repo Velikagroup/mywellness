@@ -674,7 +674,19 @@ export default function Checkout() {
       }
 
       console.log('✅ Subscription created successfully!');
-      // Reload page per far aggiornare lo stato subscription in tempo reale
+      
+      // Aggiorna lo stato utente in tempo reale prima di reindirizzare
+      try {
+        const updatedUser = await base44.auth.me();
+        await base44.auth.updateMe({ 
+          subscription_status: 'active',
+          ...updatedUser
+        });
+      } catch (e) {
+        console.log('Aggiornamento locale subscription:', e);
+      }
+      
+      // Redirect to dashboard
       window.location.href = createPageUrl('Dashboard');
 
     } catch (error) {
