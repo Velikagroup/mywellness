@@ -137,7 +137,7 @@ export default function AdminEmails() {
       const baseId = template.template_id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
       
       // Se questo base ID è già stato aggiunto, salta
-      const currentLangSuffix = `_${currentLang}`;
+      const currentLangSuffix = `_${selectedLanguage}`;
       const isCurrentLangTemplate = template.template_id.endsWith(currentLangSuffix);
       
       // Aggiungi solo la versione della lingua corrente
@@ -163,7 +163,7 @@ export default function AdminEmails() {
 
       // Cerca la versione nella lingua corrente
       const langTemplate = emailTemplates.find(t => 
-        t.template_id === `${baseId}_${currentLang}` || 
+        t.template_id === `${baseId}_${selectedLanguage}` || 
         (t.template_id === baseId && !t.template_id.match(/_it$|_en$|_es$|_pt$|_de$|_fr$/))
       );
       
@@ -180,7 +180,7 @@ export default function AdminEmails() {
     });
 
     return categories;
-  }, [emailTemplates, currentLang]);
+  }, [emailTemplates, selectedLanguage]);
 
   const loadBroadcasts = async () => {
     try {
