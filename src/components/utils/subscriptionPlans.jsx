@@ -3,7 +3,10 @@ export const PLANS = {
   TRIAL: 'trial',
   STANDARD: 'standard',
   MONTHLY: 'monthly',
-  YEARLY: 'yearly'
+  YEARLY: 'yearly',
+  PREMIUM: 'premium',
+  PRO: 'pro',
+  BASE: 'base'
 };
 
 export const PLAN_FEATURES = {
@@ -90,6 +93,69 @@ export const PLAN_FEATURES = {
     smartwatch_sync: true,
     meal_plan_generations_per_month: -1, // -1 = illimitato
     workout_plan_generations_per_month: -1 // -1 = illimitato
+  },
+  [PLANS.PREMIUM]: {
+    name: 'Premium',
+    dashboard: true,
+    meal_plan: true,
+    recipes_with_images: true,
+    bmr_calculation: true,
+    shopping_list: true,
+    weight_tracking: true,
+    ingredient_substitution: true,
+    workout_plan: true,
+    meal_photo_analysis: true,
+    auto_rebalance: true,
+    workout_tracking: true,
+    workout_modification: true,
+    progress_photo_analysis: true,
+    priority_support: true,
+    calorie_balance: true,
+    smartwatch_sync: true,
+    meal_plan_generations_per_month: -1,
+    workout_plan_generations_per_month: -1
+  },
+  [PLANS.PRO]: {
+    name: 'Pro',
+    dashboard: true,
+    meal_plan: true,
+    recipes_with_images: true,
+    bmr_calculation: true,
+    shopping_list: true,
+    weight_tracking: true,
+    ingredient_substitution: true,
+    workout_plan: true,
+    meal_photo_analysis: true,
+    auto_rebalance: true,
+    workout_tracking: true,
+    workout_modification: true,
+    progress_photo_analysis: true,
+    priority_support: true,
+    calorie_balance: true,
+    smartwatch_sync: true,
+    meal_plan_generations_per_month: -1,
+    workout_plan_generations_per_month: -1
+  },
+  [PLANS.BASE]: {
+    name: 'Base',
+    dashboard: true,
+    meal_plan: true,
+    recipes_with_images: true,
+    bmr_calculation: true,
+    shopping_list: true,
+    weight_tracking: true,
+    ingredient_substitution: true,
+    workout_plan: true,
+    meal_photo_analysis: true,
+    auto_rebalance: true,
+    workout_tracking: true,
+    workout_modification: true,
+    progress_photo_analysis: true,
+    priority_support: false,
+    calorie_balance: true,
+    smartwatch_sync: true,
+    meal_plan_generations_per_month: -1,
+    workout_plan_generations_per_month: -1
   }
 };
 
@@ -102,11 +168,22 @@ export const hasFeatureAccess = (userPlan, featureName, subscriptionStatus = nul
 
 // Funzione per ottenere il limite di generazioni
 export const getGenerationLimit = (userPlan, planType) => {
-  const plan = userPlan || PLANS.BASE;
+  // Mappia i piani Stripe ai nostri piani interni
+  const planMap = {
+    'premium': PLANS.PREMIUM,
+    'pro': PLANS.PRO,
+    'base': PLANS.BASE,
+    'standard': PLANS.STANDARD,
+    'monthly': PLANS.MONTHLY,
+    'yearly': PLANS.YEARLY,
+    'trial': PLANS.TRIAL
+  };
+  
+  const normalizedPlan = planMap[userPlan?.toLowerCase()] || PLANS.MONTHLY;
   const featureName = planType === 'meal' 
     ? 'meal_plan_generations_per_month' 
     : 'workout_plan_generations_per_month';
-  return PLAN_FEATURES[plan]?.[featureName] || 0;
+  return PLAN_FEATURES[normalizedPlan]?.[featureName] || 0;
 };
 
 // Funzione per ottenere il nome del piano
