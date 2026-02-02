@@ -24,15 +24,19 @@ export default function PostQuizSubscription() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        console.log('PostQuizSubscription - User subscription_status:', currentUser.subscription_status);
-        console.log('PostQuizSubscription - User stripe_subscription_id:', currentUser.stripe_subscription_id);
+        console.log('PostQuizSubscription - User data:', {
+          subscription_status: currentUser.subscription_status,
+          subscription_plan: currentUser.subscription_plan,
+          stripe_subscription_id: currentUser.stripe_subscription_id
+        });
         
-        // ✅ Controlla ENTRAMBI: subscription_status O se ha uno stripe_subscription_id (ha pagato)
-        const hasActiveSubscription = currentUser.subscription_status === 'active' || 
-                                      currentUser.subscription_status === 'trial' ||
-                                      (currentUser.stripe_subscription_id && currentUser.stripe_subscription_id.length > 0);
+        // ✅ Stesso check del Layout - controlla status E plan
+        const validStatuses = ['active', 'trial'];
+        const validPlans = ['premium', 'standard', 'base', 'pro'];
+        const hasValidSubscription = validStatuses.includes(currentUser.subscription_status) || 
+                                     validPlans.includes(currentUser.subscription_plan);
         
-        if (hasActiveSubscription) {
+        if (hasValidSubscription) {
           console.log('✅ User has valid subscription, navigating to Dashboard');
           navigate(createPageUrl('Dashboard'), { replace: true });
           return;
