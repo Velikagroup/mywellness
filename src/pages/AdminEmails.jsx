@@ -559,6 +559,7 @@ ${JSON.stringify(newTemplateData, null, 2)}`,
       const isCartAbandonedEmail = ['cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h'].includes(emailIdBase);
       const isQuizCompletedEmail = emailIdBase === 'quiz_completed_abandoned';
       const isWeeklyReportEmail = emailIdBase === 'weekly_report';
+      const isGoalAchieved = emailIdBase === 'goal_weight_achieved';
       
       let htmlBody;
       
@@ -571,6 +572,9 @@ ${JSON.stringify(newTemplateData, null, 2)}`,
       } else if (isWeeklyReportEmail) {
         // Generate weekly report email HTML with charts
         htmlBody = generateWeeklyReportTestEmail(template, variables, appUrl);
+      } else if (isGoalAchieved) {
+        // Generate goal achieved email HTML
+        htmlBody = generateGoalAchievedTestEmail(template, variables, appUrl);
       } else {
         // Standard email generation
         const replacedMainContent = replaceVars(safeRenderField(template.main_content) || '', variables);
@@ -879,6 +883,132 @@ ${ctaText}
 </td>
 </tr>
 </table>
+</body>
+</html>`;
+  };
+
+  // Generate goal achieved email HTML for testing
+  const generateGoalAchievedTestEmail = (template, variables, appUrl) => {
+    const userName = variables.user_name || 'Campione';
+    const weightLost = '3.5'; // Mock data
+    const daysToGoal = '45'; // Mock data
+    const couponCode = 'WINNER30_ABC123'; // Mock data
+    
+    const greeting = (template?.greeting || '').replace(/{user_name}/g, userName);
+    const introText = template?.intro_text || '';
+    const mainContent = template?.main_content || '';
+    const closingText = template?.closing_text || '';
+    const urgencyTitle = (template?.urgency_title || '').replace(/{coupon_code}/g, couponCode);
+    const urgencySubtitle = (template?.urgency_subtitle || '').replace(/{coupon_code}/g, couponCode);
+    const ctaText = template?.call_to_action_text || '🏆 Mantieni i Risultati con -30%';
+    const ctaUrl = (template?.call_to_action_url || `${appUrl}/pricing?coupon=${couponCode}`)
+        .replace(/{app_url}/g, appUrl)
+        .replace(/{coupon_code}/g, couponCode);
+    const footerQuote = template?.footer_quote || '';
+    const footerText = template?.footer_text || '';
+    const headerTitle = template?.header_title || 'CE L\'HAI FATTA!';
+    const headerSubtitle = template?.header_subtitle || 'Hai raggiunto il tuo peso obiettivo!';
+
+    return `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        .logo-cell { padding: 60px 30px 24px 30px; }
+        .content-cell { padding: 40px 30px; }
+        @media only screen and (min-width: 600px) {
+            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .content-cell { padding: 60px 60px 40px 60px !important; }
+        }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; border-radius: 0 !important; }
+            .outer-wrapper { padding: 0 !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0;">
+    ${template?.preview_text ? `<div style="display:none;max-height:0px;overflow:hidden;">${template.preview_text}</div>` : ''}
+    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+                    <tr>
+                        <td class="logo-cell" style="background: white;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content-cell">
+                            <div style="text-align: center; margin-bottom: 30px;">
+                                <h1 style="color: #26847F; margin: 0; font-size: 48px;">🎉🎊🏆</h1>
+                                <h2 style="color: #111827; margin: 10px 0; font-size: 32px; font-weight: bold;">${headerTitle}</h2>
+                                <p style="color: #6b7280; font-size: 18px; margin: 10px 0;">${headerSubtitle}</p>
+                            </div>
+
+                            ${greeting ? `<p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>` : ''}
+                            
+                            ${introText ? `<p style="color: #374151; line-height: 1.6; font-size: 16px;">${introText}</p>` : ''}
+
+                            <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 3px solid #10b981; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
+                                <h3 style="color: #065f46; margin: 0 0 20px 0; font-size: 20px;">🎯 I Tuoi Progressi Straordinari</h3>
+                                <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                                    <div style="margin: 10px;">
+                                        <p style="margin: 0; font-size: 36px; font-weight: bold; color: #10b981;">${weightLost} kg</p>
+                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">Persi</p>
+                                    </div>
+                                    <div style="margin: 10px;">
+                                        <p style="margin: 0; font-size: 36px; font-weight: bold; color: #10b981;">${daysToGoal}</p>
+                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">Giorni</p>
+                                    </div>
+                                    <div style="margin: 10px;">
+                                        <p style="margin: 0; font-size: 36px; font-weight: bold; color: #10b981;">100%</p>
+                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">Obiettivo</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="color: #374151; line-height: 1.6; font-size: 16px;">${mainContent}</div>
+
+                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
+                                <h2 style="color: #92400e; margin: 0 0 15px 0; font-size: 28px;">${urgencyTitle}</h2>
+                                <p style="margin: 0 0 15px 0; color: #92400e; font-size: 16px;">${urgencySubtitle}</p>
+                                <div style="background: white; padding: 15px 25px; border-radius: 8px; display: inline-block; margin-top: 10px;">
+                                    <p style="margin: 0; font-size: 28px; font-weight: bold; color: #26847F; letter-spacing: 2px;">${couponCode}</p>
+                                </div>
+                            </div>
+
+                            ${closingText ? `<p style="color: #374151; line-height: 1.6; font-size: 16px;">${closingText}</p>` : ''}
+
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            ${ctaText}
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            ${footerQuote ? `<p style="color: #6b7280; font-size: 14px; text-align: center; margin: 30px 0 10px 0; font-style: italic;">${footerQuote}</p>` : ''}
+                            ${footerText ? `<p style="color: #6b7280; font-size: 14px; text-align: center; margin: 10px 0;">${footerText}</p>` : ''}
+                        </td>
+                    </tr>
+                </table>
+                
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
+                    <tr>
+                        <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
+                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>`;
   };
