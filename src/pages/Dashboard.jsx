@@ -683,7 +683,7 @@ export default function Dashboard() {
                     setShowPhotoGallery(true);
                   }}
                   onOpenProgressAnalysis={() => {
-                    if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
+                    if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis', user.subscription_status)) {
                       setUpgradePlanTarget('premium');
                       setShowUpgradeModal(true);
                       return;
