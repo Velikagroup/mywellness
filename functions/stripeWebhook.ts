@@ -600,11 +600,21 @@ Deno.serve(async (req) => {
                 console.log('Trial end:', subscription.trial_end);
 
                 const customerId = subscription.customer;
+                const userIdFromMetadata = subscription.metadata?.user_id;
+
                 console.log('🔍 Looking for user with stripe_customer_id:', customerId);
-                const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
-                console.log('👥 Users found:', users.length);
+                let users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+                console.log('👥 Users found by stripe_customer_id:', users.length);
+
+                // Se non trova per stripe_customer_id, cerca per user_id dai metadata
+                if (users.length === 0 && userIdFromMetadata) {
+                    console.log('⚠️ Not found by stripe_customer_id, trying user_id:', userIdFromMetadata);
+                    users = await base44.asServiceRole.entities.User.filter({ id: userIdFromMetadata });
+                    console.log('👥 Users found by user_id:', users.length);
+                }
+
                 if (users.length === 0) {
-                    console.error('❌ NO USER FOUND for customer:', customerId);
+                    console.error('❌ NO USER FOUND for customer:', customerId, 'user_id:', userIdFromMetadata);
                 }
 
                 if (users.length > 0) {
