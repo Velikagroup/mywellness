@@ -171,17 +171,17 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
     const userName = variables.user_name || 'Utente';
     
     // Sostituisci placeholder in tutti i campi
-    let greeting = template.greeting || '';
-    let introText = template.intro_text || '';
-    let secondParagraph = template.second_paragraph || '';
-    let featuresTitle = template.features_section_title || '❌ Ecco cosa ti stai perdendo:';
-    let closingText = template.closing_text || '';
-    let urgencyTitle = template.urgency_title || '⏰ Il momento è ADESSO';
-    let urgencySubtitle = template.urgency_subtitle || '';
-    let ctaText = template.call_to_action_text || '🚀 Completa il Checkout Ora';
-    let ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`);
-    let footerQuote = template.footer_quote || '';
-    let footerText = template.footer_text || '';
+    let greeting = (template.greeting || '').toString();
+    let introText = (template.intro_text || '').toString();
+    let secondParagraph = (template.second_paragraph || '').toString();
+    let featuresTitle = (template.features_section_title || '❌ Ecco cosa ti stai perdendo:').toString();
+    let closingText = (template.closing_text || '').toString();
+    let urgencyTitle = (template.urgency_title || '⏰ Il momento è ADESSO').toString();
+    let urgencySubtitle = (template.urgency_subtitle || '').toString();
+    let ctaText = (template.call_to_action_text || '🚀 Completa il Checkout Ora').toString();
+    let ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`).toString();
+    let footerQuote = (template.footer_quote || '').toString();
+    let footerText = (template.footer_text || '').toString();
     
     // Sostituisci tutte le variabili in tutti i campi
     Object.keys(variables).forEach(key => {
