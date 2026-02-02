@@ -225,9 +225,11 @@ export default function PostQuizSubscription() {
               e.complete('fail');
               setIsLoading(false);
             } else {
-              e.complete('success');
-              navigate(createPageUrl('Dashboard'), { replace: true });
-            }
+               e.complete('success');
+               setTimeout(() => {
+                 navigate(createPageUrl('Dashboard'), { replace: true });
+               }, 2000);
+             }
           });
         }).catch(() => {
           e.complete('fail');
