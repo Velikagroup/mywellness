@@ -182,6 +182,7 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
     const ctaText = template.call_to_action_text || '🚀 Completa il Checkout Ora';
     const ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`).replace(/{app_url}/g, appUrl);
     const footerQuote = template.footer_quote || '';
+    const footerText = template.footer_text || '';
     
     // Trust badges translations
     const trustBadgeTranslations = {
