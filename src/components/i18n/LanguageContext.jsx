@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { translations } from './translations';
+import { base44 } from '@/api/base44Client';
 
 export const SUPPORTED_LANGUAGES = [
   { code: 'it', name: 'Italiano', flag: '🇮🇹' },
@@ -39,6 +40,7 @@ const getBrowserLanguage = () => {
 export function LanguageProvider({ children, forcedLanguage = null }) {
   const location = useLocation();
   const languageRef = React.useRef(forcedLanguage || DEFAULT_LANGUAGE);
+  const [userLoaded, setUserLoaded] = useState(false);
   
   // ALWAYS use forcedLanguage if provided, otherwise fallback
   const [language, setLanguageState] = useState(() => {
@@ -63,6 +65,32 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     languageRef.current = browserLang;
     return browserLang;
   });
+
+  // Load language from user profile on mount
+  useEffect(() => {
+    const loadUserLanguage = async () => {
+      try {
+        const user = await base44.auth.me();
+        const userLang = user?.preferred_language;
+        
+        if (userLang && SUPPORTED_LANGUAGES.some(l => l.code === userLang)) {
+          languageRef.current = userLang;
+          setLanguageState(userLang);
+          localStorage.setItem('preferred_language', userLang);
+        }
+      } catch (error) {
+        // User not logged in, use localStorage/browser language
+      } finally {
+        setUserLoaded(true);
+      }
+    };
+    
+    if (!forcedLanguage) {
+      loadUserLanguage();
+    } else {
+      setUserLoaded(true);
+    }
+  }, [forcedLanguage]);
 
   // Update language when forcedLanguage or URL changes
   useEffect(() => {
@@ -111,11 +139,18 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     });
   }, []);
 
-  const setLanguage = React.useCallback((newLang) => {
+  const setLanguage = React.useCallback(async (newLang) => {
     if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
     languageRef.current = newLang;
     setLanguageState(newLang);
     localStorage.setItem('preferred_language', newLang);
+    
+    // Save to user profile if logged in
+    try {
+      await base44.auth.updateMe({ preferred_language: newLang });
+    } catch (error) {
+      console.log('Could not save language to user profile:', error);
+    }
   }, []);
 
   const contextValue = React.useMemo(() => ({
