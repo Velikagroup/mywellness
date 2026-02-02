@@ -67,7 +67,7 @@ function generateEmailHtml(template, variables, language = 'it') {
         return generateQuizCompletedHtml(template, variables, appUrl);
     } else if (isGoalAchieved) {
         console.log('📧 Generating Goal Achieved HTML');
-        return generateGoalAchievedHtml(template, variables, appUrl);
+        return generateGoalAchievedHtml(template, variables, appUrl, language);
     }
     
     // Sostituisci variabili per email di default
@@ -486,10 +486,51 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
     return returnValue;
 }
 
-function generateGoalAchievedHtml(template, variables, appUrl) {
+function generateGoalAchievedHtml(template, variables, appUrl, language = 'it') {
     const userName = variables.user_name || 'Campione';
     const weightLost = variables.weight_lost || '0';
     const daysToGoal = variables.days_to_goal || '0';
+    
+    // Traduzioni per testi hardcoded
+    const translations = {
+        it: {
+            progressTitle: '🎯 I Tuoi Progressi Straordinari',
+            weightLost: 'Persi',
+            days: 'Giorni',
+            goal: 'Obiettivo'
+        },
+        en: {
+            progressTitle: '🎯 Your Extraordinary Progress',
+            weightLost: 'Lost',
+            days: 'Days',
+            goal: 'Goal'
+        },
+        es: {
+            progressTitle: '🎯 Tu Progreso Extraordinario',
+            weightLost: 'Perdidos',
+            days: 'Días',
+            goal: 'Objetivo'
+        },
+        pt: {
+            progressTitle: '🎯 Seu Progresso Extraordinário',
+            weightLost: 'Perdidos',
+            days: 'Dias',
+            goal: 'Objetivo'
+        },
+        de: {
+            progressTitle: '🎯 Dein Außergewöhnlicher Fortschritt',
+            weightLost: 'Verloren',
+            days: 'Tage',
+            goal: 'Ziel'
+        },
+        fr: {
+            progressTitle: '🎯 Votre Progrès Extraordinaire',
+            weightLost: 'Perdus',
+            days: 'Jours',
+            goal: 'Objectif'
+        }
+    };
+    const t = translations[language] || translations.it;
     
     let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
     let introText = (template.intro_text || '').replace(/{user_name}/g, userName);
@@ -545,19 +586,19 @@ function generateGoalAchievedHtml(template, variables, appUrl) {
                             ${introText ? `<p style="color: #374151; line-height: 1.6; font-size: 16px;">${introText}</p>` : ''}
 
                             <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 3px solid #10b981; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
-                                <h3 style="color: #065f46; margin: 0 0 20px 0; font-size: 20px;">🎯 I Tuoi Progressi Straordinari</h3>
+                                <h3 style="color: #065f46; margin: 0 0 20px 0; font-size: 20px;">${t.progressTitle}</h3>
                                 <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
                                     <div style="margin: 10px;">
                                         <p style="margin: 0; font-size: 36px; font-weight: bold; color: #10b981;">${weightLost} kg</p>
-                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">Persi</p>
+                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">${t.weightLost}</p>
                                     </div>
                                     <div style="margin: 10px;">
                                         <p style="margin: 0; font-size: 36px; font-weight: bold; color: #10b981;">${daysToGoal}</p>
-                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">Giorni</p>
+                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">${t.days}</p>
                                     </div>
                                     <div style="margin: 10px;">
                                         <p style="margin: 0; font-size: 36px; font-weight: bold; color: #10b981;">100%</p>
-                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">Obiettivo</p>
+                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">${t.goal}</p>
                                     </div>
                                 </div>
                             </div>
