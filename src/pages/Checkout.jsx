@@ -1309,6 +1309,11 @@ export default function Checkout() {
             <p className="text-xs text-gray-500">
               EIN: 36-5141800 - velika.03@outlook.it
             </p>
+            <p className="text-xs text-gray-500 pt-2">
+              <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" className="text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] font-semibold underline">
+                Stripe Portal
+              </a>
+            </p>
           </div>
         </div>
       </footer>
