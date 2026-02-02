@@ -119,7 +119,7 @@ export default function Dashboard() {
       ];
 
       let workoutPlanPromise = Promise.resolve([]);
-      if (hasFeatureAccess(currentUser.subscription_plan, 'workout_plan')) {
+      if (hasFeatureAccess(currentUser.subscription_plan, 'workout_plan', currentUser.subscription_status)) {
         workoutPlanPromise = base44.entities.WorkoutPlan.filter({ user_id: currentUser.id, day_of_week: todayOfWeek });
       }
 
