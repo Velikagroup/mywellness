@@ -232,7 +232,7 @@ export default function Workouts() {
           return;
         }
 
-        if (!hasFeatureAccess(currentUser.subscription_plan, 'workout_plan')) {
+        if (!hasFeatureAccess(currentUser.subscription_plan, 'workout_plan', currentUser.subscription_status)) {
           setTrainingData({ user_id: currentUser.id, subscription_plan: currentUser.subscription_plan });
           setIsLoading(false);
           return;
