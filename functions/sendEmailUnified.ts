@@ -587,19 +587,9 @@ function generateGoalAchievedHtml(template, variables, appUrl, language = 'it') 
 
                             <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 3px solid #10b981; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
                                 <h3 style="color: #065f46; margin: 0 0 20px 0; font-size: 20px;">${t.progressTitle}</h3>
-                                <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
-                                    <div style="margin: 10px;">
-                                        <p style="margin: 0; font-size: 36px; font-weight: bold; color: #10b981;">${weightLost} kg</p>
-                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">${t.weightLost}</p>
-                                    </div>
-                                    <div style="margin: 10px;">
-                                        <p style="margin: 0; font-size: 36px; font-weight: bold; color: #10b981;">${daysToGoal}</p>
-                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">${t.days}</p>
-                                    </div>
-                                    <div style="margin: 10px;">
-                                        <p style="margin: 0; font-size: 36px; font-weight: bold; color: #10b981;">100%</p>
-                                        <p style="margin: 5px 0 0 0; color: #065f46; font-size: 14px;">${t.goal}</p>
-                                    </div>
+                                <div style="text-align: center;">
+                                    <p style="margin: 0; font-size: 48px; font-weight: bold; color: #10b981;">${weightLost} kg</p>
+                                    <p style="margin: 10px 0 0 0; color: #065f46; font-size: 16px;">${t.weightLost}</p>
                                 </div>
                             </div>
 
