@@ -52,20 +52,18 @@ Deno.serve(async (req) => {
             // Recupera lo storico peso per calcolare i progressi
             const weightHistory = await base44.asServiceRole.entities.WeightHistory.filter(
                 { user_id: userId },
-                ['date'],  // Ordina dal più vecchio al più recente
+                ['created_date'],  // Ordina dalla prima registrazione alla più recente
                 500
             );
 
-            // Peso iniziale: primo peso mai registrato O peso di partenza salvato nel quiz
-            const startWeight = weightHistory.length > 0 
-                ? weightHistory[0].weight 
-                : (user.initial_weight || currentWeight);
+            // Peso iniziale: usa il current_weight dal quiz (peso di partenza)
+            const startWeight = user.current_weight || currentWeight;
             
             const weightLost = (startWeight - currentWeight).toFixed(1);
             
-            // Giorni: dalla data del primo peso registrato ad oggi
+            // Giorni: dalla prima registrazione peso ad oggi
             const daysToGoal = weightHistory.length > 0
-                ? Math.floor((new Date() - new Date(weightHistory[0].date)) / (1000 * 60 * 60 * 24))
+                ? Math.floor((new Date() - new Date(weightHistory[0].created_date)) / (1000 * 60 * 60 * 24))
                 : 0;
 
             // Recupera lingua preferita utente
