@@ -100,15 +100,6 @@ function generateEmailHtml(template, variables, language = 'it') {
         footerText = footerText.replace(regex, value);
     });
 
-    // Aggiungi link Stripe Portal se disponibile (per piani a pagamento)
-    const stripePortalUrl = variables.stripe_portal_url;
-    const stripePortalLink = stripePortalUrl ? `
-                            <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-                                <a href="${stripePortalUrl}" style="display: inline-block; color: #26847F; text-decoration: none; font-size: 13px; font-weight: 600;">
-                                    💳 Gestisci Abbonamento
-                                </a>
-                            </div>` : '';
-
     console.log('📧 Generating Default HTML');
 
     const html = `<!DOCTYPE html>
