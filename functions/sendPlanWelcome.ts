@@ -63,6 +63,24 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Template not found' }, { status: 404 });
         }
 
+        // Carica dati utente per subscription_period_end
+        let subscriptionPeriodEnd = 'N/A';
+        let stripePortalUrl = 'https://billing.stripe.com/p/login/session/test';
+        if (userId) {
+            try {
+                const user = await base44.asServiceRole.entities.User.get(userId);
+                if (user.subscription_period_end) {
+                    const date = new Date(user.subscription_period_end);
+                    subscriptionPeriodEnd = date.toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
+                }
+                if (user.stripe_customer_id) {
+                    stripePortalUrl = `https://billing.stripe.com/p/login/session/test?prefilled_email=${encodeURIComponent(userEmail)}`;
+                }
+            } catch (error) {
+                console.warn('⚠️ Could not load user subscription details');
+            }
+        }
+
         // Invia email tramite funzione unificata (service role perché non c'è utente autenticato)
         const response = await base44.asServiceRole.functions.invoke('sendEmailUnified', {
             userId: userId,
@@ -70,6 +88,9 @@ Deno.serve(async (req) => {
             templateId: templateId,
             variables: {
                 user_name: userName || 'Utente',
+                plan: plan.toUpperCase() || 'BASE',
+                subscription_period_end: subscriptionPeriodEnd,
+                stripe_portal_url: stripePortalUrl,
                 invoice_url: invoiceUrl || '#',
                 payment_amount: paymentAmount || '0'
             },
