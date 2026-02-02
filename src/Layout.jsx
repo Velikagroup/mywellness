@@ -59,9 +59,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           if (currentUser.role === 'admin' || currentUser.custom_role === 'customer_support') {
             // Accesso consentito
           } else {
+            // ✅ CORRETTO: Controlla ENTRAMBI subscription_status e subscription_plan
             const validStatuses = ['active', 'trial'];
-            if (!validStatuses.includes(currentUser.subscription_status)) {
-              console.log(`🚫 Access blocked: subscription_status = ${currentUser.subscription_status}`);
+            const validPlans = ['premium', 'standard', 'base', 'pro'];
+            const hasValidSubscription = validStatuses.includes(currentUser.subscription_status) || 
+                                         validPlans.includes(currentUser.subscription_plan);
+
+            if (!hasValidSubscription) {
+              console.log(`🚫 Access blocked: status=${currentUser.subscription_status}, plan=${currentUser.subscription_plan}`);
               // Se l'utente non ha mai completato il quiz, manda al quiz
               if (!currentUser.quiz_completed) {
                 navigate(createLocalizedPageUrl('Quiz', language), { replace: true });
