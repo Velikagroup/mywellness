@@ -64,45 +64,11 @@ Deno.serve(async (req) => {
                 ? Math.floor((new Date(weightHistory[0].date) - new Date(weightHistory[weightHistory.length - 1].date)) / (1000 * 60 * 60 * 24))
                 : 0;
 
-            const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
-            const appUrl = 'https://projectmywellness.com';
-
-            // 🔐 GENERA COUPON PERSONALIZZATO inline
-            function generatePersonalCode(userId, baseCode) {
-                const hash = userId.split('').reduce((acc, char) => {
-                    return ((acc << 5) - acc) + char.charCodeAt(0);
-                }, 0);
-                const shortHash = Math.abs(hash).toString(36).toUpperCase().slice(0, 6);
-                return `${baseCode}_${shortHash}`;
-            }
-
-            const personalCouponCode = generatePersonalCode(user.id, 'WINNER30');
-
-            // Verifica se il coupon esiste già
-            const existingCoupons = await base44.asServiceRole.entities.Coupon.filter({
-                code: personalCouponCode
-            });
-
-            if (existingCoupons.length === 0) {
-                await base44.asServiceRole.entities.Coupon.create({
-                    code: personalCouponCode,
-                    discount_type: "percentage",
-                    discount_value: 30,
-                    is_active: true,
-                    expires_at: null
-                });
-                console.log(`✅ Created coupon: ${personalCouponCode}`);
-            } else {
-                console.log(`ℹ️ Coupon already exists: ${personalCouponCode}`);
-            }
-
             // Marca come inviata sul profilo utente
             await base44.asServiceRole.entities.User.update(user.id, {
                 goal_achieved_email_sent: true,
                 goal_achieved_date: new Date().toISOString()
             });
-
-            console.log(`🎫 Using coupon: ${personalCouponCode}`);
 
             // Invia email tramite sistema unificato
             await base44.asServiceRole.functions.invoke('sendEmailUnified', {
@@ -112,8 +78,7 @@ Deno.serve(async (req) => {
                 variables: {
                     user_name: user.full_name || 'Campione',
                     weight_lost: weightLost,
-                    days_to_goal: daysToGoal,
-                    coupon_code: personalCouponCode
+                    days_to_goal: daysToGoal
                 },
                 language: 'it',
                 triggerSource: 'checkGoalOnWeightEntry'

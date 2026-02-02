@@ -892,18 +892,14 @@ ${ctaText}
     const userName = variables.user_name || 'Campione';
     const weightLost = '3.5'; // Mock data
     const daysToGoal = '45'; // Mock data
-    const couponCode = 'WINNER30_ABC123'; // Mock data
     
     const greeting = (template?.greeting || '').replace(/{user_name}/g, userName);
     const introText = template?.intro_text || '';
     const mainContent = template?.main_content || '';
     const closingText = template?.closing_text || '';
-    const urgencyTitle = (template?.urgency_title || '').replace(/{coupon_code}/g, couponCode);
-    const urgencySubtitle = (template?.urgency_subtitle || '').replace(/{coupon_code}/g, couponCode);
-    const ctaText = template?.call_to_action_text || '🏆 Mantieni i Risultati con -30%';
-    const ctaUrl = (template?.call_to_action_url || `${appUrl}/pricing?coupon=${couponCode}`)
-        .replace(/{app_url}/g, appUrl)
-        .replace(/{coupon_code}/g, couponCode);
+    const ctaText = template?.call_to_action_text || '📊 Vai alla Dashboard';
+    const ctaUrl = (template?.call_to_action_url || `${appUrl}/Dashboard`)
+        .replace(/{app_url}/g, appUrl);
     const footerQuote = template?.footer_quote || '';
     const footerText = template?.footer_text || '';
     const headerTitle = template?.header_title || 'CE L\'HAI FATTA!';
