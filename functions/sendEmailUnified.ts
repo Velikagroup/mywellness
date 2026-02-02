@@ -514,6 +514,7 @@ function generateGoalAchievedHtml(template, variables, appUrl) {
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
         .logo-cell { padding: 60px 30px 24px 30px; }
         .content-cell { padding: 40px 30px; }
+        .logo-img { height: 32px; width: auto; display: block; }
         @media only screen and (min-width: 600px) {
             .logo-cell { padding: 60px 60px 24px 60px !important; }
             .content-cell { padding: 60px 60px 40px 60px !important; }
@@ -521,6 +522,7 @@ function generateGoalAchievedHtml(template, variables, appUrl) {
         @media only screen and (max-width: 600px) {
             .container { width: 100% !important; border-radius: 0 !important; }
             .outer-wrapper { padding: 0 !important; }
+            .logo-img { height: 40px !important; }
         }
     </style>
 </head>
@@ -531,7 +533,7 @@ function generateGoalAchievedHtml(template, variables, appUrl) {
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
                         <td class="logo-cell" style="background: white;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 32px; width: auto; display: block;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" class="logo-img" style="height: 32px; width: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
