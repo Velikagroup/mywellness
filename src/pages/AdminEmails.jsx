@@ -1514,9 +1514,9 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
   
   const activeEmails = totalEmails;
 
-  const draftBroadcasts = broadcasts.filter(b => b.status === 'draft');
-  const scheduledBroadcasts = broadcasts.filter(b => b.status === 'scheduled');
-  const sentBroadcasts = broadcasts.filter(b => b.status === 'sent');
+  const draftBroadcasts = React.useMemo(() => broadcasts.filter(b => b.status === 'draft'), [broadcasts]);
+  const scheduledBroadcasts = React.useMemo(() => broadcasts.filter(b => b.status === 'scheduled'), [broadcasts]);
+  const sentBroadcasts = React.useMemo(() => broadcasts.filter(b => b.status === 'sent'), [broadcasts]);
 
   return (
     <div className="min-h-screen pb-20">
