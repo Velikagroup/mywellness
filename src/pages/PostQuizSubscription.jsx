@@ -20,10 +20,14 @@ export default function PostQuizSubscription() {
   useEffect(() => {
     const loadInitialData = async () => {
       try {
+        // Force refresh dei dati utente dal server
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
+        console.log('PostQuizSubscription - User subscription_status:', currentUser.subscription_status);
+        
         if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
+          console.log('✅ User has valid subscription, navigating to Dashboard');
           navigate(createPageUrl('Dashboard'), { replace: true });
           return;
         }
