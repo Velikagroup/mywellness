@@ -87,29 +87,37 @@ Deno.serve(async (req) => {
 
         console.log(`💰 Amount: ${amount / 100}€`);
 
-        // Crea PaymentIntent per Payment Request API
-        const paymentIntentParams = {
-            amount,
-            currency: price.currency || 'eur',
+        // ✅ CREA UNA VERA SUBSCRIPTION (non solo PaymentIntent)
+        // Questo garantisce che il webhook `checkout.session.completed` si triggeri
+        const subscriptionParams = {
             customer: stripeCustomerId,
-            payment_method_types: ['card'],
+            items: [{ price: priceId }],
+            payment_behavior: 'default_incomplete',
+            payment_settings: {
+                save_default_payment_method: 'on_subscription'
+            },
+            expand: ['latest_invoice.payment_intent'],
             metadata: {
                 user_id: user.id,
-                price_id: priceId,
-                has_trial: hasTrial ? 'true' : 'false'
-            },
-            receipt_email: user.email,
-            description: `MyWellness ${hasTrial ? 'Trial' : 'Subscription'} - ${price.nickname || priceId}`
+                price_id: priceId
+            }
         };
 
-        const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams);
+        const subscription = await stripe.subscriptions.create(subscriptionParams);
+        const paymentIntent = subscription.latest_invoice?.payment_intent;
 
-        console.log(`✅ PaymentIntent created: ${paymentIntent.id}`);
+        if (!paymentIntent) {
+            throw new Error('PaymentIntent not found in subscription');
+        }
+
+        console.log(`✅ Subscription created: ${subscription.id}`);
+        console.log(`✅ PaymentIntent: ${paymentIntent.id}`);
 
         return Response.json({
             success: true,
             clientSecret: paymentIntent.client_secret,
             paymentIntentId: paymentIntent.id,
+            subscriptionId: subscription.id,
             amount,
             currency: price.currency || 'eur'
         });
