@@ -576,7 +576,12 @@ Deno.serve(async (req) => {
                 console.log('Trial end:', subscription.trial_end);
 
                 const customerId = subscription.customer;
+                console.log('🔍 Looking for user with stripe_customer_id:', customerId);
                 const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+                console.log('👥 Users found:', users.length);
+                if (users.length === 0) {
+                    console.error('❌ NO USER FOUND for customer:', customerId);
+                }
 
                 if (users.length > 0) {
                     const user = users[0];
