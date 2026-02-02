@@ -1501,22 +1501,16 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
     return colors[color] || 'bg-gray-100 text-gray-700 border-gray-200';
   };
 
-  const filteredCategories = React.useMemo(() => {
-    return selectedCategory === 'all' 
-      ? emailCategories 
-      : { [selectedCategory]: emailCategories[selectedCategory] };
-  }, [selectedCategory, emailCategories]);
+  const filteredCategories = selectedCategory === 'all' 
+    ? emailCategories 
+    : { [selectedCategory]: emailCategories[selectedCategory] };
 
-  const totalEmails = React.useMemo(() => 
-    Object.values(emailCategories).reduce((sum, cat) => sum + cat.emails.length, 0),
-    [emailCategories]
-  );
-  
+  const totalEmails = Object.values(emailCategories).reduce((sum, cat) => sum + cat.emails.length, 0);
   const activeEmails = totalEmails;
 
-  const draftBroadcasts = React.useMemo(() => broadcasts.filter(b => b.status === 'draft'), [broadcasts]);
-  const scheduledBroadcasts = React.useMemo(() => broadcasts.filter(b => b.status === 'scheduled'), [broadcasts]);
-  const sentBroadcasts = React.useMemo(() => broadcasts.filter(b => b.status === 'sent'), [broadcasts]);
+  const draftBroadcasts = broadcasts.filter(b => b.status === 'draft');
+  const scheduledBroadcasts = broadcasts.filter(b => b.status === 'scheduled');
+  const sentBroadcasts = broadcasts.filter(b => b.status === 'sent');
 
   return (
     <div className="min-h-screen pb-20">
