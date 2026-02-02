@@ -674,7 +674,8 @@ export default function Checkout() {
       }
 
       console.log('✅ Subscription created successfully!');
-      navigate(createPageUrl('Dashboard'), { replace: true });
+      // Reload page per far aggiornare lo stato subscription in tempo reale
+      window.location.href = createPageUrl('Dashboard');
 
     } catch (error) {
       console.error('💥 Setup error:', error);
