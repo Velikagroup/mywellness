@@ -70,11 +70,12 @@ Deno.serve(async (req) => {
             });
             stripeCustomerId = customer.id;
             
-            await base44.asServiceRole.entities.User.update(user.id, {
+            const updateResult = await base44.asServiceRole.entities.User.update(user.id, {
                 stripe_customer_id: stripeCustomerId
             });
             
             console.log(`✅ Customer created: ${stripeCustomerId}`);
+            console.log(`✅ User updated with stripe_customer_id:`, JSON.stringify(updateResult));
         }
 
         // Recupera il prezzo per ottenere l'amount
