@@ -94,9 +94,10 @@ export const PLAN_FEATURES = {
 };
 
 // Funzione per verificare se l'utente ha accesso a una feature
-export const hasFeatureAccess = (userPlan, featureName) => {
-  const plan = userPlan || PLANS.MONTHLY;
-  return PLAN_FEATURES[plan]?.[featureName] || false;
+export const hasFeatureAccess = (userPlan, featureName, subscriptionStatus = null) => {
+  // Se l'utente è in trial, controlla sempre il piano TRIAL indipendentemente da userPlan
+  const planToCheck = subscriptionStatus === 'trial' ? PLANS.TRIAL : (userPlan || PLANS.MONTHLY);
+  return PLAN_FEATURES[planToCheck]?.[featureName] || false;
 };
 
 // Funzione per ottenere il limite di generazioni
