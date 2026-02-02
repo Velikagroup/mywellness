@@ -130,24 +130,31 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
   useEffect(() => {
     const completeSetupAfterLogin = async () => {
+      console.log('🔄 Check post-login setup...');
       const quizDataToSave = localStorage.getItem(`quizDataToSave_${language}`);
       const needsTrialSetup = localStorage.getItem('needsTrialSetup');
+      
+      console.log('📦 quizDataToSave:', !!quizDataToSave, 'needsTrialSetup:', !!needsTrialSetup);
       
       if (quizDataToSave && needsTrialSetup) {
         setIsLoadingUser(true);
         
         try {
           const isAuthenticated = await base44.auth.isAuthenticated();
+          console.log('✅ Authenticated:', isAuthenticated);
           
           if (!isAuthenticated) {
+            console.log('❌ Not authenticated, waiting...');
             setIsLoadingUser(false);
             return;
           }
           
           const currentUser = await base44.auth.me();
+          console.log('👤 User:', currentUser?.email);
           
           if (currentUser) {
             const dataToSave = JSON.parse(quizDataToSave);
+            console.log('💾 Saving quiz data to user...');
             await base44.auth.updateMe(dataToSave);
 
             const today = new Date().toISOString().split('T')[0];
@@ -158,14 +165,14 @@ export default function QuizContainer({ translations, language = 'it' }) {
                 date: today
               });
             } catch (weightError) {
-              console.warn('⚠️ Weight already exists or error:', weightError);
+              console.warn('⚠️ Weight already exists:', weightError);
             }
 
             localStorage.removeItem(`quizDataToSave_${language}`);
             localStorage.removeItem('needsTrialSetup');
             localStorage.removeItem(`quizData_${language}`);
 
-            // Redirect alla pagina subscription localizzata
+            console.log('✅ Setup complete, redirecting to PostQuizSubscription...');
             const langPageMap = {
               it: 'itpostquizsubscription',
               en: 'enpostquizsubscription',
@@ -179,11 +186,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
             return;
           }
         } catch (error) {
-          console.error('Error completing post-login setup:', error);
-          if (error?.response?.status === 401 || error?.message?.includes('401')) {
-            setIsLoadingUser(false);
-            return;
-          }
+          console.error('❌ Error in post-login setup:', error);
           localStorage.removeItem(`quizDataToSave_${language}`);
           localStorage.removeItem('needsTrialSetup');
         }
@@ -192,7 +195,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
       }
     };
     
-    completeSetupAfterLogin();
+    const timer = setTimeout(() => completeSetupAfterLogin(), 500);
+    return () => clearTimeout(timer);
   }, [navigate, language]);
 
   useEffect(() => {
