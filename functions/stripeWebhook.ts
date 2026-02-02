@@ -323,28 +323,34 @@ Deno.serve(async (req) => {
                 console.log('💰 Processing invoice.payment_succeeded...');
                 const invoice = event.data.object;
                 console.log('Invoice ID:', invoice.id);
-                console.log('Invoice metadata:', JSON.stringify(invoice.metadata));
-                console.log('Invoice lines:', JSON.stringify(invoice.lines?.data?.[0]?.metadata));
 
                 const customerId = invoice.customer;
                 const subscriptionId = invoice.subscription;
                 const amount = invoice.amount_paid / 100;
 
+                // Estrai user_id dai metadata
+                const userIdFromMetadata = invoice.metadata?.user_id || 
+                                           invoice.lines?.data?.[0]?.metadata?.user_id ||
+                                           invoice.parent?.subscription_details?.metadata?.user_id;
+
                 console.log('🔍 Looking for user with stripe_customer_id:', customerId);
-                const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
-                console.log('👥 Users found:', users.length);
-                if (users.length === 0) {
-                    console.error('❌ NO USER FOUND! Trying to find by user_id from metadata...');
-                    const userIdFromMetadata = invoice.metadata?.user_id || invoice.lines?.data?.[0]?.metadata?.user_id;
-                    console.log('user_id from metadata:', userIdFromMetadata);
-                    if (userIdFromMetadata) {
-                        try {
-                            // Prova a trovare per ID direttamente
-                            console.log('Attempting direct fetch by ID...');
-                        } catch (e) {
-                            console.error('Error:', e.message);
-                        }
+                let users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+                console.log('👥 Users found by stripe_customer_id:', users.length);
+
+                // Se non trova per stripe_customer_id, cerca per user_id dai metadata
+                if (users.length === 0 && userIdFromMetadata) {
+                    console.log('⚠️ Not found by stripe_customer_id, trying user_id:', userIdFromMetadata);
+                    try {
+                        // Cerca per ID diretto (user_id dal metadata)
+                        users = await base44.asServiceRole.entities.User.filter({ id: userIdFromMetadata });
+                        console.log('👥 Users found by user_id:', users.length);
+                    } catch (e) {
+                        console.error('❌ Error searching by user_id:', e.message);
                     }
+                }
+
+                if (users.length === 0) {
+                    console.error('❌ NO USER FOUND! stripe_customer_id:', customerId, 'user_id:', userIdFromMetadata);
                 }
 
                 if (users.length > 0) {
