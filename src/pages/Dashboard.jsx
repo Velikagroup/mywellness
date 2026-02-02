@@ -229,16 +229,18 @@ export default function Dashboard() {
         return; // Don't show onboarding until terms are accepted
       }
 
-      // 2. Check onboarding status - BOTH user flag AND database
-      if (!user.onboarding_completed) {
-        try {
-          const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
-          // Solo mostra se non c'è record nel DB oppure il record dice non completato
-          if (onboardingRecords.length === 0 || !onboardingRecords[0].onboarding_completed) {
-            setShowOnboarding(true);
-          }
-        } catch (error) {
-          console.error('Error checking onboarding:', error);
+      // 2. Check onboarding status - guarda SEMPRE il database
+      try {
+        const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
+        // Mostra modal solo se non c'è record nel DB o il record dice non completato
+        if (onboardingRecords.length === 0 || !onboardingRecords[0].onboarding_completed) {
+          setShowOnboarding(true);
+        }
+        // Se il DB dice completato, non mostra il modal (ignora user.onboarding_completed)
+      } catch (error) {
+        console.error('Error checking onboarding:', error);
+        // Se c'è errore e il user flag dice non completato, mostra il modal
+        if (!user.onboarding_completed) {
           setShowOnboarding(true);
         }
       }
