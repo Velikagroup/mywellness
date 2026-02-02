@@ -490,18 +490,14 @@ function generateGoalAchievedHtml(template, variables, appUrl) {
     const userName = variables.user_name || 'Campione';
     const weightLost = variables.weight_lost || '0';
     const daysToGoal = variables.days_to_goal || '0';
-    const couponCode = variables.coupon_code || 'WINNER30';
     
     let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
     let introText = (template.intro_text || '').replace(/{user_name}/g, userName);
     let mainContent = (template.main_content || '').replace(/{user_name}/g, userName);
     let closingText = (template.closing_text || '').replace(/{user_name}/g, userName);
-    let urgencyTitle = (template.urgency_title || '').replace(/{coupon_code}/g, couponCode);
-    let urgencySubtitle = (template.urgency_subtitle || '').replace(/{coupon_code}/g, couponCode);
-    let ctaText = (template.call_to_action_text || '🏆 Mantieni i Risultati con -30%');
-    let ctaUrl = (template.call_to_action_url || `${appUrl}/pricing?coupon=${couponCode}`)
-        .replace(/{app_url}/g, appUrl)
-        .replace(/{coupon_code}/g, couponCode);
+    let ctaText = (template.call_to_action_text || '📊 Vai alla Dashboard');
+    let ctaUrl = (template.call_to_action_url || `${appUrl}/Dashboard`)
+        .replace(/{app_url}/g, appUrl);
     let footerQuote = template.footer_quote || '';
     let footerText = template.footer_text || '';
 
