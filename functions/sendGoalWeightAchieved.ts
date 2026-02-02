@@ -12,9 +12,6 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Missing userId' }, { status: 400 });
         }
 
-        // ✅ SECURITY: Skip auth check when called from service role (automation)
-        // Authentication is already validated in the calling function
-
         const user = await base44.asServiceRole.entities.User.get(userId);
         
         if (!user || !user.email) {
@@ -33,7 +30,9 @@ Deno.serve(async (req) => {
         const startWeight = weightHistory.length > 0 
             ? weightHistory[weightHistory.length - 1].weight 
             : user.current_weight;
-        const currentWeight = user.current_weight;
+        const currentWeight = weightHistory.length > 0 
+            ? weightHistory[0].weight 
+            : user.current_weight;
         const weightLost = (startWeight - currentWeight).toFixed(1);
         const daysToGoal = weightHistory.length > 1 
             ? Math.floor((new Date(weightHistory[0].date) - new Date(weightHistory[weightHistory.length - 1].date)) / (1000 * 60 * 60 * 24))
@@ -42,7 +41,7 @@ Deno.serve(async (req) => {
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
         const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
 
-        // 🔐 GENERA COUPON PERSONALIZZATO
+        // 🔐 GENERA COUPON PERSONALIZZATO inline
         function generatePersonalCode(userId, baseCode) {
             const hash = userId.split('').reduce((acc, char) => {
                 return ((acc << 5) - acc) + char.charCodeAt(0);
@@ -53,7 +52,7 @@ Deno.serve(async (req) => {
 
         const personalCouponCode = generatePersonalCode(user.id, 'WINNER30');
 
-        // Verifica se il coupon esiste già, altrimenti crealo
+        // Verifica se il coupon esiste già
         const existingCoupons = await base44.asServiceRole.entities.Coupon.filter({
             code: personalCouponCode
         });
@@ -71,7 +70,7 @@ Deno.serve(async (req) => {
             console.log(`ℹ️ Coupon already exists: ${personalCouponCode}`);
         }
 
-        // Marca come inviata
+        // Marca come inviata sul profilo utente
         await base44.asServiceRole.entities.User.update(user.id, {
             goal_achieved_email_sent: true,
             goal_achieved_date: new Date().toISOString()
