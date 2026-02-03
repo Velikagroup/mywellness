@@ -158,14 +158,9 @@ function generateEmailHtml(template, variables, language = 'it') {
                         <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
                             <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
                             <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
-                            ${variables.stripe_portal_url ? `
-                            <div style="margin-top: 15px;">
-                                <a href="${variables.stripe_portal_url}" style="display: inline-block; background: #635BFF; color: #ffffff !important; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 13px;">
-                                    Stripe Portal
-                                </a>
-                            </div>
-                            ` : ''}
+                            <p style="margin: 5px 0; font-size: 11px;">
+                                EIN: 36-5141800${variables.stripe_portal_url ? ` - <a href="${variables.stripe_portal_url}" style="color: #999999; text-decoration: none;">Stripe Portal</a>` : ''}
+                            </p>
                         </td>
                     </tr>
                 </table>
