@@ -100,8 +100,7 @@ function generateEmailHtml(template, variables, language = 'it') {
         footerText = footerText.replace(regex, value);
     });
 
-    // Estrai stripe_portal_url dalle variabili per il footer
-    const stripePortalUrl = variables.stripe_portal_url || null;
+    const stripePortalUrl = 'https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800';
 
     console.log('📧 Generating Default HTML');
 
@@ -162,7 +161,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                             <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
                             <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
                             <p style="margin: 5px 0; font-size: 11px;">
-                                EIN: 36-5141800 - velika.03@outlook.it${stripePortalUrl ? ` - <a href="${stripePortalUrl}" style="color: #999999; text-decoration: none; font-weight: bold;">Stripe Portal</a>` : ''}
+                                EIN: 36-5141800 - velika.03@outlook.it - <a href="${stripePortalUrl}" style="color: #999999; text-decoration: none; font-weight: bold;">Stripe Portal</a>
                             </p>
                         </td>
                     </tr>
