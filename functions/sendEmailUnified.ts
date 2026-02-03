@@ -100,6 +100,9 @@ function generateEmailHtml(template, variables, language = 'it') {
         footerText = footerText.replace(regex, value);
     });
 
+    // Estrai stripe_portal_url dalle variabili per il footer
+    const stripePortalUrl = variables.stripe_portal_url || null;
+
     console.log('📧 Generating Default HTML');
 
     const html = `<!DOCTYPE html>
@@ -150,6 +153,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                                 </tr>
                             </table>` : ''}
                             ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
+                            ${stripePortalUrl ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0;"><a href="${stripePortalUrl}" style="color: #999999; text-decoration: none;">Stripe Portal</a></p>` : ''}
                         </td>
                     </tr>
                 </table>
