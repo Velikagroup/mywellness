@@ -863,7 +863,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
             </Card>
 
             <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="pt-6">
+              <CardContent className="pt-6 space-y-3">
                 <Button
                   onClick={handleLogout}
                   variant="destructive"
@@ -871,6 +871,15 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   {t('settings.logout')}
+                </Button>
+                
+                <Button
+                  onClick={() => setShowDeleteAccountDialog(true)}
+                  variant="outline"
+                  className="w-full border-red-300 text-red-600 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  {t('settings.deleteAccount')}
                 </Button>
               </CardContent>
             </Card>
@@ -900,23 +909,12 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   </p>
                 )}
 
-                <div className="flex gap-3">
-                  <Button
-                    onClick={handleUpgradePlan}
-                    className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                  >
-                    {user?.subscription_plan === 'premium' ? t('settings.changePlan') : t('settings.upgradePlan')}
-                  </Button>
-
-                  <Button
-                    onClick={() => setShowDeleteAccountDialog(true)}
-                    variant="outline"
-                    className="flex-1 border-red-300 text-red-600 hover:bg-red-50"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Cancella Account
-                  </Button>
-                </div>
+                <Button
+                  onClick={handleUpgradePlan}
+                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                >
+                  {user?.subscription_plan === 'premium' ? t('settings.changePlan') : t('settings.upgradePlan')}
+                </Button>
 
                 {user?.cancellation_at_period_end && user?.subscription_period_end && (
                   <div className="p-4 bg-orange-50 border-2 border-orange-200 rounded-xl">
