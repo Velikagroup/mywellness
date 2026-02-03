@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
         console.log(`📧 Sending welcome email to ${userEmail} (${templateId})`);
         
         // Invia email tramite sistema unificato
-        await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+        const emailResponse = await base44.asServiceRole.functions.invoke('sendEmailUnified', {
             userId: user.id,
             userEmail: userEmail,
             templateId: templateId,
@@ -79,6 +79,12 @@ Deno.serve(async (req) => {
             language: userLang,
             triggerSource: 'sendWelcomeEmailOnPurchase'
         });
+        
+        // Gestisci risposta da sendEmailUnified
+        const emailData = emailResponse?.data || emailResponse;
+        if (!emailData?.success) {
+            throw new Error(`sendEmailUnified failed: ${emailData?.error || 'Unknown error'}`);
+        }
         
         console.log(`✅ Welcome email sent to ${userEmail}`);
         
