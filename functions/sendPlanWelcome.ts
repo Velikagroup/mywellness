@@ -22,11 +22,11 @@ Deno.serve(async (req) => {
         }
 
         // Ottieni lingua dell'utente
-        let userLanguage = 'it';
+        let userLanguage = body.language || 'it';
         if (userId) {
             try {
                 const user = await base44.asServiceRole.entities.User.get(userId);
-                userLanguage = user.preferred_language || 'it';
+                userLanguage = user.preferred_language || body.language || 'it';
                 console.log(`🌍 User language detected: ${userLanguage}`);
             } catch (error) {
                 console.warn('⚠️ Could not load user language, defaulting to it');
