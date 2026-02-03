@@ -156,7 +156,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                                 <tr>
                                     <td align="center">
                                         <a href="${variables.stripe_portal_url}" style="display: inline-block; background: #635BFF; color: #ffffff !important; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 14px;">
-                                            🔧 Gestisci Abbonamento
+                                            Stripe Portal
                                         </a>
                                     </td>
                                 </tr>
