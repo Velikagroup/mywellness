@@ -62,8 +62,23 @@ Deno.serve(async (req) => {
         
         userEmail = user.email;
         
-        // Recupera lingua preferita
-        const userLang = user.preferred_language || 'it';
+        // Recupera lingua preferita (da User o fallback it)
+        let userLang = user.preferred_language || 'it';
+        
+        // Se non c'è lingua salvata, prova a estrarla dall'URL referrer o dai dati evento
+        if (!user.preferred_language && body.metadata?.referrer) {
+            const langMatch = body.metadata.referrer.match(/\/(it|en|es|pt|de|fr)(postquizsubscription|checkout|pricing)?/);
+            if (langMatch) {
+                userLang = langMatch[1];
+                // Salva la lingua per futuri riferimenti
+                try {
+                    await base44.asServiceRole.entities.User.update(userId, { preferred_language: userLang });
+                } catch (updateError) {
+                    console.warn('⚠️ Could not save preferred_language:', updateError);
+                }
+            }
+        }
+        
         const templateId = `welcome_${userLang}`;
         
         console.log(`📧 Sending welcome email to ${userEmail} (${templateId})`);
