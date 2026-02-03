@@ -687,12 +687,14 @@ Deno.serve(async (req) => {
                             } else if (subscription.status === 'active') {
                                 // Subscription DIRETTA (senza trial) → invia email benvenuto piano
                                 const plan = updateData.subscription_plan || 'base';
-                                console.log(`📧 Sending plan welcome email for direct subscription (${plan})...`);
+                                const userLanguage = user.preferred_language || 'it';
+                                console.log(`📧 Sending plan welcome email for direct subscription (${plan}, ${userLanguage})...`);
                                 await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
                                     userId: user.id,
                                     userEmail: user.email,
                                     userName: user.full_name,
-                                    plan: plan
+                                    plan: plan,
+                                    language: userLanguage
                                 });
                                 console.log('✅ Plan welcome email sent');
                             }
