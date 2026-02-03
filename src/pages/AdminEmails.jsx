@@ -117,6 +117,7 @@ export default function AdminEmails() {
     if (baseId.includes('goal_weight')) return 'engagement';
     if (baseId.includes('password_reset')) return 'technical';
     if (baseId.includes('weekly_report')) return 'reporting';
+    if (baseId.includes('renewal')) return 'engagement';
     if (baseId.includes('cart_abandoned') || baseId.includes('checkout_abandoned')) return 'abandonment';
     return null;
   };
