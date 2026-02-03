@@ -33,22 +33,8 @@ Deno.serve(async (req) => {
             }
         }
 
-        // Mappa piano -> template_id base
-        const planTemplateMap = {
-            'base': 'base_welcome',
-            'pro': 'pro_welcome',
-            'premium': 'premium_welcome'
-        };
-
-        const baseTemplateId = planTemplateMap[plan.toLowerCase()];
-        
-        if (!baseTemplateId) {
-            console.error(`❌ Unknown plan: ${plan}`);
-            return Response.json({ error: `Unknown plan: ${plan}` }, { status: 400 });
-        }
-
-        // Template ID con lingua
-        const templateId = `${baseTemplateId}_${userLanguage}`;
+        // Usa sempre il template "benvenuto" indipendentemente dal piano
+        const templateId = `benvenuto_${userLanguage}`;
 
         console.log(`📬 Sending ${plan} welcome to ${userEmail} (${templateId})`);
 
