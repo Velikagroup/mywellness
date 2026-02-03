@@ -453,23 +453,22 @@ Deno.serve(async (req) => {
 
                     console.log(`✅ Payment recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
 
-                    // Send renewal confirmation or welcome email for recurring payments
+                    // Send welcome email for recurring payments (no separate renewal email)
                     const userPlan = user.subscription_plan || 'base';
                     if (['base', 'pro', 'premium'].includes(userPlan)) {
                         try {
-                            console.log(`📧 Sending renewal confirmation for ${userPlan}...`);
-                            await base44.asServiceRole.functions.invoke('sendRenewalConfirmation', {
+                            console.log(`📧 Sending welcome email for ${userPlan}...`);
+                            await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
                                 userId: user.id,
                                 userEmail: user.email,
                                 userName: user.full_name,
                                 plan: userPlan,
-                                amount: amount.toFixed(2),
                                 invoiceUrl: generatedInvoiceUrl,
-                                nextBillingDate: new Date(invoice.period_end * 1000).toISOString().split('T')[0]
+                                paymentAmount: amount.toFixed(2)
                             });
-                            console.log(`✅ Renewal confirmation sent`);
+                            console.log(`✅ Welcome email sent`);
                         } catch (emailError) {
-                            console.error('⚠️ Renewal email failed:', emailError.message);
+                            console.error('⚠️ Welcome email failed:', emailError.message);
                         }
                     }
 
