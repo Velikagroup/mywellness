@@ -20,6 +20,7 @@ import PantryModal from '../components/meals/PantryModal';
 import MealPlanWizard from '../components/meals/MealPlanWizard';
 import ReplaceMealModal from '../components/meals/ReplaceMealModal';
 import { useLanguage } from '../components/i18n/LanguageContext';
+import PullToRefresh from '../components/mobile/PullToRefresh';
 
 const dietTypes = [
   { id: 'mediterranean', label: 'Mediterranea' },
@@ -1747,6 +1748,7 @@ STRICT RULES:
   return (
     <>
       <div className="min-h-screen pb-20">
+        <PullToRefresh onRefresh={loadMealPlans}>
         <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
@@ -2027,6 +2029,7 @@ STRICT RULES:
             )
           )}
         </div>
+        </PullToRefresh>
       </div>
       
       {selectedMeal && (
