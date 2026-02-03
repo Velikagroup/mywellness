@@ -75,6 +75,7 @@ Deno.serve(async (req) => {
             variables: {
                 user_name: userName || 'Utente',
                 plan: plan.toUpperCase() || 'BASE',
+                plan_name: plan.charAt(0).toUpperCase() + plan.slice(1),
                 subscription_period_end: subscriptionPeriodEnd,
                 stripe_portal_url: stripePortalUrl,
                 invoice_url: invoiceUrl || '#',

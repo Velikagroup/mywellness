@@ -453,10 +453,43 @@ Deno.serve(async (req) => {
 
                     console.log(`✅ Payment recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
 
-                    // ❌ NON inviare email benvenuto per invoice.payment_succeeded
-                    // Questo evento viene triggato ad ogni rinnovo mensile/annuale
-                    // L'email benvenuto viene inviata SOLO in customer.subscription.created
-                    console.log('⏭️ Skipping welcome email - invoice.payment_succeeded is for recurring payments only');
+                    // 📧 Invia email "Abbonamento Rinnovato" SOLO per RINNOVI (non per subscription_create)
+                    if (invoice.billing_reason === 'subscription_cycle') {
+                        console.log('📧 Sending renewal confirmation email for subscription cycle...');
+                        try {
+                            const userLanguage = user.preferred_language || 'it';
+                            const plan = planFromSubscription || user.subscription_plan || 'base';
+                            const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
+                            
+                            let nextBillingDate = 'N/A';
+                            if (subscription.current_period_end) {
+                                const date = new Date(subscription.current_period_end * 1000);
+                                nextBillingDate = date.toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
+                            }
+                            
+                            const stripePortalUrl = `https://billing.stripe.com/p/login/bSI14OdOL1n79f5144?prefilled_email=${encodeURIComponent(user.email)}`;
+                            
+                            await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+                                userId: user.id,
+                                userEmail: user.email,
+                                templateId: `rinnovo_confermato_${userLanguage}`,
+                                variables: {
+                                    user_name: user.full_name || 'Utente',
+                                    plan_name: planName,
+                                    next_billing_date: nextBillingDate,
+                                    amount: amount.toFixed(2),
+                                    stripe_portal_url: stripePortalUrl
+                                },
+                                language: userLanguage,
+                                triggerSource: 'stripeWebhook_renewal'
+                            });
+                            console.log('✅ Renewal confirmation email sent');
+                        } catch (emailError) {
+                            console.error('⚠️ Renewal email failed:', emailError.message);
+                        }
+                    } else {
+                        console.log(`⏭️ Skipping renewal email - billing_reason is ${invoice.billing_reason}, not subscription_cycle`);
+                    }
 
                     // 🔗 AFFILIATE: Traccia commissione per pagamenti ricorrenti
                     if (user.referred_by_affiliate_code) {
