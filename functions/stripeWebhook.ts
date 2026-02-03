@@ -689,24 +689,34 @@ Deno.serve(async (req) => {
                     await base44.asServiceRole.entities.User.update(user.id, updateData);
                     console.log(`✅ Subscription updated for user ${user.id} with stripe_customer_id: ${customerId}`);
 
-                    // 📧 Invia email benvenuto trial se è una nuova subscription con trial
-                    if (event.type === 'customer.subscription.created' && subscription.status === 'trialing') {
+                    // 📧 Invia email benvenuto in base al tipo di subscription
+                    if (event.type === 'customer.subscription.created') {
                         try {
-                            console.log('📧 Sending trial welcome email...');
-                            await base44.asServiceRole.functions.invoke('sendTrialWelcome', {
-                                userId: user.id,
-                                userEmail: user.email,
-                                userName: user.full_name
-                            });
-                            console.log('✅ Trial welcome email sent');
+                            if (subscription.status === 'trialing') {
+                                // Trial signup → invia email benvenuto trial
+                                console.log('📧 Sending trial welcome email...');
+                                await base44.asServiceRole.functions.invoke('sendTrialWelcome', {
+                                    userId: user.id,
+                                    userEmail: user.email,
+                                    userName: user.full_name
+                                });
+                                console.log('✅ Trial welcome email sent');
+                            } else if (subscription.status === 'active') {
+                                // Subscription DIRETTA (senza trial) → invia email benvenuto piano
+                                const plan = updateData.subscription_plan || 'base';
+                                console.log(`📧 Sending plan welcome email for direct subscription (${plan})...`);
+                                await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
+                                    userId: user.id,
+                                    userEmail: user.email,
+                                    userName: user.full_name,
+                                    plan: plan
+                                });
+                                console.log('✅ Plan welcome email sent');
+                            }
                         } catch (emailError) {
-                            console.error('⚠️ Trial welcome email failed:', emailError.message);
+                            console.error('⚠️ Welcome email failed:', emailError.message);
                         }
                     }
-
-                    // ❌ NON inviare email benvenuto piano - vengono gestite solo da checkout.session.completed
-                    // L'email "benvenuto" arriva SOLO quando l'utente si iscrive al trial (sendTrialWelcome)
-                    console.log('⏭️ Skipping plan welcome - email sent only on trial signup');
                 }
                 break;
             }
