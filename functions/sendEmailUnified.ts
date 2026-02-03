@@ -150,18 +150,6 @@ function generateEmailHtml(template, variables, language = 'it') {
                                 </tr>
                             </table>` : ''}
                             ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
-                            
-                            ${variables.stripe_portal_url ? `
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
-                                <tr>
-                                    <td align="center">
-                                        <a href="${variables.stripe_portal_url}" style="display: inline-block; background: #635BFF; color: #ffffff !important; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 14px;">
-                                            Stripe Portal
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
-                            ` : ''}
                         </td>
                     </tr>
                 </table>
@@ -171,6 +159,13 @@ function generateEmailHtml(template, variables, language = 'it') {
                             <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
                             <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
                             <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+                            ${variables.stripe_portal_url ? `
+                            <div style="margin-top: 15px;">
+                                <a href="${variables.stripe_portal_url}" style="display: inline-block; background: #635BFF; color: #ffffff !important; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 13px;">
+                                    Stripe Portal
+                                </a>
+                            </div>
+                            ` : ''}
                         </td>
                     </tr>
                 </table>

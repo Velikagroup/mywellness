@@ -689,8 +689,8 @@ Deno.serve(async (req) => {
                     await base44.asServiceRole.entities.User.update(user.id, updateData);
                     console.log(`✅ Subscription updated for user ${user.id} with stripe_customer_id: ${customerId}`);
 
-                    // 📧 Invia email benvenuto in base al tipo di subscription
-                    if (event.type === 'customer.subscription.created') {
+                    // 📧 Invia email benvenuto SOLO per subscription.created (NON per .updated per evitare duplicati)
+                    if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete') {
                         try {
                             if (subscription.status === 'trialing') {
                                 // Trial signup → invia email benvenuto trial
@@ -716,6 +716,8 @@ Deno.serve(async (req) => {
                         } catch (emailError) {
                             console.error('⚠️ Welcome email failed:', emailError.message);
                         }
+                    } else if (event.type === 'customer.subscription.updated') {
+                        console.log('⏭️ Skipping welcome email for subscription.updated event to avoid duplicates');
                     }
                 }
                 break;
