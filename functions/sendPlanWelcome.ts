@@ -51,7 +51,7 @@ Deno.serve(async (req) => {
 
         // Carica dati utente per subscription_period_end
         let subscriptionPeriodEnd = 'N/A';
-        let stripePortalUrl = 'https://billing.stripe.com/p/login/session/test';
+        let stripePortalUrl = 'https://billing.stripe.com/p/login/bSI14OdOL1n79f5144';
         if (userId) {
             try {
                 const user = await base44.asServiceRole.entities.User.get(userId);
@@ -60,7 +60,7 @@ Deno.serve(async (req) => {
                     subscriptionPeriodEnd = date.toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
                 }
                 if (user.stripe_customer_id) {
-                    stripePortalUrl = `https://billing.stripe.com/p/login/session/test?prefilled_email=${encodeURIComponent(userEmail)}`;
+                    stripePortalUrl = `https://billing.stripe.com/p/login/bSI14OdOL1n79f5144?prefilled_email=${encodeURIComponent(userEmail)}`;
                 }
             } catch (error) {
                 console.warn('⚠️ Could not load user subscription details');
