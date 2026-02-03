@@ -453,24 +453,10 @@ Deno.serve(async (req) => {
 
                     console.log(`✅ Payment recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
 
-                    // Send welcome email for recurring payments (no separate renewal email)
-                    const userPlan = user.subscription_plan || 'base';
-                    if (['base', 'pro', 'premium'].includes(userPlan)) {
-                        try {
-                            console.log(`📧 Sending welcome email for ${userPlan}...`);
-                            await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
-                                userId: user.id,
-                                userEmail: user.email,
-                                userName: user.full_name,
-                                plan: userPlan,
-                                invoiceUrl: generatedInvoiceUrl,
-                                paymentAmount: amount.toFixed(2)
-                            });
-                            console.log(`✅ Welcome email sent`);
-                        } catch (emailError) {
-                            console.error('⚠️ Welcome email failed:', emailError.message);
-                        }
-                    }
+                    // ❌ NON inviare email benvenuto per invoice.payment_succeeded
+                    // Questo evento viene triggato ad ogni rinnovo mensile/annuale
+                    // L'email benvenuto viene inviata SOLO in customer.subscription.created
+                    console.log('⏭️ Skipping welcome email - invoice.payment_succeeded is for recurring payments only');
 
                     // 🔗 AFFILIATE: Traccia commissione per pagamenti ricorrenti
                     if (user.referred_by_affiliate_code) {
