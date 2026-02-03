@@ -185,23 +185,9 @@ Deno.serve(async (req) => {
                     });
                     console.log(`✅ User subscription updated: status=active, plan=${plan}`);
 
-                    // Send welcome email if not landing offer
-                    if (!isLandingOffer && ['base', 'pro', 'premium'].includes(plan)) {
-                        try {
-                            console.log(`📧 Sending ${plan} welcome email...`);
-                            await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
-                                userId: user.id,
-                                userEmail: user.email,
-                                userName: user.full_name,
-                                plan: plan,
-                                invoiceUrl: generatedInvoiceUrl,
-                                paymentAmount: amount.toFixed(2)
-                            });
-                            console.log(`✅ ${plan} welcome email sent`);
-                        } catch (emailError) {
-                            console.error('⚠️ Welcome email failed:', emailError.message);
-                        }
-                    }
+                    // ❌ NON inviare email benvenuto - questo evento è per conversioni trial→paid
+                    // L'email benvenuto viene inviata solo alla creazione subscription DIRETTA (non da trial)
+                    console.log('⏭️ Skipping welcome email - checkout.session handles trial conversion');
                 } else {
                     console.warn('⚠️ No user found with stripe_customer_id:', customerId);
                 }
@@ -718,39 +704,9 @@ Deno.serve(async (req) => {
                         }
                     }
 
-                    // 📧 Invia email benvenuto piano se è una nuova subscription PAGATA (non trial)
-                    if (event.type === 'customer.subscription.created' && subscription.status === 'active') {
-                        try {
-                            console.log(`📧 Sending ${updateData.subscription_plan} plan welcome email...`);
-                            await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
-                                userId: user.id,
-                                userEmail: user.email,
-                                userName: user.full_name,
-                                plan: updateData.subscription_plan || 'base'
-                            });
-                            console.log('✅ Plan welcome email sent');
-                        } catch (emailError) {
-                            console.error('⚠️ Plan welcome email failed:', emailError.message);
-                        }
-                    }
-
-                    // 📧 Se passa da trial ad attivo, invia email conferma
-                    if (event.type === 'customer.subscription.updated' && 
-                        subscription.status === 'active' && 
-                        user.subscription_status === 'trial') {
-                        try {
-                            console.log('📧 Sending trial to active confirmation email...');
-                            await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
-                                userId: user.id,
-                                userEmail: user.email,
-                                userName: user.full_name,
-                                plan: updateData.subscription_plan || 'base'
-                            });
-                            console.log('✅ Trial to active confirmation sent');
-                        } catch (emailError) {
-                            console.error('⚠️ Trial to active email failed:', emailError.message);
-                        }
-                    }
+                    // ❌ NON inviare email benvenuto piano - vengono gestite solo da checkout.session.completed
+                    // L'email "benvenuto" arriva SOLO quando l'utente si iscrive al trial (sendTrialWelcome)
+                    console.log('⏭️ Skipping plan welcome - email sent only on trial signup');
                 }
                 break;
             }
