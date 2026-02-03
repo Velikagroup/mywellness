@@ -30,6 +30,7 @@ import CalorieBalanceChart from "../components/dashboard/CalorieBalanceChart";
 import TermsAcceptanceModal from "../components/dashboard/TermsAcceptanceModal";
 import { useLanguage } from "../components/i18n/LanguageContext";
 import { rememberMeManager } from "../components/utils/rememberMeManager";
+import PullToRefresh from "../components/mobile/PullToRefresh";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -673,6 +674,7 @@ export default function Dashboard() {
       )}
 
       <div className="min-h-screen pb-20 overflow-x-hidden">
+        <PullToRefresh onRefresh={loadUserData}>
         <div className="max-w-7xl mx-auto px-4 pt-0 pb-4 sm:p-6 space-y-4 sm:space-y-8">
 
           <div className="flex justify-center">
@@ -719,6 +721,7 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+        </PullToRefresh>
       </div>
 
       {selectedMeal && (

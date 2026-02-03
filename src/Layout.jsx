@@ -13,6 +13,7 @@ import { Scale, Save } from "lucide-react";
 import LiquidGlassNav from "@/components/navigation/LiquidGlassNav";
 import ProgressPhotoAnalyzer from "@/components/training/ProgressPhotoAnalyzer";
 import UnifiedCameraModal from "@/components/camera/UnifiedCameraModal";
+import { AnimatePresence, motion } from "framer-motion";
 
 function LayoutContent({ children }) {
   const location = useLocation();
@@ -506,7 +507,17 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       )}
 
       <main className={location.pathname.toLowerCase().includes('quiz') ? 'pt-0 pb-0' : 'pt-28 pb-20'}>
-        {children}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </main>
 
       {!location.pathname.toLowerCase().includes('quiz') && (

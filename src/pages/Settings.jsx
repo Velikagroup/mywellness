@@ -1784,63 +1784,17 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 onClick={async () => {
                   setIsSaving(true);
                   try {
-                    // Reset completo dell'account
-                    await base44.auth.updateMe({
-                      subscription_status: null,
-                      subscription_plan: null,
-                      subscription_period_end: null,
-                      stripe_customer_id: null,
-                      stripe_subscription_id: null,
-                      billing_type: null,
-                      company_name: null,
-                      tax_id: null,
-                      pec_sdi: null,
-                      billing_address: null,
-                      billing_city: null,
-                      billing_zip: null,
-                      billing_country: null,
-                      phone_number: null,
-                      target_weight: null,
-                      current_weight: null,
-                      height: null,
-                      age: null,
-                      gender: null,
-                      activity_level: null,
-                      fitness_goal: null,
-                      diet_type: null,
-                      allergies: null,
-                      workout_days: null,
-                      workout_location: null,
-                      equipment: null,
-                      cancellation_at_period_end: null
-                    });
-
-                    // Cancella tutti i dati dell'utente
-                    await Promise.all([
-                      base44.entities.MealPlan.filter({ user_id: user.id }).then(plans => 
-                        Promise.all(plans.map(p => base44.entities.MealPlan.delete(p.id)))
-                      ),
-                      base44.entities.WorkoutPlan.filter({ user_id: user.id }).then(plans => 
-                        Promise.all(plans.map(p => base44.entities.WorkoutPlan.delete(p.id)))
-                      ),
-                      base44.entities.WeightHistory.filter({ user_id: user.id }).then(weights => 
-                        Promise.all(weights.map(w => base44.entities.WeightHistory.delete(w.id)))
-                      ),
-                      base44.entities.MealLog.filter({ user_id: user.id }).then(logs => 
-                        Promise.all(logs.map(l => base44.entities.MealLog.delete(l.id)))
-                      ),
-                      base44.entities.ProgressPhoto.filter({ user_id: user.id }).then(photos => 
-                        Promise.all(photos.map(p => base44.entities.ProgressPhoto.delete(p.id)))
-                      ),
-                      base44.entities.WorkoutLog.filter({ user_id: user.id }).then(logs => 
-                        Promise.all(logs.map(l => base44.entities.WorkoutLog.delete(l.id)))
-                      )
-                    ]);
-
-                    // Logout
-                    rememberMeManager.clearToken();
-                    await base44.auth.logout();
-                    window.location.href = 'https://projectmywellness.com/login';
+                    const response = await base44.functions.invoke('deleteUserAccount');
+                    const data = response.data || response;
+                    
+                    if (data.success) {
+                      rememberMeManager.clearToken();
+                      await base44.auth.logout();
+                      window.location.href = 'https://projectmywellness.com/login';
+                    } else {
+                      alert('❌ Errore: ' + (data.error || 'Errore sconosciuto'));
+                      setIsSaving(false);
+                    }
                   } catch (error) {
                     console.error('Error deleting account:', error);
                     alert('❌ Errore durante la cancellazione dell\'account');
