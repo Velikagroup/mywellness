@@ -864,7 +864,7 @@ Deno.serve(async (req) => {
             try {
                 console.log(`📤 Attempt ${attempt + 1}/${MAX_RETRIES} sending to ${userEmail}`);
                 
-                sendResult = await sendViaBase44(base44, {
+                sendResult = await sendViaSendGrid({
                     to: userEmail,
                     toName: variables.user_name,
                     from: template.from_email || 'info@projectmywellness.com',
