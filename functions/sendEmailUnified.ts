@@ -14,26 +14,33 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 const MAX_RETRIES = 3;
 const RETRY_DELAYS = [5000, 15000, 30000]; // 5s, 15s, 30s
 
-async function sendViaBase44(base44, emailData) {
-    console.log('📤 Base44 Core SendEmail Request:', {
+async function sendViaSendGrid(emailData) {
+    const sgMail = (await import('npm:@sendgrid/mail')).default;
+    sgMail.setApiKey(Deno.env.get('SENDGRID_API_KEY'));
+    
+    console.log('📤 SendGrid Request:', {
         to: emailData.to,
         subject: emailData.subject,
         htmlLength: emailData.html?.length
     });
     
-    const result = await base44.asServiceRole.integrations.Core.SendEmail({
+    const msg = {
         to: emailData.to,
+        from: emailData.from || 'info@projectmywellness.com',
+        replyTo: emailData.replyTo || 'info@projectmywellness.com',
         subject: emailData.subject,
-        body: emailData.html
-    });
-
-    if (!result) {
-        throw new Error('Base44 SendEmail returned empty result');
+        html: emailData.html
+    };
+    
+    const result = await sgMail.send(msg);
+    
+    if (!result || result.length === 0) {
+        throw new Error('SendGrid returned empty result');
     }
-
+    
     return {
-        messageId: result.message_id || 'base44-sent',
-        provider: 'base44_core'
+        messageId: result[0].headers['x-message-id'] || 'sendgrid-sent',
+        provider: 'sendgrid'
     };
 }
 
