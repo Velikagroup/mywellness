@@ -279,23 +279,25 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     }
 
     setIsSavingWeight(true);
+    const today = new Date().toISOString().split('T')[0];
+    const weightValue = weightUnit === 'lbs' 
+      ? parseFloat(weightInput) / 2.20462 
+      : parseFloat(weightInput);
+
+    const weightData = {
+      user_id: user.id,
+      weight: weightValue,
+      date: today
+    };
+
+    // Optimistic update: close modal immediately
+    setWeightInput('');
+    setWeightUnit('kg');
+    setShowWeightModal(false);
+    setShowActionMenu(false);
+
     try {
-      const today = new Date().toISOString().split('T')[0];
-      const weightValue = weightUnit === 'lbs' 
-        ? parseFloat(weightInput) / 2.20462 
-        : parseFloat(weightInput);
-
-      const weightData = {
-        user_id: user.id,
-        weight: weightValue,
-        date: today
-      };
-
       await base44.entities.WeightHistory.create(weightData);
-      setWeightInput('');
-      setWeightUnit('kg');
-      setShowWeightModal(false);
-      setShowActionMenu(false);
       alert('✅ ' + (t('progressChart.weightSaved') || 'Peso registrato con successo'));
     } catch (error) {
       console.error("Error saving weight:", error);

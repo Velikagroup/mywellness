@@ -26,6 +26,12 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
     if (!checked) return; // Solo per marcare come consumato
     
     setSavingMealId(meal.id);
+    
+    // Optimistic update: trigger callbacks immediately
+    if (onMealComplete) {
+      onMealComplete();
+    }
+    
     try {
       const todayDate = new Date().toISOString().split('T')[0];
       const user = await base44.auth.me();
@@ -49,11 +55,6 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
         rebalanced: false
       });
       
-      // Trigger il callback per aggiornare il grafico
-      if (onMealComplete) {
-        onMealComplete();
-      }
-      
       // Ricarica i dati invece di fare reload completo
       if (onDataReload) {
         await onDataReload();
@@ -61,6 +62,10 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
     } catch (error) {
       console.error('Error logging meal:', error);
       alert(t('nutrition.errorSavingMeal'));
+      // Rollback: trigger reload to reset optimistic update
+      if (onDataReload) {
+        await onDataReload();
+      }
     }
     setSavingMealId(null);
   };

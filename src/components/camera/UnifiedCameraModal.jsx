@@ -956,13 +956,13 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Weight Mode UI */}
       {mode === 'weight' && (
         <div className="w-full h-full flex items-center justify-center p-6 pb-32">
-          <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl">
+          <div className="w-full max-w-md bg-[var(--bg-secondary)] rounded-3xl p-8 shadow-2xl">
             <div className="text-center mb-8">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-                <Scale className="w-10 h-10 text-gray-700" />
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                <Scale className="w-10 h-10 text-gray-700 dark:text-gray-300" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('dashboard.logWeightTitle')}</h2>
-              <p className="text-gray-600 text-sm">{t('dashboard.logWeightDesc')}</p>
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">{t('dashboard.logWeightTitle')}</h2>
+              <p className="text-[var(--text-secondary)] text-sm">{t('dashboard.logWeightDesc')}</p>
             </div>
 
             <div className="space-y-6">
@@ -997,7 +997,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">
+                <label className="block text-sm font-bold text-[var(--text-primary)] mb-3">
                   {t('dashboard.weightUnit')}
                 </label>
                 <Input
@@ -1006,10 +1006,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   value={weightKg}
                   onChange={(e) => setWeightKg(e.target.value)}
                   placeholder={weightUnit === 'lbs' ? '155' : '70.5'}
-                  className="h-16 text-xl text-center rounded-2xl border-2 border-gray-200 focus:border-black font-semibold"
+                  className="h-16 text-xl text-center rounded-2xl border-2 border-[var(--border-color)] focus:border-[#26847F] font-semibold bg-[var(--bg-primary)] text-[var(--text-primary)]"
                 />
                 {weightKg && (
-                  <p className="text-sm text-gray-500 text-center mt-3 font-medium">
+                  <p className="text-sm text-[var(--text-secondary)] text-center mt-3 font-medium">
                     ≈ {weightUnit === 'kg' ? kgToLbs(weightKg) : lbsToKg(weightKg)} {weightUnit === 'kg' ? 'lbs' : 'kg'}
                   </p>
                 )}
@@ -1041,7 +1041,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Nutrition Table Result */}
       {mode === 'nutrition_table' && nutritionResult && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-6 overflow-y-auto">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl my-auto">
+          <div className="w-full max-w-md bg-[var(--bg-secondary)] rounded-3xl shadow-2xl my-auto">
             {nutritionResult.photo_url && (
               <div className="relative w-full h-48 rounded-t-3xl overflow-hidden bg-gray-100">
                 <img 
@@ -1054,33 +1054,33 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
             <div className="p-8">
               <div className="mb-6 text-center">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{nutritionResult.nome_alimento}</h3>
+                <h3 className="text-2xl font-bold text-[var(--text-primary)] mb-2">{nutritionResult.nome_alimento}</h3>
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-[#26847F]/20 to-[#26847F]/10 border-2 border-[#26847F]">
                   <p className="text-3xl font-bold text-[#26847F]">{nutritionResult.score_qualita}</p>
                 </div>
-                <p className="text-sm text-gray-500 mt-3 font-medium">{t('dashboard.qualityScore')}</p>
+                <p className="text-sm text-[var(--text-secondary)] mt-3 font-medium">{t('dashboard.qualityScore')}</p>
               </div>
 
               <div className="border-t border-gray-200 mb-6"></div>
 
               <div className="mb-6">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{t('dashboard.nutritionalInfo')}</p>
+                <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-3">{t('dashboard.nutritionalInfo')}</p>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <p className="text-xl font-bold text-gray-900">{nutritionResult.calorie_per_porzione}</p>
-                    <p className="text-xs text-gray-600 mt-1">{t('meals.calories')}</p>
+                  <div className="bg-[var(--bg-primary)] rounded-lg p-3 text-center border border-[var(--border-color)]">
+                    <p className="text-xl font-bold text-[var(--text-primary)]">{nutritionResult.calorie_per_porzione}</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">{t('meals.calories')}</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <p className="text-xl font-bold text-gray-900">{nutritionResult.proteine_g}g</p>
-                    <p className="text-xs text-gray-600 mt-1">{t('nutrition.protein')}</p>
+                  <div className="bg-[var(--bg-primary)] rounded-lg p-3 text-center border border-[var(--border-color)]">
+                    <p className="text-xl font-bold text-[var(--text-primary)]">{nutritionResult.proteine_g}g</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">{t('nutrition.protein')}</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <p className="text-xl font-bold text-gray-900">{nutritionResult.carboidrati_g}g</p>
-                    <p className="text-xs text-gray-600 mt-1">{t('nutrition.carbs')}</p>
+                  <div className="bg-[var(--bg-primary)] rounded-lg p-3 text-center border border-[var(--border-color)]">
+                    <p className="text-xl font-bold text-[var(--text-primary)]">{nutritionResult.carboidrati_g}g</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">{t('nutrition.carbs')}</p>
                   </div>
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <p className="text-xl font-bold text-gray-900">{nutritionResult.grassi_g}g</p>
-                    <p className="text-xs text-gray-600 mt-1">{t('nutrition.fat')}</p>
+                  <div className="bg-[var(--bg-primary)] rounded-lg p-3 text-center border border-[var(--border-color)]">
+                    <p className="text-xl font-bold text-[var(--text-primary)]">{nutritionResult.grassi_g}g</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-1">{t('nutrition.fat')}</p>
                   </div>
                 </div>
               </div>
@@ -1161,9 +1161,9 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Body Scan Result */}
       {mode === 'bodyscan' && bodyScanResult && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto">
+          <div className="w-full max-w-2xl bg-[var(--bg-secondary)] rounded-3xl shadow-2xl my-auto">
             {/* Header con foto */}
-            <div className="relative rounded-t-3xl overflow-hidden bg-white border-b border-gray-200">
+            <div className="relative rounded-t-3xl overflow-hidden bg-[var(--bg-secondary)] border-b border-[var(--border-color)]">
               <div className="grid grid-cols-2 gap-3 p-4">
                 {bodyScanResult.photos.front && (
                   <img src={bodyScanResult.photos.front} className="w-full h-56 object-cover rounded-lg" alt="Front" />
@@ -1173,40 +1173,40 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 )}
               </div>
               <div className="px-6 py-4">
-                <p className="text-sm text-gray-500 mb-1">{t('dashboard.analysisDate')} {new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                <h3 className="text-2xl font-bold text-gray-900">{t('dashboard.bodyScanResults')}</h3>
+                <p className="text-sm text-[var(--text-secondary)] mb-1">{t('dashboard.analysisDate')} {new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                <h3 className="text-2xl font-bold text-[var(--text-primary)]">{t('dashboard.bodyScanResults')}</h3>
               </div>
             </div>
 
             <div className="p-6 max-h-[60vh] overflow-y-auto">
               {/* Metriche Principali */}
               <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t('dashboard.somatotype')}</p>
-                  <p className="text-2xl font-bold text-gray-900 capitalize">{bodyScanResult.somatotype}</p>
+                <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg p-4">
+                  <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-1">{t('dashboard.somatotype')}</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)] capitalize">{bodyScanResult.somatotype}</p>
                 </div>
 
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t('dashboard.bodyFatPercentage')}</p>
-                  <p className="text-2xl font-bold text-gray-900">{bodyScanResult.body_fat_percentage}%</p>
+                <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg p-4">
+                  <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-1">{t('dashboard.bodyFatPercentage')}</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{bodyScanResult.body_fat_percentage}%</p>
                 </div>
 
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t('dashboard.muscleDefinitionScore')}</p>
-                  <p className="text-2xl font-bold text-gray-900">{bodyScanResult.muscle_definition_score}<span className="text-base text-gray-500">/100</span></p>
+                <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg p-4">
+                  <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-1">{t('dashboard.muscleDefinitionScore')}</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{bodyScanResult.muscle_definition_score}<span className="text-base text-[var(--text-secondary)]">/100</span></p>
                 </div>
 
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t('dashboard.biologicalAge')}</p>
-                  <p className="text-2xl font-bold text-gray-900">{bodyScanResult.body_age_estimate} <span className="text-base text-gray-500">{t('dashboard.years')}</span></p>
+                <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg p-4">
+                  <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-1">{t('dashboard.biologicalAge')}</p>
+                  <p className="text-2xl font-bold text-[var(--text-primary)]">{bodyScanResult.body_age_estimate} <span className="text-base text-[var(--text-secondary)]">{t('dashboard.years')}</span></p>
                 </div>
               </div>
 
               {/* Postura */}
               {bodyScanResult.posture_assessment && (
-                <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{t('dashboard.posturalAssessment')}</p>
-                  <p className="text-sm text-gray-700 leading-relaxed">{bodyScanResult.posture_assessment}</p>
+                <div className="mb-6 bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg p-4">
+                  <p className="text-xs font-medium text-[var(--text-secondary)] uppercase tracking-wide mb-2">{t('dashboard.posturalAssessment')}</p>
+                  <p className="text-sm text-[var(--text-primary)] leading-relaxed">{bodyScanResult.posture_assessment}</p>
                 </div>
               )}
 
@@ -1238,21 +1238,21 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               {/* Dettagli Aggiuntivi */}
               <div className="grid grid-cols-3 gap-3 mb-6">
                 {bodyScanResult.skin_texture && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500 font-medium mb-1">{t('dashboard.skinTexture')}</p>
-                    <p className="text-sm font-semibold text-gray-900">{bodyScanResult.skin_texture}</p>
+                  <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg p-3 text-center">
+                    <p className="text-xs text-[var(--text-secondary)] font-medium mb-1">{t('dashboard.skinTexture')}</p>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">{bodyScanResult.skin_texture}</p>
                   </div>
                 )}
                 {bodyScanResult.skin_tone && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500 font-medium mb-1">{t('dashboard.skinTone')}</p>
-                    <p className="text-sm font-semibold text-gray-900">{bodyScanResult.skin_tone}</p>
+                  <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg p-3 text-center">
+                    <p className="text-xs text-[var(--text-secondary)] font-medium mb-1">{t('dashboard.skinTone')}</p>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">{bodyScanResult.skin_tone}</p>
                   </div>
                 )}
                 {bodyScanResult.swelling_percentage !== undefined && (
-                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500 font-medium mb-1">{t('dashboard.swelling')}</p>
-                    <p className="text-sm font-semibold text-gray-900">{bodyScanResult.swelling_percentage}%</p>
+                  <div className="bg-[var(--bg-primary)] border border-[var(--border-color)] rounded-lg p-3 text-center">
+                    <p className="text-xs text-[var(--text-secondary)] font-medium mb-1">{t('dashboard.swelling')}</p>
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">{bodyScanResult.swelling_percentage}%</p>
                   </div>
                 )}
               </div>
@@ -1336,10 +1336,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Calorie History Modal */}
       {showCalorieHistoryModal && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto border border-gray-200/30">
-            <div className="p-6 border-b border-gray-200/30">
+          <div className="w-full max-w-2xl bg-[var(--bg-secondary)] rounded-3xl shadow-2xl my-auto border border-[var(--border-color)]">
+            <div className="p-6 border-b border-[var(--border-color)]">
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-gray-900">{t('dashboard.calorieHistory')}</h3>
+                <h3 className="text-2xl font-bold text-[var(--text-primary)]">{t('dashboard.calorieHistory')}</h3>
                 <button
                   onClick={() => {
                     setShowCalorieHistoryModal(false);
@@ -1370,10 +1370,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Nutrition History Modal */}
       {showNutritionHistoryModal && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto border border-gray-200/30">
-            <div className="p-6 border-b border-gray-200/30">
+          <div className="w-full max-w-2xl bg-[var(--bg-secondary)] rounded-3xl shadow-2xl my-auto border border-[var(--border-color)]">
+            <div className="p-6 border-b border-[var(--border-color)]">
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-gray-900">{t('dashboard.nutritionHistory')}</h3>
+                <h3 className="text-2xl font-bold text-[var(--text-primary)]">{t('dashboard.nutritionHistory')}</h3>
                 <button
                   onClick={() => {
                     setShowNutritionHistoryModal(false);
