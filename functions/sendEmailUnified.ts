@@ -153,7 +153,6 @@ function generateEmailHtml(template, variables, language = 'it') {
                                 </tr>
                             </table>` : ''}
                             ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
-                            ${stripePortalUrl ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0;"><a href="${stripePortalUrl}" style="color: #999999; text-decoration: none;">Stripe Portal</a></p>` : ''}
                         </td>
                     </tr>
                 </table>
@@ -163,7 +162,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                             <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
                             <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
                             <p style="margin: 5px 0; font-size: 11px;">
-                                EIN: 36-5141800 - velika.03@outlook.it${variables.stripe_portal_url ? ` - <a href="${variables.stripe_portal_url}" style="color: #999999; text-decoration: none;">Stripe Portal</a>` : ''}
+                                EIN: 36-5141800 - velika.03@outlook.it${stripePortalUrl ? ` - <a href="${stripePortalUrl}" style="color: #999999; text-decoration: none;">Stripe Portal</a>` : ''}
                             </p>
                         </td>
                     </tr>
