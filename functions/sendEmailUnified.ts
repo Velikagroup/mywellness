@@ -150,6 +150,18 @@ function generateEmailHtml(template, variables, language = 'it') {
                                 </tr>
                             </table>` : ''}
                             ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
+                            
+                            ${variables.stripe_portal_url ? `
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${variables.stripe_portal_url}" style="display: inline-block; background: #635BFF; color: #ffffff !important; text-decoration: none; padding: 14px 28px; border-radius: 10px; font-weight: 600; font-size: 14px;">
+                                            🔧 Gestisci Abbonamento
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                            ` : ''}
                         </td>
                     </tr>
                 </table>
