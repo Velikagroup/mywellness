@@ -124,7 +124,7 @@ function generateWeightDataForEmail(weightHistory, startDate, endDate) {
     }));
 }
 
-function generateWeeklyReportEmailHtml(template, variables, stats) {
+function generateWeeklyReportEmailHtml(template, variables, stats, language = 'it') {
     const appUrl = 'https://projectmywellness.com';
     const userName = variables.user_name || 'Utente';
     const weekRange = stats.weekRange;
@@ -135,6 +135,16 @@ function generateWeeklyReportEmailHtml(template, variables, stats) {
     const adherence = variables.adherence || 0;
     const progress = variables.progress || 0;
     const motivationalMessage = variables.motivational_message || 'Mantieni questo ritmo! 💪';
+    
+    const translations = {
+        it: { weightTitle: '📊 Peso Attuale', weekLabel: 'questa settimana' },
+        en: { weightTitle: '📊 Current Weight', weekLabel: 'this week' },
+        es: { weightTitle: '📊 Peso Actual', weekLabel: 'esta semana' },
+        pt: { weightTitle: '📊 Peso Atual', weekLabel: 'esta semana' },
+        de: { weightTitle: '📊 Aktuelles Gewicht', weekLabel: 'diese Woche' },
+        fr: { weightTitle: '📊 Poids Actuel', weekLabel: 'cette semaine' }
+    };
+    const t = translations[language] || translations.it;
     
     const stripePortalUrl = 'https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800';
     
