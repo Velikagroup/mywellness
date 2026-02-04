@@ -30,6 +30,24 @@ export default function PostQuizSubscription() {
           stripe_subscription_id: currentUser.stripe_subscription_id
         });
         
+        // ✅ Invia email di benvenuto nella lingua corretta
+        const userLang = currentUser.preferred_language || 'it';
+        try {
+          await base44.functions.invoke('sendEmailUnified', {
+            userId: currentUser.id,
+            userEmail: currentUser.email,
+            templateId: `trial_welcome_${userLang}`,
+            variables: {
+              user_name: currentUser.full_name || 'Utente'
+            },
+            language: userLang,
+            triggerSource: 'PostQuizSubscription'
+          });
+          console.log(`✅ Welcome email sent to ${currentUser.email} in ${userLang}`);
+        } catch (emailError) {
+          console.error('Error sending welcome email:', emailError);
+        }
+        
         // ✅ Stesso check del Layout - controlla status E plan
         const validStatuses = ['active', 'trial'];
         const validPlans = ['premium', 'standard', 'base', 'pro'];
