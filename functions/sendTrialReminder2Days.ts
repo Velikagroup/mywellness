@@ -65,7 +65,6 @@ Deno.serve(async (req) => {
 <table style="max-width:600px;background:white;padding:30px;border-radius:12px;">
 <tr><td>
 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" height="30" alt="MyWellness" style="margin-bottom:20px;">
-${greeting ? `<p style="margin:0 0 15px 0;font-size:16px;color:#374151;">${greeting}</p>` : ''}
 <div style="line-height:1.6;color:#374151;font-size:16px;margin:0 0 25px 0;">${mainContent}</div>
 ${template.call_to_action_text ? `<div style="text-align:center;margin:30px 0;"><a href="${template.call_to_action_url || 'https://projectmywellness.com'}" style="display:inline-block;background:#26847F;color:white;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:bold;">${template.call_to_action_text}</a></div>` : ''}
 </td></tr>
