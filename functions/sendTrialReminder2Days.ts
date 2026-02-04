@@ -122,34 +122,7 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-            try {
-                await base44.asServiceRole.integrations.Core.SendEmail({
-                    to: targetUser.email,
-                    subject: '⏰ Il Tuo Trial Finisce Domani',
-                    body: emailHtml,
-                    from_name: 'MyWellness'
-                });
 
-                emailsSent++;
-                console.log(`✅ Email sent to ${targetUser.email} via Base44 Core`);
-
-                // Log email
-                try {
-                    await base44.asServiceRole.entities.EmailLog.create({
-                        user_id: targetUser.id,
-                        email_type: 'trial_reminder_24h',
-                        recipient_email: targetUser.email,
-                        subject: '⏰ Il Tuo Trial Finisce Domani',
-                        status: 'sent',
-                        provider: 'base44_core',
-                        sent_at: new Date().toISOString()
-                    });
-                } catch (logError) {
-                    console.warn('⚠️ Email log error:', logError);
-                }
-            } catch (error) {
-                console.error(`❌ Failed to send to ${targetUser.email}:`, error.message);
-            }
         }
 
         console.log(`✅ Trial reminder process completed. Emails sent: ${emailsSent}`);
