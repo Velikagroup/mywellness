@@ -117,6 +117,7 @@ export default function AdminEmails() {
     if (baseId.includes('goal_weight')) return 'engagement';
     if (baseId.includes('password_reset')) return 'technical';
     if (baseId.includes('weekly_report')) return 'reporting';
+    if (baseId.includes('renewal_reminder')) return 'engagement';
     if (baseId.includes('renewal')) return 'engagement';
     if (baseId.includes('cart_abandoned') || baseId.includes('checkout_abandoned')) return 'abandonment';
     return null;
@@ -153,6 +154,7 @@ export default function AdminEmails() {
       else if (baseId.includes('goal_weight')) category = 'engagement';
       else if (baseId.includes('password_reset')) category = 'technical';
       else if (baseId.includes('weekly_report')) category = 'reporting';
+      else if (baseId.includes('renewal_reminder')) category = 'engagement';
       else if (baseId.includes('renewal')) category = 'engagement';
       else if (baseId.includes('cart_abandoned') || baseId.includes('checkout_abandoned')) category = 'abandonment';
       
