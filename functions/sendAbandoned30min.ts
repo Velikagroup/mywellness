@@ -37,7 +37,6 @@ Deno.serve(async (req) => {
                 const userLanguage = user.preferred_language || 'it';
                 const templateId = `cart_checkout_abandoned_${userLanguage}`;
                 
-                // Send email via sendEmailUnified
                 await base44.asServiceRole.functions.invoke('sendEmailUnified', {
                     userId: user.id,
                     userEmail: user.email,
