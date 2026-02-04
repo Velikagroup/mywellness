@@ -87,15 +87,15 @@ export default function Dashboard() {
         console.warn('⚠️ User completed quiz but no subscription, redirecting to PostQuizSubscription');
         const userLanguage = currentUser.preferred_language || 'it';
         const langPageMap = {
-          it: 'itpostquizsubscription',
-          en: 'enpostquizsubscription',
-          es: 'espostquizsubscription',
-          pt: 'ptpostquizsubscription',
-          de: 'depostquizsubscription',
-          fr: 'frpostquizsubscription'
+          it: '/itpostquizsubscription',
+          en: '/enpostquizsubscription',
+          es: '/espostquizsubscription',
+          pt: '/ptpostquizsubscription',
+          de: '/depostquizsubscription',
+          fr: '/frpostquizsubscription'
         };
-        const targetPage = langPageMap[userLanguage] || 'itpostquizsubscription';
-        navigate(createPageUrl(targetPage), { replace: true });
+        const targetUrl = langPageMap[userLanguage] || '/itpostquizsubscription';
+        navigate(targetUrl, { replace: true });
         return;
       }
       
