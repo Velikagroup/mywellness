@@ -26,8 +26,6 @@ Deno.serve(async (req) => {
 
         console.log(`👥 Found ${usersWithPendingRenewal.length} trial users with pending annual renewal to check`);
 
-        const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
-
         let sent7Days = 0;
         let sent3Days = 0;
         let sent1Day = 0;
