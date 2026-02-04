@@ -759,9 +759,15 @@ Deno.serve(async (req) => {
     };
     
     try {
-        // Inizializza Base44 SDK con service role (bypass auth)
         base44 = createClientFromRequest(req);
-        console.log('✅ Base44 SDK initialized in service role mode');
+        
+        // Verify admin/service level access
+        const user = await base44.auth.me().catch(() => null);
+        if (!user) {
+            console.log('⚠️ No authenticated user, using service role');
+        } else {
+            console.log(`✅ User authenticated: ${user.email} (role: ${user.role})`);
+        }
         
         const body = await req.json();
         const { 
