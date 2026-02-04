@@ -643,7 +643,7 @@ ${ctaHtml}
 <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
 <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer">Stripe Portal</a></p>
+<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: #999999; text-decoration: none;">Stripe Portal</a></p>
 </td>
 </tr>
 </table>
@@ -880,7 +880,7 @@ ${ctaText}
 <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
 <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer">Stripe Portal</a></p>
+<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: #999999; text-decoration: none;">Stripe Portal</a></p>
 </td>
 </tr>
 </table>
@@ -1114,7 +1114,7 @@ ${ctaText}
 <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
 <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer">Stripe Portal</a></p>
+<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: #999999; text-decoration: none;">Stripe Portal</a></p>
 </td>
 </tr>
 </table>
@@ -1297,7 +1297,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
 <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
 <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer">Stripe Portal</a></p>
+<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: #999999; text-decoration: none;">Stripe Portal</a></p>
 </td>
 </tr>
 </table>
