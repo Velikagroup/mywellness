@@ -5,6 +5,8 @@ Deno.serve(async (req) => {
 
     try {
         const base44 = createClientFromRequest(req);
+        const body = await req.json().catch(() => ({}));
+        const testEmail = body.test_email; // Per testare con email specifica
         
         const now = new Date();
         const thirtyMinutesAgo = new Date(now.getTime() - 30 * 60 * 1000);
@@ -13,6 +15,11 @@ Deno.serve(async (req) => {
         const allUsers = await base44.asServiceRole.entities.User.list();
         
         const usersToEmail = allUsers.filter(u => {
+            // Se è test mode con email specifica
+            if (testEmail) {
+                return u.email === testEmail;
+            }
+            
             const createdDate = new Date(u.created_date);
             
             // User created in last 30 minutes
