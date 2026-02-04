@@ -134,7 +134,7 @@ function generateWeeklyReportEmailHtml(template, variables, stats) {
     const workoutsCompleted = variables.workouts_completed || 0;
     const adherence = variables.adherence || 0;
     const progress = variables.progress || 0;
-    const motivationalMessage = variables.motivational_message || 'Continua così! 💪';
+    const motivationalMessage = variables.motivational_message || 'Mantieni questo ritmo! 💪';
     
     const stripePortalUrl = 'https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800';
     
