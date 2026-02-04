@@ -262,6 +262,25 @@ export default function PostQuizSubscription() {
 
                    if (hasValidSubscription) {
                      clearInterval(pollInterval);
+                     
+                     // ✅ Invia email di benvenuto dopo pagamento confermato
+                     try {
+                       const userLang = updatedUser.preferred_language || 'it';
+                       await base44.functions.invoke('sendEmailUnified', {
+                         userId: updatedUser.id,
+                         userEmail: updatedUser.email,
+                         templateId: `trial_welcome_${userLang}`,
+                         variables: {
+                           user_name: updatedUser.full_name || 'Utente'
+                         },
+                         language: userLang,
+                         triggerSource: 'PostQuizSubscription_AfterPayment'
+                       });
+                       console.log(`✅ Welcome email sent to ${updatedUser.email} in ${userLang}`);
+                     } catch (emailError) {
+                       console.error('⚠️ Email error (non-blocking):', emailError);
+                     }
+                     
                      navigate(createPageUrl('Dashboard'), { replace: true });
                      return;
                    }
