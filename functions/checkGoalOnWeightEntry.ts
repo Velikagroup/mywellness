@@ -26,8 +26,9 @@ Deno.serve(async (req) => {
         
         console.log(`📊 New weight entry for user ${userId}: ${weightEntry.weight} kg`);
         
-        // Ottieni dati utente
-        const user = await base44.asServiceRole.entities.User.get(userId);
+        // Ottieni dati utente (usa filter invece di get per sicurezza)
+        const users = await base44.asServiceRole.entities.User.filter({ id: userId });
+        const user = users?.[0];
         
         if (!user || !user.target_weight) {
             console.log('❌ User not found or no target weight set');

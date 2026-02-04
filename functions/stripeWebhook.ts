@@ -672,8 +672,30 @@ Deno.serve(async (req) => {
                     await base44.asServiceRole.entities.User.update(user.id, updateData);
                     console.log(`✅ Subscription updated for user ${user.id} with stripe_customer_id: ${customerId}`);
 
-                    // ⏭️ Email di benvenuto viene inviata dal frontend dopo pagamento confermato
-                    console.log('⏭️ Welcome email will be sent by PostQuizSubscription after payment confirmation');
+                    // 📧 Invia email benvenuto SOLO per subscription.created (NON per .updated per evitare duplicati)
+                    if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete') {
+                        try {
+                            const userLang = user.preferred_language || 'it';
+                            console.log(`📧 Sending welcome email in ${userLang}...`);
+                            
+                            // Invia email benvenuto localizzata usando sendEmailUnified
+                            await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+                                userId: user.id,
+                                userEmail: user.email,
+                                templateId: `trial_welcome_${userLang}`,
+                                variables: {
+                                    user_name: user.full_name || 'Utente'
+                                },
+                                language: userLang,
+                                triggerSource: 'StripeWebhook_SubscriptionCreated'
+                            });
+                            console.log(`✅ Welcome email sent to ${user.email} in ${userLang}`);
+                        } catch (emailError) {
+                            console.error('⚠️ Welcome email failed:', emailError.message);
+                        }
+                    } else if (event.type === 'customer.subscription.updated') {
+                        console.log('⏭️ Skipping welcome email for subscription.updated event to avoid duplicates');
+                    }
                 }
                 break;
             }
