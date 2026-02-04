@@ -11,12 +11,12 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        console.log('🔍 Finding users with trial ending in ~2 days...');
+        console.log('🔍 Finding users with trial ending in ~24h...');
 
-        // Trova tutti gli utenti con trial attivo che finisce tra 1.5 e 2.5 giorni
+        // Trova tutti gli utenti con trial attivo che finisce tra 12 e 36 ore
         const now = new Date();
-        const twoDaysFromNow = new Date(now.getTime() + (2 * 24 * 60 * 60 * 1000));
-        const oneDayHalfFromNow = new Date(now.getTime() + (1.5 * 24 * 60 * 60 * 1000));
+        const oneDayFromNow = new Date(now.getTime() + (36 * 60 * 60 * 1000)); // 36h
+        const halfDayFromNow = new Date(now.getTime() + (12 * 60 * 60 * 1000)); // 12h
 
         const users = await base44.asServiceRole.entities.User.filter({
             subscription_status: 'trial'
@@ -31,15 +31,15 @@ Deno.serve(async (req) => {
 
             const trialEndsAt = new Date(targetUser.trial_ends_at);
             
-            // Controlla se il trial finisce tra 1.5 e 2.5 giorni
-            if (trialEndsAt < oneDayHalfFromNow || trialEndsAt > twoDaysFromNow) {
+            // Controlla se il trial finisce tra 12 e 36 ore
+            if (trialEndsAt < halfDayFromNow || trialEndsAt > oneDayFromNow) {
                 continue;
             }
 
             // Verifica che non abbia già ricevuto il reminder
             const existingReminders = await base44.asServiceRole.entities.EmailLog.filter({
                 user_id: targetUser.id,
-                email_type: 'trial_reminder_2days'
+                email_type: 'trial_reminder_24h'
             });
 
             if (existingReminders.length > 0) {
@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
                     <tr>
                         <td style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 40px 30px; text-align: center;">
                             <div style="font-size: 64px; margin-bottom: 10px;">⏰</div>
-                            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 800;">Il Tuo Trial Sta per Finire!</h1>
+                            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 800;">Il Tuo Trial Finisce Domani!</h1>
                         </td>
                     </tr>
                     <tr>
@@ -125,7 +125,7 @@ Deno.serve(async (req) => {
             try {
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: targetUser.email,
-                    subject: '⏰ Il Tuo Trial Termina Tra 2 Giorni',
+                    subject: '⏰ Il Tuo Trial Finisce Domani',
                     body: emailHtml,
                     from_name: 'MyWellness'
                 });
@@ -137,9 +137,9 @@ Deno.serve(async (req) => {
                 try {
                     await base44.asServiceRole.entities.EmailLog.create({
                         user_id: targetUser.id,
-                        email_type: 'trial_reminder_2days',
+                        email_type: 'trial_reminder_24h',
                         recipient_email: targetUser.email,
-                        subject: '⏰ Il Tuo Trial Termina Tra 2 Giorni',
+                        subject: '⏰ Il Tuo Trial Finisce Domani',
                         status: 'sent',
                         provider: 'base44_core',
                         sent_at: new Date().toISOString()
