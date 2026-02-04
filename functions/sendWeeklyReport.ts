@@ -277,7 +277,7 @@ Deno.serve(async (req) => {
                     workouts_completed: stats.workoutsCompleted,
                     adherence: stats.adherence,
                     progress: stats.progressPercentage,
-                    motivational_message: getMotivationalMessageText(stats),
+                    motivational_message: getMotivationalMessageText(stats, userLanguage),
                     weight_data: generateWeightDataForEmail(weightHistory, oneWeekAgo, today)
                 };
 
