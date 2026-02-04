@@ -1,5 +1,82 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
+function generateWeeklyReportHtml(template, variables) {
+    const appUrl = 'https://projectmywellness.com';
+    const userName = variables.user_name || 'Utente';
+    const weekRange = variables.week_range || '10-16 Gennaio 2025';
+    const currentWeight = variables.current_weight || 72.5;
+    const weightChange = variables.weight_change || -1.2;
+    const avgCalories = variables.avg_calories || 1850;
+    const workoutsCompleted = variables.workouts_completed || 4;
+    const adherence = variables.adherence || 85;
+    const progress = variables.progress || 65;
+    const motivationalMessage = variables.motivational_message || 'Ottimo lavoro questa settimana! Continua così! 💪';
+    
+    const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#fafafa;">
+<table width="100%" cellpadding="20">
+<tr><td align="center">
+<table style="max-width:600px;background:white;padding:30px;border-radius:12px;">
+<tr><td>
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" height="30" alt="MyWellness">
+<h2 style="color:#26847F;margin:10px 0 10px;">Report Settimanale</h2>
+<p style="color:#6b7280;font-size:14px;">${weekRange}</p>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;">
+<p style="font-size:16px;">Ciao ${userName},</p>
+<p style="line-height:1.6;">Ecco il tuo report settimanale! 🎯</p>
+
+<div style="background:#f9fafb;padding:20px;border-radius:12px;margin:20px 0;">
+<h3 style="color:#374151;margin:0 0 15px;font-size:16px;">📊 Peso Attuale</h3>
+<p style="text-align:center;font-size:32px;color:#26847F;font-weight:bold;margin:10px 0;">${currentWeight} kg</p>
+<p style="text-align:center;font-size:14px;color:${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg questa settimana</p>
+</div>
+
+<h3 style="color:#374151;margin:20px 0 15px;font-size:16px;">📈 Le tue statistiche</h3>
+
+<table width="100%" cellpadding="10" cellspacing="10">
+<tr>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${avgCalories}</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">Calorie medie/giorno</p>
+</td>
+<td width="4%"></td>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${workoutsCompleted}</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">Allenamenti</p>
+</td>
+</tr>
+<tr>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${adherence}%</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">Aderenza</p>
+</td>
+<td width="4%"></td>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${progress}%</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">Progresso</p>
+</td>
+</tr>
+</table>
+
+<p style="color:#26847F;text-align:center;font-weight:600;margin:25px 0;">${motivationalMessage}</p>
+
+<div style="text-align:center;margin:25px 0;">
+<a href="${appUrl}/Dashboard" style="display:inline-block;background:#26847F;color:white;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:bold;">Vai alla Dashboard</a>
+</div>
+
+<p style="text-align:center;color:#999;font-size:12px;margin-top:30px;">© VELIKA GROUP LLC</p>
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+
+    return { html, subject: 'Report Settimanale - MyWellness' };
+}
+
 Deno.serve(async (req) => {
     console.log('📊 sendWeeklyReport CRON - Start');
     
