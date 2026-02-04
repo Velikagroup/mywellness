@@ -16,10 +16,10 @@ Deno.serve(async (req) => {
 
         const now = new Date();
         
-        // Recupera tutti gli utenti attivi
+        // Recupera tutti gli utenti attivi o in trial
         const allUsers = await base44.asServiceRole.entities.User.list();
         const activeUsers = allUsers.filter(u => 
-            u.subscription_status === 'active' && 
+            (u.subscription_status === 'active' || u.subscription_status === 'trial') && 
             u.quiz_completed === true
         );
 
@@ -37,17 +37,17 @@ Deno.serve(async (req) => {
                 const userHour = userNow.getHours();
                 const userDay = userNow.getDay(); // 0=Sunday, 1=Monday, etc.
                 
-                // Controlla se è lunedì (1) e se è tra mezzanotte e 1am
-                if (userDay === 1 && userHour === 0) {
+                // Controlla se è lunedì (1) e se è alle 9am
+                if (userDay === 1 && userHour === 9) {
                     usersToEmail.push(user);
-                    console.log(`✅ User ${user.email} (${userTimezone}): is Monday midnight - will send`);
+                    console.log(`✅ User ${user.email} (${userTimezone}): is Monday 9am - will send`);
                 }
             } catch (error) {
                 console.error(`⚠️ Invalid timezone for user ${user.email}: ${userTimezone}`, error.message);
             }
         }
 
-        console.log(`📧 Sending weekly reports to ${usersToEmail.length} users (Monday midnight in their timezone)`);
+        console.log(`📧 Sending weekly reports to ${usersToEmail.length} users (Monday 9am in their timezone)`);
 
         let sentCount = 0;
         const results = [];
