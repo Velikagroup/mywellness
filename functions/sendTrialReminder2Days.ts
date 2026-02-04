@@ -109,9 +109,10 @@ ${template.call_to_action_text ? `<div style="text-align:center;margin:30px 0;">
             body: html,
             from_name: 'MyWellness'
         });
-        
-        console.log(`✅ Email sent to ${user.email}`);
-        emailsSent++;
+            
+            console.log(`✅ Email sent to ${user.email}`);
+            emailsSent++;
+        }
 
         console.log(`✅ Trial reminder process completed. Emails sent: ${emailsSent}`);
 
