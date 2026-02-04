@@ -59,15 +59,56 @@ function calculateWeeklyStats(user, weightHistory, mealLogs, workoutLogs, startD
     };
 }
 
-function getMotivationalMessageText(stats) {
+function getMotivationalMessageText(stats, language = 'it') {
+    const messages = {
+        it: {
+            great75: '🔥 Incredibile! Sei oltre il 75% del tuo obiettivo! Il traguardo è vicino, continua così!',
+            excellent: '💪 Ottimo lavoro! La tua costanza sta dando risultati. Mantieni questo ritmo!',
+            down: '📉 Ben fatto! Il peso sta scendendo. Stai andando nella direzione giusta!',
+            advice: '💡 Consiglio: Cerca di seguire il piano con maggiore costanza questa settimana. Piccoli passi portano a grandi risultati!'
+        },
+        en: {
+            great75: '🔥 Incredible! You\'re over 75% of your goal! The finish line is near, keep it up!',
+            excellent: '💪 Great work! Your consistency is paying off. Maintain this pace!',
+            down: '📉 Well done! Your weight is going down. You\'re heading in the right direction!',
+            advice: '💡 Tip: Try to follow your plan more consistently this week. Small steps lead to big results!'
+        },
+        es: {
+            great75: '🔥 ¡Increíble! ¡Estás por encima del 75% de tu objetivo! La meta está cerca, ¡sigue así!',
+            excellent: '💪 ¡Excelente trabajo! Tu consistencia está dando resultados. ¡Mantén este ritmo!',
+            down: '📉 ¡Bien hecho! Tu peso está bajando. ¡Vas en la dirección correcta!',
+            advice: '💡 Consejo: Intenta seguir tu plan con mayor consistencia esta semana. ¡Los pequeños pasos llevan a grandes resultados!'
+        },
+        pt: {
+            great75: '🔥 Incrível! Você está acima de 75% da sua meta! A linha de chegada está perto, continue assim!',
+            excellent: '💪 Ótimo trabalho! Sua consistência está dando resultados. Mantenha esse ritmo!',
+            down: '📉 Bem feito! Seu peso está diminuindo. Você está na direção certa!',
+            advice: '💡 Dica: Tente seguir seu plano com maior consistência esta semana. Pequenos passos levam a grandes resultados!'
+        },
+        de: {
+            great75: '🔥 Unglaublich! Du bist über 75% deines Ziels! Das Ziel ist in Reichweite, mach weiter so!',
+            excellent: '💪 Großartig! Deine Konsistenz bringt Ergebnisse. Behalte dieses Tempo bei!',
+            down: '📉 Gut gemacht! Dein Gewicht sinkt. Du bist auf dem richtigen Weg!',
+            advice: '💡 Tipp: Versuche, deinen Plan diese Woche konsistenter zu befolgen. Kleine Schritte führen zu großen Ergebnissen!'
+        },
+        fr: {
+            great75: '🔥 Incroyable! Tu es à plus de 75% de ton objectif! La ligne d\'arrivée approche, continue comme ça!',
+            excellent: '💪 Excellent travail! Ta constance porte ses fruits. Maintiens ce rythme!',
+            down: '📉 Bien joué! Ton poids diminue. Tu es sur la bonne voie!',
+            advice: '💡 Conseil: Essaie de suivre ton plan avec plus de constance cette semaine. Les petits pas mènent à de grands résultats!'
+        }
+    };
+
+    const msgs = messages[language] || messages.it;
+
     if (stats.progressPercentage >= 75) {
-        return '🔥 Incredibile! Sei oltre il 75% del tuo obiettivo! Il traguardo è vicino, continua così!';
+        return msgs.great75;
     } else if (stats.adherence >= 80 && stats.workoutsCompleted >= stats.plannedWorkouts * 0.8) {
-        return '💪 Ottimo lavoro! La tua costanza sta dando risultati. Mantieni questo ritmo!';
+        return msgs.excellent;
     } else if (stats.weightTrend === 'down') {
-        return '📉 Ben fatto! Il peso sta scendendo. Stai andando nella direzione giusta!';
+        return msgs.down;
     } else {
-        return '💡 Consiglio: Cerca di seguire il piano con maggiore costanza questa settimana. Piccoli passi portano a grandi risultati!';
+        return msgs.advice;
     }
 }
 
