@@ -2,6 +2,95 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 
 
+function generateWeeklyReportEmailHtml(template, variables, stats) {
+    const appUrl = 'https://projectmywellness.com';
+    const userName = variables.user_name || 'Utente';
+    const weekRange = stats.weekRange;
+    const currentWeight = variables.current_weight || 72.5;
+    const weightChange = variables.weight_change || -1.2;
+    const avgCalories = variables.avg_calories || 0;
+    const workoutsCompleted = variables.workouts_completed || 0;
+    const adherence = variables.adherence || 0;
+    const progress = variables.progress || 0;
+    const motivationalMessage = variables.motivational_message || 'Continua così! 💪';
+    
+    const stripePortalUrl = 'https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800';
+    
+    const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#fafafa;">
+<table width="100%" cellpadding="20">
+<tr><td align="center">
+<table style="max-width:600px;background:white;padding:30px;border-radius:12px;">
+<tr><td>
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" height="30" alt="MyWellness">
+<h2 style="color:#26847F;margin:10px 0 10px;">${template.header_title || 'Report Settimanale'}</h2>
+<p style="color:#6b7280;font-size:14px;">${weekRange}</p>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;">
+<p style="font-size:16px;">${template.greeting ? template.greeting.replace(/{user_name}/g, userName) : 'Ciao ' + userName + ','}</p>
+<p style="line-height:1.6;">${template.intro_text || 'Ecco il tuo report settimanale!'}</p>
+
+<div style="background:#f9fafb;padding:20px;border-radius:12px;margin:20px 0;">
+<h3 style="color:#374151;margin:0 0 15px;font-size:16px;">📊 ${template.weight_card_title || 'Peso Attuale'}</h3>
+<p style="text-align:center;font-size:32px;color:#26847F;font-weight:bold;margin:10px 0;">${currentWeight} kg</p>
+<p style="text-align:center;font-size:14px;color:${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg questa settimana</p>
+</div>
+
+<h3 style="color:#374151;margin:20px 0 15px;font-size:16px;">📈 ${template.stats_section_title || 'Le tue statistiche'}</h3>
+
+<table width="100%" cellpadding="10" cellspacing="10">
+<tr>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${avgCalories}</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">${template.calories_stat_label || 'Calorie medie/giorno'}</p>
+</td>
+<td width="4%"></td>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${workoutsCompleted}</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">${template.workouts_stat_label || 'Allenamenti'}</p>
+</td>
+</tr>
+<tr>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${adherence}%</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">${template.adherence_stat_label || 'Aderenza'}</p>
+</td>
+<td width="4%"></td>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${progress}%</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">${template.progress_stat_label || 'Progresso'}</p>
+</td>
+</tr>
+</table>
+
+<p style="color:#26847F;text-align:center;font-weight:600;margin:25px 0;">${motivationalMessage}</p>
+
+<div style="text-align:center;margin:25px 0;">
+<a href="${template.call_to_action_url || appUrl + '/Dashboard'}" style="display:inline-block;background:#26847F;color:white;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:bold;">${template.call_to_action_text || 'Vai alla Dashboard'}</a>
+</div>
+
+<p style="text-align:center;color:#6b7280;font-size:13px;margin:20px 0 0 0;">${template.footer_text || 'Continua così!'}</p>
+</td></tr>
+</table>
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;margin-top:20px;background-color:#fafafa;">
+<tr>
+<td align="center" style="padding:20px;color:#999999;background-color:#fafafa;">
+<p style="margin:5px 0;font-size:12px;font-weight:600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+<p style="margin:5px 0;font-size:11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+<p style="margin:5px 0;font-size:11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="${stripePortalUrl}" style="color:#999999;text-decoration:none;">Stripe Portal</a></p>
+</td>
+</tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+
+    return html;
+}
+
 Deno.serve(async (req) => {
     console.log('📊 sendWeeklyReport CRON - Start');
     
