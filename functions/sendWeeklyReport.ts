@@ -151,7 +151,7 @@ function generateWeeklyReportEmailHtml(template, variables, stats) {
 <p style="color:#6b7280;font-size:14px;">${weekRange}</p>
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;">
 <p style="font-size:16px;">${template.greeting ? template.greeting.replace(/{user_name}/g, userName) : 'Ciao ' + userName + ','}</p>
-<p style="line-height:1.6;">${template.intro_text || 'Ecco il tuo report settimanale!'}</p>
+<p style="line-height:1.6;font-size:16px;">${template.intro_text || 'Ecco il tuo report settimanale!'}</p>
 
 <div style="background:#f9fafb;padding:20px;border-radius:12px;margin:20px 0;">
 <h3 style="color:#374151;margin:0 0 15px;font-size:16px;">📊 ${template.weight_card_title || 'Peso Attuale'}</h3>
