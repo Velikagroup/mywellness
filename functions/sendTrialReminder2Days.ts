@@ -24,15 +24,6 @@ Deno.serve(async (req) => {
 
         console.log(`📊 Found ${users.length} users with trial status`);
 
-        const sendGridApiKey = Deno.env.get('SENDGRID_API_KEY');
-        if (!sendGridApiKey) {
-            console.error('❌ SENDGRID_API_KEY not configured');
-            return Response.json({ 
-                success: false, 
-                error: 'Email service not configured' 
-            }, { status: 500 });
-        }
-
         let emailsSent = 0;
 
         for (const targetUser of users) {
@@ -131,24 +122,16 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-            const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${sendGridApiKey}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    personalizations: [{ to: [{ email: targetUser.email, name: targetUser.full_name }] }],
-                    from: { email: 'info@projectmywellness.com', name: 'MyWellness' },
-                    reply_to: { email: 'info@projectmywellness.com' },
+            try {
+                await base44.asServiceRole.integrations.Core.SendEmail({
+                    to: targetUser.email,
                     subject: '⏰ Il Tuo Trial Termina Tra 2 Giorni',
-                    content: [{ type: 'text/html', value: emailHtml }]
-                })
-            });
+                    body: emailHtml,
+                    from_name: 'MyWellness'
+                });
 
-            if (response.ok) {
                 emailsSent++;
-                console.log(`✅ Email sent to ${targetUser.email}`);
+                console.log(`✅ Email sent to ${targetUser.email} via Base44 Core`);
 
                 // Log email
                 try {
@@ -158,13 +141,14 @@ Deno.serve(async (req) => {
                         recipient_email: targetUser.email,
                         subject: '⏰ Il Tuo Trial Termina Tra 2 Giorni',
                         status: 'sent',
+                        provider: 'base44_core',
                         sent_at: new Date().toISOString()
                     });
                 } catch (logError) {
                     console.warn('⚠️ Email log error:', logError);
                 }
-            } else {
-                console.error(`❌ Failed to send to ${targetUser.email}`);
+            } catch (error) {
+                console.error(`❌ Failed to send to ${targetUser.email}:`, error.message);
             }
         }
 
