@@ -164,9 +164,9 @@ function generateWeeklyReportEmailHtml(template, variables, stats, language = 'i
 <p style="line-height:1.6;font-size:16px;">${template.intro_text || 'Ecco il tuo report settimanale!'}</p>
 
 <div style="background:#f9fafb;padding:20px;border-radius:12px;margin:20px 0;">
-<h3 style="color:#374151;margin:0 0 15px;font-size:16px;">📊 ${template.weight_card_title || 'Peso Attuale'}</h3>
+<h3 style="color:#374151;margin:0 0 15px;font-size:16px;">${t.weightTitle}</h3>
 <p style="text-align:center;font-size:32px;color:#26847F;font-weight:bold;margin:10px 0;">${currentWeight} kg</p>
-<p style="text-align:center;font-size:14px;color:${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg questa settimana</p>
+<p style="text-align:center;font-size:14px;color:${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg ${t.weekLabel}</p>
 </div>
 
 <p style="color:#26847F;text-align:center;font-weight:600;margin:25px 0;font-size:18px;line-height:1.6;">${motivationalMessage}</p>
