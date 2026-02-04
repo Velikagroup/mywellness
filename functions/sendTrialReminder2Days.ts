@@ -11,13 +11,13 @@ Deno.serve(async (req) => {
         //     return Response.json({ error: 'Unauthorized' }, { status: 401 });
         // }
 
-        // Calcola date per cercare trial in scadenza tra 2 giorni
+        // Calcola date per cercare trial in scadenza tra 24 ore
         const today = new Date();
-        const in48Hours = new Date(today.getTime() + 48 * 60 * 60 * 1000);
+        const in24Hours = new Date(today.getTime() + 24 * 60 * 60 * 1000);
         const todayStr = today.toISOString().split('T')[0];
-        const in48HoursStr = in48Hours.toISOString().split('T')[0];
+        const in24HoursStr = in24Hours.toISOString().split('T')[0];
 
-        console.log(`🔍 Cercando trial in scadenza tra ${todayStr} e ${in48HoursStr}`);
+        console.log(`🔍 Cercando trial in scadenza tra ${todayStr} e ${in24HoursStr}`);
 
         // Cerca tutti gli utenti con trial attivo in scadenza tra 2 giorni
         const usersWithExpiringSoon = await base44.asServiceRole.entities.User.filter({
