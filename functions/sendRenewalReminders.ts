@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
     console.log('🔔 sendRenewalReminders CRON - Start');
@@ -16,15 +16,15 @@ Deno.serve(async (req) => {
 
         console.log(`📅 Today: ${today.toISOString().split('T')[0]}`);
 
-        // Recupera tutti gli utenti con subscription attiva E che hanno cancellato il rinnovo automatico
+        // Recupera tutti gli utenti CON TRIAL ATTIVO che stanno per passare al piano annuale
         const allUsers = await base44.asServiceRole.entities.User.list();
-        const usersWithCancelledRenewal = allUsers.filter(u => 
-            u.subscription_status === 'active' && 
-            u.subscription_period_end &&
-            u.cancellation_at_period_end === true  // SOLO utenti che hanno annullato il rinnovo automatico
+        const usersWithPendingRenewal = allUsers.filter(u => 
+            u.subscription_status === 'trial' && 
+            u.trial_end &&
+            u.subscription_plan // Hanno un piano in attesa dopo il trial
         );
 
-        console.log(`👥 Found ${usersWithCancelledRenewal.length} users with cancelled auto-renewal to check`);
+        console.log(`👥 Found ${usersWithPendingRenewal.length} trial users with pending annual renewal to check`);
 
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
 
@@ -33,58 +33,47 @@ Deno.serve(async (req) => {
         let sent1Day = 0;
         const results = [];
 
-        for (const user of usersWithCancelledRenewal) {
+        for (const user of usersWithPendingRenewal) {
             // ✅ CONTROLLO PREFERENZE EMAIL
             if (user.email_notifications?.renewal_reminders === false) {
                 console.log(`⏭️ Skipping ${user.email} - renewal reminders disabled`);
                 continue;
             }
 
-            const expiresAt = new Date(user.subscription_period_end);
-            const daysUntilExpiry = Math.ceil((expiresAt.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            const trialEndsAt = new Date(user.trial_end);
+            const hoursUntilRenewal = Math.ceil((trialEndsAt.getTime() - today.getTime()) / (1000 * 60 * 60));
 
-            console.log(`📧 User ${user.email}: expires in ${daysUntilExpiry} days (auto-renewal cancelled)`);
+            console.log(`📧 User ${user.email}: trial ends in ${hoursUntilRenewal} hours, will convert to ${user.subscription_plan}`);
 
-            let emailSubject = '';
-            let emailBody = '';
             let shouldSend = false;
+            const userLang = user.preferred_language || 'it';
+            const templateId = `renewal_reminder_48h_${userLang}`;
 
-            // Reminder a 7 giorni
-            if (daysUntilExpiry === 7) {
-                shouldSend = true;
-                sent7Days++;
-                emailSubject = '⏰ Il tuo abbonamento MyWellness scade tra 7 giorni';
-                emailBody = getEmailTemplate(user, 7, expiresAt);
-            }
-            // Reminder a 3 giorni
-            else if (daysUntilExpiry === 3) {
-                shouldSend = true;
-                sent3Days++;
-                emailSubject = '🔔 Ultimi 3 giorni - Non perdere MyWellness!';
-                emailBody = getEmailTemplate(user, 3, expiresAt);
-            }
-            // Reminder a 1 giorno
-            else if (daysUntilExpiry === 1) {
+            // Reminder a 24-48h prima del passaggio da trial a piano annuale
+            if (hoursUntilRenewal >= 24 && hoursUntilRenewal <= 48) {
                 shouldSend = true;
                 sent1Day++;
-                emailSubject = '🚨 Ultimo giorno! Il tuo abbonamento MyWellness scade domani';
-                emailBody = getEmailTemplate(user, 1, expiresAt);
             }
 
             if (shouldSend) {
                 try {
-                    await base44.asServiceRole.integrations.Core.SendEmail({
-                        to: user.email,
-                        from_name: `MyWellness Team <${fromEmail}>`,
-                        subject: emailSubject,
-                        body: emailBody
+                    // Usa il sistema email unificato con template multilingue
+                    await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+                        userId: user.id,
+                        userEmail: user.email,
+                        templateId: templateId,
+                        variables: {
+                            user_name: user.full_name || 'Utente'
+                        },
+                        language: userLang,
+                        triggerSource: 'sendRenewalReminders'
                     });
 
-                    console.log(`✅ Reminder sent to ${user.email} (${daysUntilExpiry} days)`);
+                    console.log(`✅ Renewal reminder sent to ${user.email} (${hoursUntilRenewal}h before conversion)`);
                     results.push({
                         user_id: user.id,
                         email: user.email,
-                        days_until_expiry: daysUntilExpiry,
+                        hours_until_renewal: hoursUntilRenewal,
                         status: 'sent'
                     });
                 } catch (error) {
@@ -92,7 +81,7 @@ Deno.serve(async (req) => {
                     results.push({
                         user_id: user.id,
                         email: user.email,
-                        days_until_expiry: daysUntilExpiry,
+                        hours_until_renewal: hoursUntilRenewal,
                         status: 'failed',
                         error: error.message
                     });
@@ -103,15 +92,13 @@ Deno.serve(async (req) => {
             }
         }
 
-        console.log('🎉 Renewal reminders completed');
-        console.log(`📊 Sent: ${sent7Days} (7d) + ${sent3Days} (3d) + ${sent1Day} (1d)`);
+        console.log('🎉 Trial renewal reminders completed');
+        console.log(`📊 Sent: ${sent1Day} reminders (24-48h before renewal)`);
 
         return Response.json({
             success: true,
-            sent_7_days: sent7Days,
-            sent_3_days: sent3Days,
-            sent_1_day: sent1Day,
-            total_sent: sent7Days + sent3Days + sent1Day,
+            sent_reminders: sent1Day,
+            total_sent: sent1Day,
             results: results
         });
 
