@@ -305,7 +305,7 @@ Deno.serve(async (req) => {
                     .replace(/{week_range}/g, stats.weekRange)
                     .replace(/{user_name}/g, user.full_name || 'Utente');
                 
-                const html = generateWeeklyReportEmailHtml(template, variables, stats);
+                const html = generateWeeklyReportEmailHtml(template, variables, stats, userLanguage);
                 
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: user.email,
