@@ -5,14 +5,12 @@ Deno.serve(async (req) => {
     
     try {
         const base44 = createClientFromRequest(req);
+        const body = await req.json().catch(() => ({}));
+        const isTestMode = body.test === true;
         
-        // Auth check disabled for testing - re-enable in production if needed
-        // const cronSecret = Deno.env.get('CRON_SECRET');
-        // const authHeader = req.headers.get('Authorization');
-        // if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-        //     console.error('Unauthorized cron call');
-        //     return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        // }
+        if (isTestMode) {
+            console.log('🧪 TEST MODE ENABLED');
+        }
 
         const now = new Date();
         
@@ -29,21 +27,27 @@ Deno.serve(async (req) => {
         const usersToEmail = [];
         
         for (const user of activeUsers) {
-            const userTimezone = user.timezone || 'Europe/Rome';
-            
-            try {
-                // Calcola che ore sono nel timezone dell'utente
-                const userNow = new Date(now.toLocaleString('en-US', { timeZone: userTimezone }));
-                const userHour = userNow.getHours();
-                const userDay = userNow.getDay(); // 0=Sunday, 1=Monday, etc.
+            if (isTestMode) {
+                // In test mode, send to all active users
+                usersToEmail.push(user);
+                console.log(`🧪 Test mode: ${user.email} will receive report`);
+            } else {
+                const userTimezone = user.timezone || 'Europe/Rome';
                 
-                // Controlla se è lunedì (1) e se è alle 9am
-                if (userDay === 1 && userHour === 9) {
-                    usersToEmail.push(user);
-                    console.log(`✅ User ${user.email} (${userTimezone}): is Monday 9am - will send`);
+                try {
+                    // Calcola che ore sono nel timezone dell'utente
+                    const userNow = new Date(now.toLocaleString('en-US', { timeZone: userTimezone }));
+                    const userHour = userNow.getHours();
+                    const userDay = userNow.getDay(); // 0=Sunday, 1=Monday, etc.
+                    
+                    // Controlla se è lunedì (1) e se è alle 9am
+                    if (userDay === 1 && userHour === 9) {
+                        usersToEmail.push(user);
+                        console.log(`✅ User ${user.email} (${userTimezone}): is Monday 9am - will send`);
+                    }
+                } catch (error) {
+                    console.error(`⚠️ Invalid timezone for user ${user.email}: ${userTimezone}`, error.message);
                 }
-            } catch (error) {
-                console.error(`⚠️ Invalid timezone for user ${user.email}: ${userTimezone}`, error.message);
             }
         }
 
