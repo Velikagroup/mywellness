@@ -11,43 +11,21 @@ Deno.serve(async (req) => {
         //     return Response.json({ error: 'Unauthorized' }, { status: 401 });
         // }
 
-        console.log('🔍 Finding users with trial ending in ~24h...');
+        console.log('🔍 TEST MODE - Sending to andrea.fontana@bluadv.net');
 
-        // Trova tutti gli utenti con trial attivo che finisce tra 12 e 36 ore
-        const now = new Date();
-        const oneDayFromNow = new Date(now.getTime() + (36 * 60 * 60 * 1000)); // 36h
-        const halfDayFromNow = new Date(now.getTime() + (12 * 60 * 60 * 1000)); // 12h
-
-        const users = await base44.asServiceRole.entities.User.filter({
-            subscription_status: 'trial'
+        // TEST: Invia solo a te
+        const targetUser = await base44.asServiceRole.entities.User.filter({
+            email: 'andrea.fontana@bluadv.net'
         });
 
-        console.log(`📊 Found ${users.length} users with trial status`);
+        if (targetUser.length === 0) {
+            throw new Error('User not found');
+        }
 
         let emailsSent = 0;
+        const user = targetUser[0];
 
-        for (const targetUser of users) {
-            if (!targetUser.trial_ends_at || !targetUser.email) continue;
-
-            const trialEndsAt = new Date(targetUser.trial_ends_at);
-            
-            // Controlla se il trial finisce tra 12 e 36 ore
-            if (trialEndsAt < halfDayFromNow || trialEndsAt > oneDayFromNow) {
-                continue;
-            }
-
-            // Verifica che non abbia già ricevuto il reminder
-            const existingReminders = await base44.asServiceRole.entities.EmailLog.filter({
-                user_id: targetUser.id,
-                email_type: 'trial_reminder_24h'
-            });
-
-            if (existingReminders.length > 0) {
-                console.log(`⏭️ Skipping ${targetUser.email} - reminder already sent`);
-                continue;
-            }
-
-            console.log(`📧 Sending reminder to: ${targetUser.email}`);
+        console.log(`📧 Sending reminder to: ${user.email}`);
 
             // Usa sendEmailUnified per template centralizzato
             const userLanguage = targetUser.preferred_language || 'it';
