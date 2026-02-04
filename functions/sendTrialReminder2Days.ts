@@ -11,23 +11,22 @@ Deno.serve(async (req) => {
         //     return Response.json({ error: 'Unauthorized' }, { status: 401 });
         // }
 
-        // Calcola date per cercare trial in scadenza tra 24 ore
-        const today = new Date();
-        const in24Hours = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-        const todayStr = today.toISOString().split('T')[0];
-        const in24HoursStr = in24Hours.toISOString().split('T')[0];
+        // Calcola date per cercare trial in scadenza nelle prossime 24 ore
+        const now = new Date();
+        const in24Hours = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-        console.log(`🔍 Cercando trial in scadenza tra ${todayStr} e ${in24HoursStr}`);
+        console.log(`🔍 Cercando trial in scadenza tra ${now.toISOString()} e ${in24Hours.toISOString()}`);
 
-        // Cerca tutti gli utenti con trial attivo in scadenza tra 2 giorni
+        // Cerca tutti gli utenti con trial attivo in scadenza nelle prossime 24 ore
         const usersWithExpiringSoon = await base44.asServiceRole.entities.User.filter({
             subscription_status: 'trial'
         }, null, 500);
 
         const targetUsers = usersWithExpiringSoon.filter(u => {
-            if (!u.trial_end_date) return false;
-            const trialEnd = new Date(u.trial_end_date);
-            return trialEnd >= today && trialEnd <= in24Hours;
+            if (!u.trial_end_date && !u.data?.trial_ends_at) return false;
+            const trialEndStr = u.trial_end_date || u.data?.trial_ends_at;
+            const trialEnd = new Date(trialEndStr);
+            return trialEnd > now && trialEnd <= in24Hours;
         });
 
         if (targetUsers.length === 0) {
