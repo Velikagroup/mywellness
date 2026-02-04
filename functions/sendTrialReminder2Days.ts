@@ -11,19 +11,37 @@ Deno.serve(async (req) => {
         //     return Response.json({ error: 'Unauthorized' }, { status: 401 });
         // }
 
-        console.log('🔍 TEST MODE - Sending to andrea.fontana@bluadv.net');
+        // Calcola date per cercare trial in scadenza tra 2 giorni
+        const today = new Date();
+        const in48Hours = new Date(today.getTime() + 48 * 60 * 60 * 1000);
+        const todayStr = today.toISOString().split('T')[0];
+        const in48HoursStr = in48Hours.toISOString().split('T')[0];
 
-        // TEST: Invia solo a te
-        const targetUser = await base44.asServiceRole.entities.User.filter({
-            email: 'andrea.fontana@bluadv.net'
+        console.log(`🔍 Cercando trial in scadenza tra ${todayStr} e ${in48HoursStr}`);
+
+        // Cerca tutti gli utenti con trial attivo in scadenza tra 2 giorni
+        const usersWithExpiringSoon = await base44.asServiceRole.entities.User.filter({
+            subscription_status: 'trial'
+        }, null, 500);
+
+        const targetUsers = usersWithExpiringSoon.filter(u => {
+            if (!u.trial_end_date) return false;
+            const trialEnd = new Date(u.trial_end_date);
+            return trialEnd >= today && trialEnd <= in48Hours;
         });
 
-        if (targetUser.length === 0) {
-            throw new Error('User not found');
+        if (targetUsers.length === 0) {
+            console.log('⚠️ Nessun trial in scadenza trovato');
+            return Response.json({ 
+                success: true,
+                emailsSent: 0,
+                message: 'No expiring trials found'
+            });
         }
 
+        console.log(`📧 Trovati ${targetUsers.length} utenti con trial in scadenza`);
+
         let emailsSent = 0;
-        const user = targetUser[0];
 
         console.log(`📧 Sending reminder to: ${user.email}`);
 
