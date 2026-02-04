@@ -14,33 +14,27 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 const MAX_RETRIES = 3;
 const RETRY_DELAYS = [5000, 15000, 30000]; // 5s, 15s, 30s
 
-async function sendViaSendGrid(emailData) {
-    const sgMail = (await import('npm:@sendgrid/mail')).default;
-    sgMail.setApiKey(Deno.env.get('SENDGRID_API_KEY'));
-    
-    console.log('📤 SendGrid Request:', {
+async function sendViaBase44Core(emailData, base44) {
+    console.log('📤 Base44 Core Request:', {
         to: emailData.to,
         subject: emailData.subject,
         htmlLength: emailData.html?.length
     });
     
-    const msg = {
+    const result = await base44.integrations.Core.SendEmail({
         to: emailData.to,
-        from: emailData.from || 'info@projectmywellness.com',
-        replyTo: emailData.replyTo || 'info@projectmywellness.com',
         subject: emailData.subject,
-        html: emailData.html
-    };
+        body: emailData.html,
+        from_name: 'MyWellness'
+    });
     
-    const result = await sgMail.send(msg);
-    
-    if (!result || result.length === 0) {
-        throw new Error('SendGrid returned empty result');
+    if (!result) {
+        throw new Error('Base44 Core returned empty result');
     }
     
     return {
-        messageId: result[0].headers['x-message-id'] || 'sendgrid-sent',
-        provider: 'sendgrid'
+        messageId: 'base44-core-sent',
+        provider: 'base44_core'
     };
 }
 
@@ -809,6 +803,7 @@ Deno.serve(async (req) => {
         logEntry.language = language;
         logEntry.trigger_source = triggerSource;
         logEntry.metadata = { variables };
+        logEntry.provider = 'base44_core';
 
         console.log(`📬 Preparing email to ${userEmail} using template ${templateId}`);
         console.log(`📍 Trigger source: ${triggerSource}`);
@@ -862,18 +857,18 @@ Deno.serve(async (req) => {
             logEntry.retry_count = attempt;
             
             try {
-                console.log(`📤 Attempt ${attempt + 1}/${MAX_RETRIES} sending to ${userEmail}`);
+                console.log(`📤 Attempt ${attempt + 1}/${MAX_RETRIES} sending to ${userEmail} via Base44 Core`);
                 
-                sendResult = await sendViaSendGrid({
+                sendResult = await sendViaBase44Core({
                     to: userEmail,
                     toName: variables.user_name,
                     from: template.from_email || 'info@projectmywellness.com',
                     replyTo: template.reply_to_email || 'info@projectmywellness.com',
                     subject: subject,
                     html: html
-                });
+                }, base44);
 
-                console.log(`✅ Email sent successfully on attempt ${attempt + 1}`);
+                console.log(`✅ Email sent successfully via Base44 Core on attempt ${attempt + 1}`);
                 break;
 
             } catch (error) {
