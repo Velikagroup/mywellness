@@ -1,6 +1,87 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
+function calculateWeeklyStats(user, weightHistory, mealLogs, workoutLogs, startDate, endDate) {
+    const weekRange = `${startDate.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })} - ${endDate.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}`;
+    
+    const weekWeights = weightHistory.filter(w => {
+        const date = new Date(w.date);
+        return date >= startDate && date <= endDate;
+    });
 
+    const weekMeals = mealLogs.filter(m => {
+        const date = new Date(m.date);
+        return date >= startDate && date <= endDate;
+    });
+
+    const weekWorkouts = workoutLogs.filter(w => {
+        const date = new Date(w.date);
+        return date >= startDate && date <= endDate;
+    });
+
+    let weightChange = 0;
+    let weightTrend = 'stable';
+    if (weekWeights.length >= 2) {
+        const oldestWeight = weekWeights[weekWeights.length - 1].weight;
+        const newestWeight = weekWeights[0].weight;
+        weightChange = newestWeight - oldestWeight;
+        weightTrend = weightChange < -0.2 ? 'down' : weightChange > 0.2 ? 'up' : 'stable';
+    }
+
+    const totalCalories = weekMeals.reduce((sum, m) => sum + (m.actual_calories || 0), 0);
+    const avgCalories = weekMeals.length > 0 ? Math.round(totalCalories / weekMeals.length) : 0;
+
+    const workoutsCompleted = weekWorkouts.filter(w => w.completed === true).length;
+
+    const totalDays = 7;
+    const daysWithLogs = new Set(weekMeals.map(m => m.date)).size;
+    const adherence = Math.round((daysWithLogs / totalDays) * 100);
+
+    const currentWeight = weightHistory.length > 0 ? weightHistory[0].weight : user.current_weight;
+    const startWeight = user.current_weight;
+    const targetWeight = user.target_weight;
+    const totalDistance = Math.abs(startWeight - targetWeight);
+    const distanceCovered = Math.abs(startWeight - currentWeight);
+    const progressPercentage = totalDistance > 0 ? Math.round((distanceCovered / totalDistance) * 100) : 0;
+
+    return {
+        weekRange,
+        weightChange: weightChange.toFixed(1),
+        weightTrend,
+        currentWeight: currentWeight.toFixed(1),
+        targetWeight: targetWeight.toFixed(1),
+        avgCalories,
+        workoutsCompleted,
+        plannedWorkouts: user.workout_days || 3,
+        adherence,
+        progressPercentage,
+        totalDistance: totalDistance.toFixed(1),
+        distanceRemaining: (totalDistance - distanceCovered).toFixed(1)
+    };
+}
+
+function getMotivationalMessageText(stats) {
+    if (stats.progressPercentage >= 75) {
+        return '🔥 Incredibile! Sei oltre il 75% del tuo obiettivo! Il traguardo è vicino, continua così!';
+    } else if (stats.adherence >= 80 && stats.workoutsCompleted >= stats.plannedWorkouts * 0.8) {
+        return '💪 Ottimo lavoro! La tua costanza sta dando risultati. Mantieni questo ritmo!';
+    } else if (stats.weightTrend === 'down') {
+        return '📉 Ben fatto! Il peso sta scendendo. Stai andando nella direzione giusta!';
+    } else {
+        return '💡 Consiglio: Cerca di seguire il piano con maggiore costanza questa settimana. Piccoli passi portano a grandi risultati!';
+    }
+}
+
+function generateWeightDataForEmail(weightHistory, startDate, endDate) {
+    const weekWeights = weightHistory.filter(w => {
+        const date = new Date(w.date);
+        return date >= startDate && date <= endDate;
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    return weekWeights.map(w => ({
+        date: new Date(w.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }),
+        weight: parseFloat(w.weight.toFixed(1))
+    }));
+}
 
 function generateWeeklyReportEmailHtml(template, variables, stats) {
     const appUrl = 'https://projectmywellness.com';
@@ -105,7 +186,6 @@ Deno.serve(async (req) => {
 
         const now = new Date();
         
-        // Recupera tutti gli utenti attivi o in trial
         const allUsers = await base44.asServiceRole.entities.User.list();
         const activeUsers = allUsers.filter(u => 
             (u.subscription_status === 'active' || u.subscription_status === 'trial') && 
@@ -114,24 +194,20 @@ Deno.serve(async (req) => {
 
         console.log(`👥 Found ${activeUsers.length} active users total`);
 
-        // Filtra solo utenti per cui è lunedì mezzanotte nel loro timezone
         const usersToEmail = [];
         
         for (const user of activeUsers) {
             if (isTestMode) {
-                // In test mode, send to all active users
                 usersToEmail.push(user);
                 console.log(`🧪 Test mode: ${user.email} will receive report`);
             } else {
                 const userTimezone = user.timezone || 'Europe/Rome';
                 
                 try {
-                    // Calcola che ore sono nel timezone dell'utente
                     const userNow = new Date(now.toLocaleString('en-US', { timeZone: userTimezone }));
                     const userHour = userNow.getHours();
-                    const userDay = userNow.getDay(); // 0=Sunday, 1=Monday, etc.
+                    const userDay = userNow.getDay();
                     
-                    // Controlla se è lunedì (1) e se è alle 9am
                     if (userDay === 1 && userHour === 9) {
                         usersToEmail.push(user);
                         console.log(`✅ User ${user.email} (${userTimezone}): is Monday 9am - will send`);
@@ -147,17 +223,14 @@ Deno.serve(async (req) => {
         let sentCount = 0;
         const results = [];
         
-        // Calcola periodo settimanale (ultimi 7 giorni)
         const today = new Date();
         const oneWeekAgo = new Date(today);
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
         for (const user of usersToEmail) {
             try {
-                // Rileva lingua utente
                 const userLanguage = user.preferred_language || 'it';
                 
-                // Recupera i dati della settimana
                 const weightHistory = await base44.asServiceRole.entities.WeightHistory.filter(
                     { user_id: user.id },
                     ['-date'],
@@ -176,10 +249,8 @@ Deno.serve(async (req) => {
                     20
                 );
 
-                // Calcola statistiche
                 const stats = calculateWeeklyStats(user, weightHistory, mealLogs, workoutLogs, oneWeekAgo, today);
 
-                // Prepara variabili per sendEmailUnified
                 const variables = {
                     user_name: user.full_name || 'Utente',
                     week_range: stats.weekRange,
@@ -196,7 +267,6 @@ Deno.serve(async (req) => {
                     weight_data: generateWeightDataForEmail(weightHistory, oneWeekAgo, today)
                 };
 
-                // Carica template e invia via Core
                 const templates = await base44.asServiceRole.entities.EmailTemplate.filter({
                     template_id: `weekly_report_${userLanguage}`,
                     is_active: true
@@ -231,7 +301,6 @@ Deno.serve(async (req) => {
                     stats: stats
                 });
 
-                // Rate limiting
                 await new Promise(resolve => setTimeout(resolve, 200));
 
             } catch (error) {
@@ -262,92 +331,3 @@ Deno.serve(async (req) => {
         }, { status: 500 });
     }
 });
-
-function calculateWeeklyStats(user, weightHistory, mealLogs, workoutLogs, startDate, endDate) {
-    const weekRange = `${startDate.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })} - ${endDate.toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}`;
-    
-    // Filtra dati della settimana
-    const weekWeights = weightHistory.filter(w => {
-        const date = new Date(w.date);
-        return date >= startDate && date <= endDate;
-    });
-
-    const weekMeals = mealLogs.filter(m => {
-        const date = new Date(m.date);
-        return date >= startDate && date <= endDate;
-    });
-
-    const weekWorkouts = workoutLogs.filter(w => {
-        const date = new Date(w.date);
-        return date >= startDate && date <= endDate;
-    });
-
-    // Calcola variazione peso
-    let weightChange = 0;
-    let weightTrend = 'stable';
-    if (weekWeights.length >= 2) {
-        const oldestWeight = weekWeights[weekWeights.length - 1].weight;
-        const newestWeight = weekWeights[0].weight;
-        weightChange = newestWeight - oldestWeight;
-        weightTrend = weightChange < -0.2 ? 'down' : weightChange > 0.2 ? 'up' : 'stable';
-    }
-
-    // Calcola calorie medie
-    const totalCalories = weekMeals.reduce((sum, m) => sum + (m.actual_calories || 0), 0);
-    const avgCalories = weekMeals.length > 0 ? Math.round(totalCalories / weekMeals.length) : 0;
-
-    // Conta allenamenti completati (con completed: true)
-    const workoutsCompleted = weekWorkouts.filter(w => w.completed === true).length;
-
-    // Calcola aderenza al piano
-    const totalDays = 7;
-    const daysWithLogs = new Set(weekMeals.map(m => m.date)).size;
-    const adherence = Math.round((daysWithLogs / totalDays) * 100);
-
-    // Progresso verso obiettivo
-    const currentWeight = weightHistory.length > 0 ? weightHistory[0].weight : user.current_weight;
-    const startWeight = user.current_weight;
-    const targetWeight = user.target_weight;
-    const totalDistance = Math.abs(startWeight - targetWeight);
-    const distanceCovered = Math.abs(startWeight - currentWeight);
-    const progressPercentage = totalDistance > 0 ? Math.round((distanceCovered / totalDistance) * 100) : 0;
-
-    return {
-        weekRange,
-        weightChange: weightChange.toFixed(1),
-        weightTrend,
-        currentWeight: currentWeight.toFixed(1),
-        targetWeight: targetWeight.toFixed(1),
-        avgCalories,
-        workoutsCompleted,
-        plannedWorkouts: user.workout_days || 3,
-        adherence,
-        progressPercentage,
-        totalDistance: totalDistance.toFixed(1),
-        distanceRemaining: (totalDistance - distanceCovered).toFixed(1)
-    };
-}
-
-function getMotivationalMessageText(stats) {
-    if (stats.progressPercentage >= 75) {
-        return '🔥 Incredibile! Sei oltre il 75% del tuo obiettivo! Il traguardo è vicino, continua così!';
-    } else if (stats.adherence >= 80 && stats.workoutsCompleted >= stats.plannedWorkouts * 0.8) {
-        return '💪 Ottimo lavoro! La tua costanza sta dando risultati. Mantieni questo ritmo!';
-    } else if (stats.weightTrend === 'down') {
-        return '📉 Ben fatto! Il peso sta scendendo. Stai andando nella direzione giusta!';
-    } else {
-        return '💡 Consiglio: Cerca di seguire il piano con maggiore costanza questa settimana. Piccoli passi portano a grandi risultati!';
-    }
-}
-
-function generateWeightDataForEmail(weightHistory, startDate, endDate) {
-    const weekWeights = weightHistory.filter(w => {
-        const date = new Date(w.date);
-        return date >= startDate && date <= endDate;
-    }).sort((a, b) => new Date(a.date) - new Date(b.date));
-
-    return weekWeights.map(w => ({
-        date: new Date(w.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }),
-        weight: parseFloat(w.weight.toFixed(1))
-    }));
-}
