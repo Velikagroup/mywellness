@@ -34,30 +34,54 @@ Deno.serve(async (req) => {
         
         console.log(`📧 Using template: ${templateId} for user ${user.email}`);
         
-        // Chiama sendEmailUnified direttamente tramite fetch
-        console.log('🔧 Calling sendEmailUnified via direct call...');
+        // Carica template da EmailTemplate
+        console.log('🔍 Loading template from database...');
+        const templates = await base44.asServiceRole.entities.EmailTemplate.filter({
+            template_id: templateId,
+            is_active: true
+        });
         
-        const emailPayload = {
-            userId: user.id,
-            userEmail: user.email,
-            templateId: templateId,
-            variables: {
-                user_name: user.full_name || 'Utente'
-            },
-            language: userLanguage,
-            triggerSource: 'sendTrialReminder2Days'
-        };
+        if (templates.length === 0) {
+            throw new Error(`Template not found: ${templateId}`);
+        }
         
-        console.log('📤 Email payload:', JSON.stringify(emailPayload));
+        const template = templates[0];
+        console.log(`✅ Template loaded: ${template.name}`);
         
+        // Genera HTML dal template
+        const userName = user.full_name || 'Utente';
+        let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
+        let mainContent = (template.main_content || '').replace(/{user_name}/g, userName);
+        let subject = template.subject || 'MyWellness';
+        
+        const html = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#fafafa;">
+<table width="100%" cellpadding="20">
+<tr><td align="center">
+<table style="max-width:600px;background:white;padding:30px;border-radius:12px;">
+<tr><td>
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" height="30" alt="MyWellness">
+${greeting ? `<p style="margin:20px 0 10px;">${greeting}</p>` : ''}
+<div style="line-height:1.6;">${mainContent}</div>
+${template.call_to_action_text ? `<div style="text-align:center;margin:30px 0;"><a href="${template.call_to_action_url || 'https://projectmywellness.com'}" style="display:inline-block;background:#26847F;color:white;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:bold;">${template.call_to_action_text}</a></div>` : ''}
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
+        
+        console.log('📤 Sending email with template HTML...');
         const emailResponse = await base44.asServiceRole.integrations.Core.SendEmail({
             to: user.email,
-            subject: '⏰ Reminder: Rinnovo Piano Annuale MyWellness',
-            body: `<p>Ciao ${user.full_name},</p><p>Ti scriviamo per ricordarti che, qualora tu non abbia ancora effettuato la cancellazione del Piano Annuale MyWellness, entro 24 ore verrà elaborato il relativo pagamento.</p>`,
+            subject: subject,
+            body: html,
             from_name: 'MyWellness'
         });
         
-        console.log(`✅ Email sent via Base44 Core to ${user.email}`);
+        console.log(`✅ Email sent to ${user.email}`);
         emailsSent++;
 
         console.log(`✅ Trial reminder process completed. Emails sent: ${emailsSent}`);
