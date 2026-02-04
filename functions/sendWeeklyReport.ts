@@ -105,24 +105,17 @@ Deno.serve(async (req) => {
                 const templateId = `weekly_report_${userLanguage}`;
                 
                 // Invia email direttamente usando l'SDK
-                const response = await fetch(`${Deno.env.get('BASE44_FUNCTION_URL') || 'https://projectmywellness.base44.app/functions'}/sendEmailUnified`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': req.headers.get('Authorization') || ''
-                    },
-                    body: JSON.stringify({
-                        userId: user.id,
-                        userEmail: user.email,
-                        templateId: templateId,
-                        variables: variables,
-                        language: userLanguage,
-                        triggerSource: 'sendWeeklyReport_cron'
-                    })
+                const response = await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+                    userId: user.id,
+                    userEmail: user.email,
+                    templateId: templateId,
+                    variables: variables,
+                    language: userLanguage,
+                    triggerSource: 'sendWeeklyReport_cron'
                 });
                 
-                if (!response.ok) {
-                    throw new Error(`sendEmailUnified returned ${response.status}`);
+                if (!response || !response.success) {
+                    throw new Error(`sendEmailUnified failed: ${response?.error || 'Unknown error'}`);
                 }
 
                 sentCount++;
