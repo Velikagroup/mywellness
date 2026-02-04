@@ -224,7 +224,7 @@ export default function PricingPageContent() {
         'Ribilanciamento automatico calorie',
         'Scansione etichette con Health Score',
         'Lista della spesa intelligente',
-        'Sincronizzazione smartwatch'
+        'Calcolo del bilancio calorico corporeo'
       ] : language === 'en' ? [
         'AI nutrition and workout plans',
         'Body Scan with body composition analysis',
@@ -232,7 +232,7 @@ export default function PricingPageContent() {
         'Automatic calorie rebalancing',
         'Label scanning with Health Score',
         'Smart shopping list',
-        'Smartwatch synchronization'
+        'Body calorie balance calculation'
       ] : language === 'es' ? [
         'Planes nutricionales y entrenamiento IA',
         'Body Scan con análisis composición corporal',
@@ -240,7 +240,7 @@ export default function PricingPageContent() {
         'Rebalanceo automático calorías',
         'Escaneo etiquetas con Health Score',
         'Lista de compras inteligente',
-        'Sincronización smartwatch'
+        'Cálculo del balance calórico corporal'
       ] : language === 'pt' ? [
         'Planos nutricionais e treino IA',
         'Body Scan com análise composição corporal',
@@ -248,7 +248,7 @@ export default function PricingPageContent() {
         'Rebalanceamento automático calorias',
         'Escaneamento rótulos com Health Score',
         'Lista de compras inteligente',
-        'Sincronização smartwatch'
+        'Cálculo do balanço calórico corporal'
       ] : language === 'de' ? [
         'KI-Ernährungs- und Trainingspläne',
         'Body Scan mit Körperzusammensetzungsanalyse',
@@ -256,7 +256,7 @@ export default function PricingPageContent() {
         'Automatisches Kalorien-Rebalancing',
         'Etiketten-Scan mit Health Score',
         'Intelligente Einkaufsliste',
-        'Smartwatch-Synchronisierung'
+        'Berechnung der Körperkalorienbalance'
       ] : [
         'Plans nutritionnels et entraînement IA',
         'Body Scan avec analyse composition corporelle',
@@ -264,7 +264,7 @@ export default function PricingPageContent() {
         'Rééquilibrage automatique calories',
         'Scan étiquettes avec Health Score',
         'Liste de courses intelligente',
-        'Synchronisation smartwatch'
+        'Calcul du bilan calorique corporel'
       ],
       cta: t('pricing.startFree'),
       popular: false
@@ -297,7 +297,7 @@ export default function PricingPageContent() {
         'Ribilanciamento automatico calorie',
         'Scansione etichette con Health Score',
         'Lista della spesa intelligente',
-        'Sincronizzazione smartwatch',
+        'Calcolo del bilancio calorico corporeo',
         'Supporto prioritario'
       ] : language === 'en' ? [
         'AI nutrition and workout plans',
@@ -306,7 +306,7 @@ export default function PricingPageContent() {
         'Automatic calorie rebalancing',
         'Label scanning with Health Score',
         'Smart shopping list',
-        'Smartwatch synchronization',
+        'Body calorie balance calculation',
         'Priority support'
       ] : language === 'es' ? [
         'Planes nutricionales y entrenamiento IA',
@@ -315,7 +315,7 @@ export default function PricingPageContent() {
         'Rebalanceo automático calorías',
         'Escaneo etiquetas con Health Score',
         'Lista de compras inteligente',
-        'Sincronización smartwatch',
+        'Cálculo del balance calórico corporal',
         'Soporte prioritario'
       ] : language === 'pt' ? [
         'Planos nutricionais e treino IA',
@@ -324,7 +324,7 @@ export default function PricingPageContent() {
         'Rebalanceamento automático calorias',
         'Escaneamento rótulos com Health Score',
         'Lista de compras inteligente',
-        'Sincronização smartwatch',
+        'Cálculo do balanço calórico corporal',
         'Suporte prioritário'
       ] : language === 'de' ? [
         'KI-Ernährungs- und Trainingspläne',
@@ -333,7 +333,7 @@ export default function PricingPageContent() {
         'Automatisches Kalorien-Rebalancing',
         'Etiketten-Scan mit Health Score',
         'Intelligente Einkaufsliste',
-        'Smartwatch-Synchronisierung',
+        'Berechnung der Körperkalorienbalance',
         'Prioritäts-Support'
       ] : [
         'Plans nutritionnels et entraînement IA',
@@ -342,7 +342,7 @@ export default function PricingPageContent() {
         'Rééquilibrage automatique calories',
         'Scan étiquettes avec Health Score',
         'Liste de courses intelligente',
-        'Synchronisation smartwatch',
+        'Calcul du bilan calorique corporel',
         'Support prioritaire'
       ],
       cta: t('pricing.startFree'),
