@@ -675,29 +675,24 @@ Deno.serve(async (req) => {
                     // 📧 Invia email benvenuto SOLO per subscription.created (NON per .updated per evitare duplicati)
                     if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete') {
                         try {
-                            if (subscription.status === 'trialing') {
-                                // Trial signup → invia email benvenuto trial
-                                console.log('📧 Sending trial welcome email...');
-                                await base44.asServiceRole.functions.invoke('sendTrialWelcome', {
-                                    userId: user.id,
-                                    userEmail: user.email,
-                                    userName: user.full_name
-                                });
-                                console.log('✅ Trial welcome email sent');
-                            } else if (subscription.status === 'active') {
-                                // Subscription DIRETTA (senza trial) → invia email benvenuto piano
-                                const plan = updateData.subscription_plan || 'base';
-                                console.log(`📧 Sending plan welcome email for direct subscription (${plan})...`);
-                                await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
-                                    userId: user.id,
-                                    userEmail: user.email,
-                                    userName: user.full_name,
-                                    plan: plan
-                                });
-                                console.log('✅ Plan welcome email sent');
-                            }
+                            const userLang = user.preferred_language || 'it';
+                            console.log(`📧 Sending welcome email in ${userLang}...`);
+                            
+                            // Invia email benvenuto localizzata usando sendEmailUnified
+                            await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+                                userId: user.id,
+                                userEmail: user.email,
+                                templateId: `trial_welcome_${userLang}`,
+                                variables: {
+                                    user_name: user.full_name || 'Utente'
+                                },
+                                language: userLang,
+                                triggerSource: 'StripeWebhook_SubscriptionCreated'
+                            });
+                            console.log(`✅ Welcome email sent to ${user.email} in ${userLang}`);
                         } catch (emailError) {
                             console.error('⚠️ Welcome email failed:', emailError.message);
+                            console.error('Stack:', emailError.stack);
                         }
                     } else if (event.type === 'customer.subscription.updated') {
                         console.log('⏭️ Skipping welcome email for subscription.updated event to avoid duplicates');
