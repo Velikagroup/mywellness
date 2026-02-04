@@ -70,10 +70,20 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
               console.log(`🚫 Access blocked: status=${currentUser.subscription_status}, plan=${currentUser.subscription_plan}`);
               // Se l'utente non ha mai completato il quiz, manda al quiz
               if (!currentUser.quiz_completed) {
-                navigate(createLocalizedPageUrl('Quiz', language), { replace: true });
+                navigate(createPageUrl('Quiz'), { replace: true });
               } else {
-                // Se ha completato il quiz ma non è abbonato, manda a PostQuizSubscription
-                navigate(createLocalizedPageUrl('PostQuizSubscription', language), { replace: true });
+                // Se ha completato il quiz ma non è abbonato, manda a PostQuizSubscription localizzata
+                const userLanguage = currentUser.preferred_language || 'it';
+                const langPageMap = {
+                  it: '/itpostquizsubscription',
+                  en: '/enpostquizsubscription',
+                  es: '/espostquizsubscription',
+                  pt: '/ptpostquizsubscription',
+                  de: '/depostquizsubscription',
+                  fr: '/frpostquizsubscription'
+                };
+                const targetUrl = langPageMap[userLanguage] || '/itpostquizsubscription';
+                navigate(targetUrl, { replace: true });
               }
             }
           }
