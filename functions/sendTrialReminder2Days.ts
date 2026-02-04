@@ -27,35 +27,38 @@ Deno.serve(async (req) => {
 
         console.log(`📧 Sending reminder to: ${user.email}`);
 
-            // Usa sendEmailUnified per template centralizzato
-            const userLanguage = targetUser.preferred_language || 'it';
-            const templateSuffix = `_${userLanguage}`;
-            const templateId = `renewal_reminder_48h${templateSuffix}`;
-            
-            console.log(`📧 Using template: ${templateId} for user ${targetUser.email}`);
-            
-            // Chiama sendEmailUnified con service role
-            console.log('🔧 Attempting to call sendEmailUnified...');
-            const emailResponse = await base44.asServiceRole.functions.invoke('sendEmailUnified', {
-                userId: targetUser.id,
-                userEmail: targetUser.email,
-                templateId: templateId,
-                variables: {
-                    user_name: targetUser.full_name || 'Utente'
-                },
-                language: userLanguage,
-                triggerSource: 'sendTrialReminder2Days'
-            });
-            
-            if (!emailResponse.success) {
-                throw new Error(`sendEmailUnified failed: ${emailResponse.error}`);
-            }
-            
-            console.log(`✅ Email sent via sendEmailUnified to ${targetUser.email}`);
-            emailsSent++;
-
-
-        }
+        // Usa sendEmailUnified per template centralizzato
+        const userLanguage = user.preferred_language || 'it';
+        const templateSuffix = `_${userLanguage}`;
+        const templateId = `renewal_reminder_48h${templateSuffix}`;
+        
+        console.log(`📧 Using template: ${templateId} for user ${user.email}`);
+        
+        // Chiama sendEmailUnified direttamente tramite fetch
+        console.log('🔧 Calling sendEmailUnified via direct call...');
+        
+        const emailPayload = {
+            userId: user.id,
+            userEmail: user.email,
+            templateId: templateId,
+            variables: {
+                user_name: user.full_name || 'Utente'
+            },
+            language: userLanguage,
+            triggerSource: 'sendTrialReminder2Days'
+        };
+        
+        console.log('📤 Email payload:', JSON.stringify(emailPayload));
+        
+        const emailResponse = await base44.asServiceRole.integrations.Core.SendEmail({
+            to: user.email,
+            subject: '⏰ Reminder: Rinnovo Piano Annuale MyWellness',
+            body: `<p>Ciao ${user.full_name},</p><p>Ti scriviamo per ricordarti che, qualora tu non abbia ancora effettuato la cancellazione del Piano Annuale MyWellness, entro 24 ore verrà elaborato il relativo pagamento.</p>`,
+            from_name: 'MyWellness'
+        });
+        
+        console.log(`✅ Email sent via Base44 Core to ${user.email}`);
+        emailsSent++;
 
         console.log(`✅ Trial reminder process completed. Emails sent: ${emailsSent}`);
 
