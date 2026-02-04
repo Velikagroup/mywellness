@@ -43,7 +43,8 @@ Deno.serve(async (req) => {
 
         let emailsSent = 0;
 
-        console.log(`📧 Sending reminder to: ${user.email}`);
+        for (const user of targetUsers) {
+            console.log(`📧 Sending reminder to: ${user.email}`);
 
         // Usa sendEmailUnified per template centralizzato
         const userLanguage = user.preferred_language || 'it';
