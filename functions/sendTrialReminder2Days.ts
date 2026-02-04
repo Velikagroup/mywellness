@@ -54,6 +54,8 @@ Deno.serve(async (req) => {
         let mainContent = (template.main_content || '').replace(/{user_name}/g, userName);
         let subject = template.subject || 'MyWellness';
         
+        const stripePortalUrl = 'https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800';
+        
         const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
@@ -66,6 +68,7 @@ Deno.serve(async (req) => {
 ${greeting ? `<p style="margin:0 0 15px 0;font-size:16px;color:#374151;">${greeting}</p>` : ''}
 <div style="line-height:1.6;color:#374151;font-size:16px;margin:0 0 25px 0;">${mainContent}</div>
 ${template.call_to_action_text ? `<div style="text-align:center;margin:30px 0;"><a href="${template.call_to_action_url || 'https://projectmywellness.com'}" style="display:inline-block;background:#26847F;color:white;padding:16px 32px;border-radius:12px;text-decoration:none;font-weight:bold;">${template.call_to_action_text}</a></div>` : ''}
+<div style="text-align:center;margin:15px 0;"><a href="${stripePortalUrl}" style="display:inline-block;background:#6b7280;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">Stripe Portal</a></div>
 </td></tr>
 </table>
 <table style="max-width:600px;margin-top:20px;background-color:#fafafa;">
