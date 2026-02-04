@@ -105,22 +105,27 @@ Deno.serve(async (req) => {
                     weight_data: generateWeightDataForEmail(weightHistory, oneWeekAgo, today)
                 };
 
-                // Usa sendEmailUnified con template localizzato
-                const templateId = `weekly_report_${userLanguage}`;
-                
-                // Invia email direttamente usando l'SDK
-                const response = await base44.asServiceRole.functions.invoke('sendEmailUnified', {
-                    userId: user.id,
-                    userEmail: user.email,
-                    templateId: templateId,
-                    variables: variables,
-                    language: userLanguage,
-                    triggerSource: 'sendWeeklyReport_cron'
+                // Carica template direttamente (bypass functions.invoke)
+                const templates = await base44.asServiceRole.entities.EmailTemplate.filter({
+                    template_id: `weekly_report_${userLanguage}`,
+                    is_active: true
                 });
                 
-                if (!response || !response.success) {
-                    throw new Error(`sendEmailUnified failed: ${response?.error || 'Unknown error'}`);
+                if (templates.length === 0) {
+                    throw new Error(`Template not found: weekly_report_${userLanguage}`);
                 }
+                
+                const template = templates[0];
+                
+                // Invia email direttamente
+                const emailHtml = generateWeeklyReportHtml(template, variables);
+                
+                await base44.asServiceRole.integrations.Core.SendEmail({
+                    to: user.email,
+                    subject: emailHtml.subject,
+                    body: emailHtml.html,
+                    from_name: 'MyWellness'
+                });
 
                 sentCount++;
                 console.log(`✅ Weekly report sent to ${user.email} (${userLanguage})`);
