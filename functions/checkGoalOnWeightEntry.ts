@@ -89,9 +89,9 @@ Deno.serve(async (req) => {
             
             console.log(`✅ Goal achievement email sent to ${user.email}`);
             
-            // Reset flag subito dopo l'invio per permettere email future
+            // Setta flag per bloccare email duplicate
             await base44.asServiceRole.entities.User.update(user.id, {
-                goal_achieved_email_sent: false,
+                goal_achieved_email_sent: true,
                 goal_achieved_date: new Date().toISOString()
             });
             
