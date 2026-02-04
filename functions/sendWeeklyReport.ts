@@ -159,7 +159,7 @@ function generateWeeklyReportEmailHtml(template, variables, stats) {
 <p style="text-align:center;font-size:14px;color:${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg questa settimana</p>
 </div>
 
-<p style="color:#26847F;text-align:center;font-weight:600;margin:25px 0;">${motivationalMessage}</p>
+<p style="color:#26847F;text-align:center;font-weight:600;margin:25px 0;font-size:18px;line-height:1.6;">${motivationalMessage}</p>
 
 <div style="text-align:center;margin:25px 0;">
 <a href="${template.call_to_action_url || appUrl + '/Dashboard'}" style="display:inline-block;background:#26847F;color:white;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:bold;">${template.call_to_action_text || 'Vai alla Dashboard'}</a>
