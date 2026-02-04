@@ -75,7 +75,7 @@ ${template.call_to_action_text ? `<div style="text-align:center;margin:30px 0;">
 <td align="center" style="padding:20px;color:#999999;background-color:#fafafa;">
 <p style="margin:5px 0;font-size:12px;font-weight:600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin:5px 0;font-size:11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-<p style="margin:5px 0;font-size:11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+<p style="margin:5px 0;font-size:11px;">EIN: 36-5141800 - velika.03@outlook.it - <a href="${stripePortalUrl}" style="color:#999999;text-decoration:none;">Stripe Portal</a></p>
 </td>
 </tr>
 </table>
