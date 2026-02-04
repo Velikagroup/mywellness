@@ -78,7 +78,9 @@ Deno.serve(async (req) => {
                 variables: {
                     user_name: user.full_name || 'Campione',
                     weight_lost: weightLost,
-                    days_to_goal: daysToGoal
+                    days_to_goal: daysToGoal,
+                    app_url: 'https://projectmywellness.com',
+                    coupon_code: 'GOALREACHED30'
                 },
                 language: userLang,
                 triggerSource: 'checkGoalOnWeightEntry'
