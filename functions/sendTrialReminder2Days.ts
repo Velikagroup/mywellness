@@ -56,7 +56,8 @@ Deno.serve(async (req) => {
             
             console.log(`📧 Using template: ${templateId} for user ${targetUser.email}`);
             
-            // Chiama sendEmailUnified
+            // Chiama sendEmailUnified con service role
+            console.log('🔧 Attempting to call sendEmailUnified...');
             const emailResponse = await base44.asServiceRole.functions.invoke('sendEmailUnified', {
                 userId: targetUser.id,
                 userEmail: targetUser.email,
