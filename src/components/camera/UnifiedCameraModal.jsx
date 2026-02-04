@@ -997,7 +997,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-[var(--text-primary)] mb-3">
+                <label className="block text-sm font-bold text-gray-900 mb-3">
                   {t('dashboard.weightUnit')}
                 </label>
                 <Input
@@ -1006,10 +1006,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   value={weightKg}
                   onChange={(e) => setWeightKg(e.target.value)}
                   placeholder={weightUnit === 'lbs' ? '155' : '70.5'}
-                  className="h-16 text-xl text-center rounded-2xl border-2 border-[var(--border-color)] focus:border-[#26847F] font-semibold bg-[var(--bg-primary)] text-[var(--text-primary)]"
+                  className="h-16 text-xl text-center rounded-2xl border-2 border-gray-200 focus:border-[#26847F] font-semibold bg-white text-gray-900"
                 />
                 {weightKg && (
-                  <p className="text-sm text-[var(--text-secondary)] text-center mt-3 font-medium">
+                  <p className="text-sm text-gray-600 text-center mt-3 font-medium">
                     ≈ {weightUnit === 'kg' ? kgToLbs(weightKg) : lbsToKg(weightKg)} {weightUnit === 'kg' ? 'lbs' : 'kg'}
                   </p>
                 )}
