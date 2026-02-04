@@ -47,80 +47,33 @@ Deno.serve(async (req) => {
                 continue;
             }
 
-            console.log(`📧 Sending 2-day reminder to: ${targetUser.email}`);
+            console.log(`📧 Sending reminder to: ${targetUser.email}`);
 
-            const endDate = trialEndsAt.toLocaleDateString('it-IT', { 
-                day: 'numeric', 
-                month: 'long',
-                hour: '2-digit',
-                minute: '2-digit'
+            // Usa sendEmailUnified per template centralizzato
+            const userLanguage = targetUser.preferred_language || 'it';
+            const templateSuffix = `_${userLanguage}`;
+            const templateId = `renewal_reminder_48h${templateSuffix}`;
+            
+            console.log(`📧 Using template: ${templateId} for user ${targetUser.email}`);
+            
+            // Chiama sendEmailUnified
+            const emailResponse = await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+                userId: targetUser.id,
+                userEmail: targetUser.email,
+                templateId: templateId,
+                variables: {
+                    user_name: targetUser.full_name || 'Utente'
+                },
+                language: userLanguage,
+                triggerSource: 'sendTrialReminder2Days'
             });
-
-            const emailHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        @media only screen and (max-width: 600px) {
-            .container { width: 100% !important; }
-            .content { padding: 30px 20px !important; }
-        }
-    </style>
-</head>
-<body style="background-color: #fafafa; padding: 20px 0;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-            <td align="center">
-                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
-                    <tr>
-                        <td style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 40px 30px; text-align: center;">
-                            <div style="font-size: 64px; margin-bottom: 10px;">⏰</div>
-                            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 800;">Il Tuo Trial Finisce Domani!</h1>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="content" style="padding: 40px 30px;">
-                            <p style="font-size: 18px; color: #333; margin-bottom: 20px;">Ciao ${targetUser.full_name || 'Utente'}! 👋</p>
-                            <p style="color: #555; line-height: 1.8; margin-bottom: 25px;">
-                                Il tuo trial gratuito di MyWellness termina il <strong>${endDate}</strong>.
-                            </p>
-                            
-                            <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; border-left: 5px solid #3b82f6;">
-                                <h3 style="color: #1e40af; margin: 0 0 15px 0;">💡 Non Perdere i Tuoi Progressi</h3>
-                                <p style="color: #1e3a8a; margin: 0; line-height: 1.6;">
-                                    Hai fatto grandi passi avanti! Continua il tuo percorso per raggiungere i tuoi obiettivi senza interruzioni.
-                                </p>
-                            </div>
-
-                            <div style="background: #f3f4f6; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-                                <h4 style="color: #1f2937; margin: 0 0 10px 0;">📋 Cosa Succede Dopo?</h4>
-                                <p style="color: #6b7280; margin: 0; font-size: 14px; line-height: 1.6;">
-                                    ✅ Se non fai nulla, il tuo abbonamento continuerà automaticamente<br>
-                                    ❌ Se vuoi cancellare, fallo prima del ${endDate}<br>
-                                    💳 Il pagamento partirà solo alla fine del trial
-                                </p>
-                            </div>
-
-                            <div style="text-align: center; margin: 35px 0;">
-                                <a href="https://app.projectmywellness.com/Settings" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-weight: 700; font-size: 16px; margin-right: 10px;">
-                                    Gestisci Abbonamento
-                                </a>
-                            </div>
-
-                            <p style="color: #999; font-size: 12px; text-align: center; margin-top: 30px;">
-                                Puoi cancellare in qualsiasi momento dalle impostazioni. Nessun costo nascosto.
-                            </p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>`;
+            
+            if (!emailResponse.success) {
+                throw new Error(`sendEmailUnified failed: ${emailResponse.error}`);
+            }
+            
+            console.log(`✅ Email sent via sendEmailUnified to ${targetUser.email}`);
+            emailsSent++;
 
 
         }
