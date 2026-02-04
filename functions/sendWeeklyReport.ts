@@ -118,33 +118,6 @@ function generateWeeklyReportEmailHtml(template, variables, stats) {
 <p style="text-align:center;font-size:14px;color:${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg questa settimana</p>
 </div>
 
-<h3 style="color:#374151;margin:20px 0 15px;font-size:16px;">📈 ${template.stats_section_title || 'Le tue statistiche'}</h3>
-
-<table width="100%" cellpadding="10" cellspacing="10">
-<tr>
-<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
-<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${avgCalories}</p>
-<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">${template.calories_stat_label || 'Calorie medie/giorno'}</p>
-</td>
-<td width="4%"></td>
-<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
-<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${workoutsCompleted}</p>
-<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">${template.workouts_stat_label || 'Allenamenti'}</p>
-</td>
-</tr>
-<tr>
-<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
-<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${adherence}%</p>
-<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">${template.adherence_stat_label || 'Aderenza'}</p>
-</td>
-<td width="4%"></td>
-<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
-<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${progress}%</p>
-<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">${template.progress_stat_label || 'Progresso'}</p>
-</td>
-</tr>
-</table>
-
 <p style="color:#26847F;text-align:center;font-weight:600;margin:25px 0;">${motivationalMessage}</p>
 
 <div style="text-align:center;margin:25px 0;">
