@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
         const targetUsers = usersWithExpiringSoon.filter(u => {
             if (!u.trial_end_date) return false;
             const trialEnd = new Date(u.trial_end_date);
-            return trialEnd >= today && trialEnd <= in48Hours;
+            return trialEnd >= today && trialEnd <= in24Hours;
         });
 
         if (targetUsers.length === 0) {
