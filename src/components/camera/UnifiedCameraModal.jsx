@@ -956,7 +956,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Weight Mode UI */}
       {mode === 'weight' && (
         <div className="w-full h-full flex items-center justify-center p-6 pb-32">
-          <div className="w-full max-w-md bg-[var(--bg-secondary)] rounded-3xl p-8 shadow-2xl">
+          <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl">
             <div className="text-center mb-8">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                 <Scale className="w-10 h-10 text-gray-700 dark:text-gray-300" />
