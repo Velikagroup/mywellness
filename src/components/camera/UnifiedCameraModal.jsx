@@ -1336,7 +1336,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Calorie History Modal */}
       {showCalorieHistoryModal && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-[var(--bg-secondary)] rounded-3xl shadow-2xl my-auto border border-[var(--border-color)]">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto border border-white">
             <div className="p-6 border-b border-[var(--border-color)]">
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl font-bold text-[var(--text-primary)]">{t('dashboard.calorieHistory')}</h3>
@@ -1370,7 +1370,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Nutrition History Modal */}
       {showNutritionHistoryModal && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-[var(--bg-secondary)] rounded-3xl shadow-2xl my-auto border border-[var(--border-color)]">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto border border-white">
             <div className="p-6 border-b border-[var(--border-color)]">
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl font-bold text-[var(--text-primary)]">{t('dashboard.nutritionHistory')}</h3>
