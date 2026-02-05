@@ -545,6 +545,10 @@ export default function QuizContainer({ translations, language = 'it' }) {
         quizData.neck_circumference, quizData.hip_circumference
       );
 
+      // Get influencer data from localStorage before creating userDataToSave
+      const savedInfluencerCode = localStorage.getItem('influencerReferralCode');
+      const savedInfluencerId = localStorage.getItem('influencerId');
+
       const userDataToSave = {
         gender: quizData.gender,
         birthdate: quizData.birthdate,
@@ -565,6 +569,12 @@ export default function QuizContainer({ translations, language = 'it' }) {
         quiz_completed: true,
         preferred_language: language
       };
+
+      // Add influencer referral data if present
+      if (savedInfluencerCode && savedInfluencerId) {
+        userDataToSave.influencer_referral_code = savedInfluencerCode;
+        userDataToSave.influencer_id = savedInfluencerId;
+      }
 
       await base44.auth.updateMe(userDataToSave);
 
