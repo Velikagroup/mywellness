@@ -127,8 +127,10 @@ export default function WeightPotentialStep({ data, onDataChange, onNext, transl
           </div>
 
           <p className="text-sm text-gray-600 text-center leading-relaxed px-2">
-            {t.weightLossSlowAtFirst || 
-              "According to MyWellness historical data, weight loss may be slow at first, but after a few days you'll see surprising results!"}
+            {((data.target_weight || 70) > (data.current_weight || 81))
+              ? (t.weightGainSlowAtFirst || "Secondo i dati storici di MyWellness, l'aumento di peso può essere lento all'inizio, ma dopo pochi giorni potrai vedere risultati sorprendenti!")
+              : (t.weightLossSlowAtFirst || "Secondo i dati storici di MyWellness, la perdita di peso può essere lenta all'inizio, ma dopo pochi giorni potrai vedere risultati sorprendenti!")
+            }
           </p>
         </div>
       </div>
