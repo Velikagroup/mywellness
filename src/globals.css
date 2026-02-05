@@ -1,3 +1,4 @@
+css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@ html, body {
 
 .quiz-button-fixed {
   position: fixed;
-  bottom: 8px;
+  bottom: 40px;
   left: 20px;
   right: 20px;
   z-index: 50;
