@@ -581,6 +581,10 @@ export default function AdminMarketing() {
 
     const conversionRate = quizCompleted > 0 ? ((purchases / quizCompleted) * 100).toFixed(1) : '0.0';
 
+    // Conta utenti che hanno usato il referral code
+    const usersWithReferralCode = influencer.referral_code 
+      ? allUsers.filter(u => u.influencer_referral_code === influencer.referral_code).length
+      : 0;
 
     return {
       revenue,
@@ -593,7 +597,8 @@ export default function AdminMarketing() {
         ? { quiz: quizCompleted, landing: landingViews, checkout: checkoutStarted, purchases }
         : { quiz: quizCompleted, checkout: checkoutStarted, purchases },
       conversionRate,
-      transactions: influencerTransactions
+      transactions: influencerTransactions,
+      referralUsers: usersWithReferralCode
     };
   };
 
@@ -1314,7 +1319,13 @@ export default function AdminMarketing() {
                       {/* Referral Code Display */}
                       {influencer.referral_code && (
                        <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
-                         <p className="text-xs text-indigo-600 font-semibold mb-2">Codice Referral Quiz</p>
+                         <div className="flex items-center justify-between mb-2">
+                           <p className="text-xs text-indigo-600 font-semibold">Codice Referral Quiz</p>
+                           <div className="flex items-center gap-1 bg-indigo-600 text-white px-2 py-1 rounded-full">
+                             <span className="text-xs font-bold">{metrics.referralUsers}</span>
+                             <span className="text-xs">utenti</span>
+                           </div>
+                         </div>
                          <div className="flex items-center justify-between">
                            <code className="text-lg font-bold text-indigo-900">{influencer.referral_code}</code>
                            <Button
