@@ -11,6 +11,23 @@ html, body {
   -webkit-overflow-scrolling: touch;
 }
 
+.quiz-button-fixed {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  z-index: 50;
+}
+
+@media (min-width: 768px) {
+  .quiz-button-fixed {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    right: auto;
+  }
+}
+
 button, a, [role="button"], svg {
   user-select: none;
   -webkit-user-select: none;
