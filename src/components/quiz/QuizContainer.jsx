@@ -566,14 +566,6 @@ export default function QuizContainer({ translations, language = 'it' }) {
         preferred_language: language
       };
 
-      // Add influencer referral data if present
-      const influencerCode = localStorage.getItem('influencerReferralCode');
-      const influencerId = localStorage.getItem('influencerId');
-      if (influencerCode && influencerId) {
-        userDataToSave.influencer_referral_code = influencerCode;
-        userDataToSave.influencer_id = influencerId;
-      }
-
       await base44.auth.updateMe(userDataToSave);
 
       const today = new Date().toISOString().split('T')[0];
