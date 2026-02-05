@@ -1330,41 +1330,45 @@ export default function AdminMarketing() {
 
                       {/* Referral Code Display */}
                       {influencer.referral_code && (
-                       <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
-                         <div className="flex items-center justify-between mb-3">
-                           <p className="text-xs text-indigo-600 font-semibold">Codice Referral Quiz</p>
-                           <div className="flex items-center gap-2">
-                             <div className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-full">
-                               <span className="text-xs font-bold">{metrics.referralUsers}</span>
-                               <span className="text-xs">mail</span>
-                             </div>
-                             <div className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded-full">
-                               <span className="text-xs font-bold">{metrics.activeSubscriptionUsers}</span>
-                               <span className="text-xs">dashboard</span>
-                             </div>
-                           </div>
-                         </div>
-                         <div className="flex items-center justify-between">
-                           <code className="text-lg font-bold text-indigo-900">{influencer.referral_code}</code>
-                           <Button
-                             onClick={() => {
-                               navigator.clipboard.writeText(influencer.referral_code);
-                               setCopiedLink(`referral_${influencer.id}`);
-                               setTimeout(() => setCopiedLink(null), 2000);
-                             }}
-                             variant="outline"
-                             size="sm"
-                             className="text-xs"
-                           >
-                             {copiedLink === `referral_${influencer.id}` ? (
-                               <CheckCircle className="w-3 h-3 mr-1" />
-                             ) : (
-                               <LinkIcon className="w-3 h-3 mr-1" />
-                             )}
-                             Copia
-                           </Button>
-                         </div>
-                       </div>
+                      <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
+                        <div className="flex items-center justify-between mb-3">
+                          <p className="text-xs text-indigo-600 font-semibold">Codice Referral Quiz</p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <div className="flex items-center gap-1 bg-orange-600 text-white px-2 py-1 rounded-full" title="Codici confermati nel quiz">
+                              <span className="text-xs font-bold">{influencer.referral_code_confirmed_count || 0}</span>
+                              <span className="text-xs">quiz</span>
+                            </div>
+                            <div className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-full" title="Email registrate">
+                              <span className="text-xs font-bold">{influencer.email_registered_count || 0}</span>
+                              <span className="text-xs">mail</span>
+                            </div>
+                            <div className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded-full" title="Subscription attive">
+                              <span className="text-xs font-bold">{influencer.subscription_activated_count || 0}</span>
+                              <span className="text-xs">sub</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <code className="text-lg font-bold text-indigo-900">{influencer.referral_code}</code>
+                          <Button
+                            onClick={() => {
+                              navigator.clipboard.writeText(influencer.referral_code);
+                              setCopiedLink(`referral_${influencer.id}`);
+                              setTimeout(() => setCopiedLink(null), 2000);
+                            }}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs"
+                          >
+                            {copiedLink === `referral_${influencer.id}` ? (
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                            ) : (
+                              <LinkIcon className="w-3 h-3 mr-1" />
+                            )}
+                            Copia
+                          </Button>
+                        </div>
+                      </div>
                       )}
 
                       {/* Actions */}

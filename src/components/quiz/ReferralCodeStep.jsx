@@ -55,6 +55,15 @@ export default function ReferralCodeStep({ data, onDataChange, onNext, translati
         localStorage.setItem('influencerReferralCode', code.toUpperCase());
         localStorage.setItem('influencerId', influencers[0].id);
         
+        // Track: Step 1 - Codice inserito e confermato nel quiz
+        try {
+          await base44.entities.Influencer.update(influencers[0].id, {
+            referral_code_confirmed_count: (influencers[0].referral_code_confirmed_count || 0) + 1
+          });
+        } catch (error) {
+          console.log('Error tracking referral confirmation:', error);
+        }
+        
         setTimeout(() => {
           onNext();
         }, 800);
