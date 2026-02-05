@@ -13,7 +13,7 @@ export default function ReferralCodeStep({ data, onDataChange, onNext, translati
 
   const handleValidateAndContinue = async () => {
     if (!code.trim()) {
-      onDataChange({ referral_code: null });
+      onDataChange({ referral_code: null, referral_source: null });
       onNext();
       return;
     }
@@ -27,12 +27,33 @@ export default function ReferralCodeStep({ data, onDataChange, onNext, translati
         affiliate_code: code.toUpperCase() 
       });
 
+      // Check if influencer referral code exists
+      const influencers = await base44.entities.Influencer.filter({
+        referral_code: code.toUpperCase()
+      });
+
       if (affiliateLinks.length > 0) {
         setValidationStatus('valid');
-        onDataChange({ referral_code: code.toUpperCase() });
+        onDataChange({ 
+          referral_code: code.toUpperCase(),
+          referral_source: 'affiliate'
+        });
         
-        // Store in localStorage for later use
         localStorage.setItem('affiliateCode', code.toUpperCase());
+        
+        setTimeout(() => {
+          onNext();
+        }, 800);
+      } else if (influencers.length > 0) {
+        setValidationStatus('valid');
+        onDataChange({ 
+          referral_code: code.toUpperCase(),
+          referral_source: 'influencer',
+          influencer_id: influencers[0].id
+        });
+        
+        localStorage.setItem('influencerReferralCode', code.toUpperCase());
+        localStorage.setItem('influencerId', influencers[0].id);
         
         setTimeout(() => {
           onNext();

@@ -64,6 +64,7 @@ export default function AdminMarketing() {
   const [newInfluencer, setNewInfluencer] = useState({
     name: '',
     slug: '',
+    referral_code: '',
     platform: 'instagram',
     follower_count: '',
     cost_per_post: '',
@@ -506,6 +507,7 @@ export default function AdminMarketing() {
       setNewInfluencer({
         name: '',
         slug: '',
+        referral_code: '',
         platform: 'instagram',
         follower_count: '',
         cost_per_post: '',
@@ -549,8 +551,16 @@ export default function AdminMarketing() {
 
   // Calculate influencer metrics
   const getInfluencerMetrics = (influencer) => {
+    // Trova utenti che hanno usato il referral code o il link utm
+    const usersFromReferral = influencer.referral_code 
+      ? allUsers.filter(u => u.influencer_referral_code === influencer.referral_code)
+      : [];
+    
+    const userIdsFromReferral = usersFromReferral.map(u => u.id);
+    
     const influencerTransactions = funnelFilteredTransactions.filter(t =>
-      t.traffic_source === `influencer_${influencer.slug}` && t.status === 'succeeded'
+      (t.traffic_source === `influencer_${influencer.slug}` || userIdsFromReferral.includes(t.user_id)) && 
+      t.status === 'succeeded'
     );
 
     const revenue = influencerTransactions.reduce((sum, t) => sum + t.amount, 0);
@@ -1301,36 +1311,63 @@ export default function AdminMarketing() {
                         </div>
                       </div>
 
+                      {/* Referral Code Display */}
+                      {influencer.referral_code && (
+                       <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
+                         <p className="text-xs text-indigo-600 font-semibold mb-2">Codice Referral Quiz</p>
+                         <div className="flex items-center justify-between">
+                           <code className="text-lg font-bold text-indigo-900">{influencer.referral_code}</code>
+                           <Button
+                             onClick={() => {
+                               navigator.clipboard.writeText(influencer.referral_code);
+                               setCopiedLink(`referral_${influencer.id}`);
+                               setTimeout(() => setCopiedLink(null), 2000);
+                             }}
+                             variant="outline"
+                             size="sm"
+                             className="text-xs"
+                           >
+                             {copiedLink === `referral_${influencer.id}` ? (
+                               <CheckCircle className="w-3 h-3 mr-1" />
+                             ) : (
+                               <LinkIcon className="w-3 h-3 mr-1" />
+                             )}
+                             Copia
+                           </Button>
+                         </div>
+                       </div>
+                      )}
+
                       {/* Actions */}
                       <div className="space-y-2">
-                        <div className="flex gap-2">
-                          <Button
-                            onClick={() => copyInfluencerLink(influencer, 'trial')}
-                            variant="outline"
-                            size="sm"
-                            className="flex-1 text-xs"
-                          >
-                            {copiedLink === `influencer_${influencer.slug}_trial` ? (
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                            ) : (
-                              <LinkIcon className="w-3 h-3 mr-1" />
-                            )}
-                            Trial Link
-                          </Button>
-                          <Button
-                            onClick={() => copyInfluencerLink(influencer, 'landing')}
-                            variant="outline"
-                            size="sm"
-                            className="flex-1 text-xs"
-                          >
-                            {copiedLink === `influencer_${influencer.slug}_landing` ? (
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                            ) : (
-                              <LinkIcon className="w-3 h-3 mr-1" />
-                            )}
-                            Landing Link
-                          </Button>
-                        </div>
+                       <div className="flex gap-2">
+                         <Button
+                           onClick={() => copyInfluencerLink(influencer, 'trial')}
+                           variant="outline"
+                           size="sm"
+                           className="flex-1 text-xs"
+                         >
+                           {copiedLink === `influencer_${influencer.slug}_trial` ? (
+                             <CheckCircle className="w-3 h-3 mr-1" />
+                           ) : (
+                             <LinkIcon className="w-3 h-3 mr-1" />
+                           )}
+                           Trial Link
+                         </Button>
+                         <Button
+                           onClick={() => copyInfluencerLink(influencer, 'landing')}
+                           variant="outline"
+                           size="sm"
+                           className="flex-1 text-xs"
+                         >
+                           {copiedLink === `influencer_${influencer.slug}_landing` ? (
+                             <CheckCircle className="w-3 h-3 mr-1" />
+                           ) : (
+                             <LinkIcon className="w-3 h-3 mr-1" />
+                           )}
+                           Landing Link
+                         </Button>
+                       </div>
                         <Button
                           onClick={() => {
                             const amount = prompt('Inserisci l\'importo speso (EUR):');
@@ -1742,6 +1779,17 @@ export default function AdminMarketing() {
                 />
                 <p className="text-xs text-gray-500 mt-1">URL sarà: ?utm_source=influencer_{newInfluencer.slug}</p>
               </div>
+            </div>
+
+            <div>
+              <Label htmlFor="influencer-referral-code">Codice Referral (per quiz)</Label>
+              <Input
+                id="influencer-referral-code"
+                value={newInfluencer.referral_code}
+                onChange={(e) => setNewInfluencer({ ...newInfluencer, referral_code: e.target.value.toUpperCase() })}
+                placeholder="MARIO2024"
+              />
+              <p className="text-xs text-gray-500 mt-1">Codice che gli utenti inseriscono nel quiz per essere tracciati</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
