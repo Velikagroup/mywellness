@@ -174,7 +174,7 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ delay: index * 0.05 }}
-              className="bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all"
+              className="bg-white rounded-xl border-2 border-white hover:border-white hover:shadow-lg transition-all"
             >
               {/* Header cliccabile */}
               <button
