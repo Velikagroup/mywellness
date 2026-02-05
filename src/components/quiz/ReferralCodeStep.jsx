@@ -59,13 +59,13 @@ export default function ReferralCodeStep({ data, onDataChange, onNext, translati
         
         // Track: Step 1 - Codice inserito e confermato nel quiz
         try {
-          await base44.functions.invoke('trackInfluencerEvent', {
-            influencerId: influencer.id,
-            eventType: 'quiz_confirmed'
+          const currentCount = influencer.referral_code_confirmed_count || 0;
+          await base44.asServiceRole.entities.Influencer.update(influencer.id, {
+            referral_code_confirmed_count: currentCount + 1
           });
-          console.log(`✅ Influencer ${influencer.name} - quiz confirmed tracked`);
+          console.log(`✅ Quiz confirmed: ${currentCount} → ${currentCount + 1}`);
         } catch (error) {
-          console.error('❌ Error tracking referral confirmation:', error);
+          console.error('❌ Error tracking:', error);
         }
         
         setTimeout(() => {
