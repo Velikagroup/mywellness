@@ -581,11 +581,19 @@ export default function AdminMarketing() {
 
     const conversionRate = quizCompleted > 0 ? ((purchases / quizCompleted) * 100).toFixed(1) : '0.0';
 
-    // Conta utenti che hanno usato il referral code E completato il quiz
+    // Conta utenti che hanno usato il referral code E completato il quiz (accessi con mail)
     const usersWithReferralCode = influencer.referral_code 
       ? allUsers.filter(u => 
           u.influencer_referral_code === influencer.referral_code && 
           u.quiz_completed === true
+        ).length
+      : 0;
+
+    // Conta utenti con subscription attiva/trial (accessi alla dashboard)
+    const usersWithActiveSubscription = influencer.referral_code 
+      ? allUsers.filter(u => 
+          u.influencer_referral_code === influencer.referral_code && 
+          (u.subscription_status === 'active' || u.subscription_status === 'trial')
         ).length
       : 0;
 
@@ -601,7 +609,8 @@ export default function AdminMarketing() {
         : { quiz: quizCompleted, checkout: checkoutStarted, purchases },
       conversionRate,
       transactions: influencerTransactions,
-      referralUsers: usersWithReferralCode
+      referralUsers: usersWithReferralCode,
+      activeSubscriptionUsers: usersWithActiveSubscription
     };
   };
 
@@ -1322,11 +1331,17 @@ export default function AdminMarketing() {
                       {/* Referral Code Display */}
                       {influencer.referral_code && (
                        <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
-                         <div className="flex items-center justify-between mb-2">
+                         <div className="flex items-center justify-between mb-3">
                            <p className="text-xs text-indigo-600 font-semibold">Codice Referral Quiz</p>
-                           <div className="flex items-center gap-1 bg-indigo-600 text-white px-2 py-1 rounded-full">
-                             <span className="text-xs font-bold">{metrics.referralUsers}</span>
-                             <span className="text-xs">utenti</span>
+                           <div className="flex items-center gap-2">
+                             <div className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-full">
+                               <span className="text-xs font-bold">{metrics.referralUsers}</span>
+                               <span className="text-xs">mail</span>
+                             </div>
+                             <div className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded-full">
+                               <span className="text-xs font-bold">{metrics.activeSubscriptionUsers}</span>
+                               <span className="text-xs">dashboard</span>
+                             </div>
                            </div>
                          </div>
                          <div className="flex items-center justify-between">
