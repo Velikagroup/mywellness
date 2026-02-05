@@ -151,13 +151,13 @@ function generateEmailHtml(template, variables, language = 'it') {
                             <div style="color: #374151; line-height: 1.7; font-size: 16px;">${mainContent}</div>
                             ${template.call_to_action_text ? `
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 16px 0;">
-                                <tr>
-                                    <td align="center">
-                                        <a href="${ctaUrl}" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            ${template.call_to_action_text}
-                                        </a>
-                                    </td>
-                                </tr>
+                               <tr>
+                                   <td align="center">
+                                       <a href="${ctaUrl}" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 28px 100px; border-radius: 12px; font-weight: bold; font-size: 20px;">
+                                           ${template.call_to_action_text}
+                                       </a>
+                                   </td>
+                               </tr>
                             </table>` : ''}
                             ${footerText ? `<p class="footer-text" style="color: #6b7280; text-align: center; font-size: 13px; margin: 24px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
                         </td>
