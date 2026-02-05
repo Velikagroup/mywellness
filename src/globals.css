@@ -13,7 +13,7 @@ html, body {
 
 .quiz-button-fixed {
   position: fixed;
-  bottom: 20px;
+  bottom: 8px;
   left: 20px;
   right: 20px;
   z-index: 50;
