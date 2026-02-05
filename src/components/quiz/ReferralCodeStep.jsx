@@ -46,22 +46,26 @@ export default function ReferralCodeStep({ data, onDataChange, onNext, translati
         }, 800);
       } else if (influencers.length > 0) {
         setValidationStatus('valid');
+        const influencer = influencers[0];
+        
         onDataChange({ 
           referral_code: code.toUpperCase(),
           referral_source: 'influencer',
-          influencer_id: influencers[0].id
+          influencer_id: influencer.id
         });
         
         localStorage.setItem('influencerReferralCode', code.toUpperCase());
-        localStorage.setItem('influencerId', influencers[0].id);
+        localStorage.setItem('influencerId', influencer.id);
         
         // Track: Step 1 - Codice inserito e confermato nel quiz
         try {
-          await base44.entities.Influencer.update(influencers[0].id, {
-            referral_code_confirmed_count: (influencers[0].referral_code_confirmed_count || 0) + 1
+          const currentCount = influencer.referral_code_confirmed_count || 0;
+          await base44.entities.Influencer.update(influencer.id, {
+            referral_code_confirmed_count: currentCount + 1
           });
+          console.log(`✅ Influencer ${influencer.name} - referral confirmed: ${currentCount} → ${currentCount + 1}`);
         } catch (error) {
-          console.log('Error tracking referral confirmation:', error);
+          console.error('❌ Error tracking referral confirmation:', error);
         }
         
         setTimeout(() => {
