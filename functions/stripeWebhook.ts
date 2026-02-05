@@ -185,6 +185,21 @@ Deno.serve(async (req) => {
                     });
                     console.log(`✅ User subscription updated: status=active, plan=${plan}`);
 
+                    // Track: Step 3 - Subscription attivata per influencer
+                    if (user.influencer_id) {
+                        try {
+                            const influencers = await base44.asServiceRole.entities.Influencer.filter({id: user.influencer_id});
+                            if (influencers.length > 0) {
+                                await base44.asServiceRole.entities.Influencer.update(user.influencer_id, {
+                                    subscription_activated_count: (influencers[0].subscription_activated_count || 0) + 1
+                                });
+                                console.log('✅ Influencer subscription_activated_count incremented');
+                            }
+                        } catch (infError) {
+                            console.warn('⚠️ Influencer subscription tracking error:', infError);
+                        }
+                    }
+
                     // ❌ NON inviare email benvenuto - questo evento è per conversioni trial→paid
                     // L'email benvenuto viene inviata solo alla creazione subscription DIRETTA (non da trial)
                     console.log('⏭️ Skipping welcome email - checkout.session handles trial conversion');
@@ -671,6 +686,21 @@ Deno.serve(async (req) => {
                     updateData.stripe_customer_id = customerId;  // 🔗 SALVA il stripe_customer_id
                     await base44.asServiceRole.entities.User.update(user.id, updateData);
                     console.log(`✅ Subscription updated for user ${user.id} with stripe_customer_id: ${customerId}`);
+
+                    // Track: Step 3 - Subscription attivata per influencer (se subscription.created e status != incomplete)
+                    if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete' && user.influencer_id) {
+                        try {
+                            const influencers = await base44.asServiceRole.entities.Influencer.filter({id: user.influencer_id});
+                            if (influencers.length > 0) {
+                                await base44.asServiceRole.entities.Influencer.update(user.influencer_id, {
+                                    subscription_activated_count: (influencers[0].subscription_activated_count || 0) + 1
+                                });
+                                console.log('✅ Influencer subscription_activated_count incremented');
+                            }
+                        } catch (infError) {
+                            console.warn('⚠️ Influencer subscription tracking error:', infError);
+                        }
+                    }
 
                     // 📧 Invia email benvenuto SOLO per subscription.created (NON per .updated per evitare duplicati)
                     if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete') {

@@ -634,6 +634,11 @@ export default function QuizContainer({ translations, language = 'it' }) {
             influencer_referral_code: influencerCode,
             influencer_id: influencerId
           });
+
+          // Track: Step 2 - Email registrata con codice referral
+          await base44.entities.Influencer.update(influencerId, {
+            email_registered_count: (await base44.entities.Influencer.filter({id: influencerId}))[0].email_registered_count + 1
+          });
         } catch (infError) {
           console.warn('⚠️ Influencer tracking error:', infError);
         }
