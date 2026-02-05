@@ -606,6 +606,23 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
         localStorage.removeItem('affiliateCode');
       }
+
+      // Traccia influencer referral se presente
+      const influencerCode = localStorage.getItem('influencerReferralCode');
+      const influencerId = localStorage.getItem('influencerId');
+      if (influencerCode && influencerId) {
+        try {
+          await base44.auth.updateMe({
+            influencer_referral_code: influencerCode,
+            influencer_id: influencerId
+          });
+        } catch (infError) {
+          console.warn('⚠️ Influencer tracking error:', infError);
+        }
+
+        localStorage.removeItem('influencerReferralCode');
+        localStorage.removeItem('influencerId');
+      }
       
       localStorage.removeItem(`quizData_${language}`);
       localStorage.removeItem(`quizDataToSave_${language}`);
