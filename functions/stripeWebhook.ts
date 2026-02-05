@@ -188,15 +188,16 @@ Deno.serve(async (req) => {
                     // Track: Step 3 - Subscription attivata per influencer
                     if (user.influencer_id) {
                         try {
-                            const influencers = await base44.asServiceRole.entities.Influencer.filter({id: user.influencer_id});
+                            const influencers = await base44.asServiceRole.entities.Influencer.filter({ id: user.influencer_id });
                             if (influencers.length > 0) {
+                                const currentCount = influencers[0].subscription_activated_count || 0;
                                 await base44.asServiceRole.entities.Influencer.update(user.influencer_id, {
-                                    subscription_activated_count: (influencers[0].subscription_activated_count || 0) + 1
+                                    subscription_activated_count: currentCount + 1
                                 });
-                                console.log('✅ Influencer subscription_activated_count incremented');
+                                console.log(`✅ Influencer ${influencers[0].name} subscription_activated_count: ${currentCount} → ${currentCount + 1}`);
                             }
                         } catch (infError) {
-                            console.warn('⚠️ Influencer subscription tracking error:', infError);
+                            console.error('❌ Influencer subscription tracking error:', infError);
                         }
                     }
 
@@ -690,15 +691,16 @@ Deno.serve(async (req) => {
                     // Track: Step 3 - Subscription attivata per influencer (se subscription.created e status != incomplete)
                     if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete' && user.influencer_id) {
                         try {
-                            const influencers = await base44.asServiceRole.entities.Influencer.filter({id: user.influencer_id});
+                            const influencers = await base44.asServiceRole.entities.Influencer.filter({ id: user.influencer_id });
                             if (influencers.length > 0) {
+                                const currentCount = influencers[0].subscription_activated_count || 0;
                                 await base44.asServiceRole.entities.Influencer.update(user.influencer_id, {
-                                    subscription_activated_count: (influencers[0].subscription_activated_count || 0) + 1
+                                    subscription_activated_count: currentCount + 1
                                 });
-                                console.log('✅ Influencer subscription_activated_count incremented');
+                                console.log(`✅ Influencer ${influencers[0].name} subscription_activated_count: ${currentCount} → ${currentCount + 1}`);
                             }
                         } catch (infError) {
-                            console.warn('⚠️ Influencer subscription tracking error:', infError);
+                            console.error('❌ Influencer subscription tracking error:', infError);
                         }
                     }
 
