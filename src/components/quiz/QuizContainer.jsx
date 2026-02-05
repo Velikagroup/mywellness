@@ -440,6 +440,14 @@ export default function QuizContainer({ translations, language = 'it' }) {
           daily_calories: Math.round(dailyCalories)
         };
 
+        // Add influencer referral data if present
+        const influencerCode = localStorage.getItem('influencerReferralCode');
+        const influencerId = localStorage.getItem('influencerId');
+        if (influencerCode && influencerId) {
+          userDataToSave.influencer_referral_code = influencerCode;
+          userDataToSave.influencer_id = influencerId;
+        }
+
         await base44.auth.updateMe(userDataToSave);
         
         const today = new Date().toISOString().split('T')[0];
@@ -557,6 +565,14 @@ export default function QuizContainer({ translations, language = 'it' }) {
         quiz_completed: true,
         preferred_language: language
       };
+
+      // Add influencer referral data if present
+      const influencerCode = localStorage.getItem('influencerReferralCode');
+      const influencerId = localStorage.getItem('influencerId');
+      if (influencerCode && influencerId) {
+        userDataToSave.influencer_referral_code = influencerCode;
+        userDataToSave.influencer_id = influencerId;
+      }
 
       await base44.auth.updateMe(userDataToSave);
 
