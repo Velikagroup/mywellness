@@ -581,9 +581,12 @@ export default function AdminMarketing() {
 
     const conversionRate = quizCompleted > 0 ? ((purchases / quizCompleted) * 100).toFixed(1) : '0.0';
 
-    // Conta utenti che hanno usato il referral code
+    // Conta utenti che hanno usato il referral code E completato il quiz
     const usersWithReferralCode = influencer.referral_code 
-      ? allUsers.filter(u => u.influencer_referral_code === influencer.referral_code).length
+      ? allUsers.filter(u => 
+          u.influencer_referral_code === influencer.referral_code && 
+          u.quiz_completed === true
+        ).length
       : 0;
 
     return {
