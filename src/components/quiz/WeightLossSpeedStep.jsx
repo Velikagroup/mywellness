@@ -67,6 +67,9 @@ export default function WeightLossSpeedStep({ data, onDataChange, translations, 
   const weeklyLoss = calculateWeeklyLoss(sliderValue);
   const speedCategory = getSpeedCategory(sliderValue);
   
+  // Check if user wants to gain or lose weight
+  const isGainingWeight = (data.target_weight || 70) > (data.current_weight || 81);
+  
   // Calculate months to goal
   const weightDiff = Math.abs((data.current_weight || 81) - (data.target_weight || 70));
   const monthsToGoal = Math.ceil((weightDiff / weeklyLoss) / 4.33);
@@ -161,9 +164,14 @@ export default function WeightLossSpeedStep({ data, onDataChange, translations, 
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8 space-y-8">
         
-        {/* Weekly Loss Display */}
+        {/* Weekly Loss/Gain Display */}
         <div className="text-center space-y-2">
-          <p className="text-gray-600 text-sm">{t.weeklyLossRate || 'Velocidad de pérdida de peso por semana'}</p>
+          <p className="text-gray-600 text-sm">
+            {isGainingWeight 
+              ? (t.weeklyGainRate || 'Velocità di aumento di peso per settimana')
+              : (t.weeklyLossRate || 'Velocità di perdita di peso per settimana')
+            }
+          </p>
           <p className="text-5xl font-bold text-gray-900">{weeklyLoss.toFixed(1)} <span className="text-2xl">kg</span></p>
         </div>
 
