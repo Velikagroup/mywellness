@@ -1448,6 +1448,8 @@ export const translations = {
     },
     workouts: {
       title: "Protocollo di Allenamento",
+      noPlan: "Nessun Protocollo di Allenamento",
+      noPlanDesc: "Genera il tuo piano personalizzato dal database di {count} esercizi per iniziare.",
       weeklySchedule: "Programmazione Settimanale",
       restDay: "Giorno di Riposo Attivo",
       restDayDesc: "Focus su recupero e mobilità.",
@@ -3845,6 +3847,8 @@ export const translations = {
     },
     workouts: {
       title: "Workout Protocol",
+      noPlan: "No Workout Protocol",
+      noPlanDesc: "Generate your personalized plan from the database of {count} exercises to get started.",
       weeklySchedule: "Weekly Schedule",
       restDay: "Active Rest Day",
       restDayDesc: "Focus on recovery and mobility.",
@@ -6153,6 +6157,8 @@ export const translations = {
     },
     workouts: {
       title: "Protocolo de Entrenamiento",
+      noPlan: "Sin Protocolo de Entrenamiento",
+      noPlanDesc: "Genera tu plan personalizado desde la base de datos de {count} ejercicios para empezar.",
       weeklySchedule: "Programación Semanal",
       restDay: "Día de Descanso Activo",
       restDayDesc: "Enfoque en recuperación y movilidad.",
@@ -8515,6 +8521,8 @@ export const translations = {
     },
     workouts: {
       title: "Protocolo de Treino",
+      noPlan: "Nenhum Protocolo de Treino",
+      noPlanDesc: "Gere seu plano personalizado do banco de dados de {count} exercícios para começar.",
       weeklySchedule: "Programação Semanal",
       restDay: "Dia de Descanso Ativo",
       restDayDesc: "Foco em recuperação e mobilidade.",
@@ -10877,6 +10885,8 @@ export const translations = {
     },
     workouts: {
       title: "Trainingsprotokoll",
+      noPlan: "Kein Trainingsprotokoll",
+      noPlanDesc: "Erstellen Sie Ihren personalisierten Plan aus der Datenbank von {count} Übungen zum Starten.",
       weeklySchedule: "Wochenplanung",
       restDay: "Aktiver Ruhetag",
       restDayDesc: "Fokus auf Erholung und Mobilität.",
@@ -13238,6 +13248,8 @@ export const translations = {
     },
     workouts: {
       title: "Protocole d'Entraînement",
+      noPlan: "Aucun Protocole d'Entraînement",
+      noPlanDesc: "Générez votre plan personnalisé depuis la base de données de {count} exercices pour commencer.",
       weeklySchedule: "Programmation Hebdomadaire",
       restDay: "Jour de Repos Actif",
       restDayDesc: "Accent sur la récupération et la mobilité.",

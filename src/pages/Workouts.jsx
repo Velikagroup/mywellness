@@ -2603,9 +2603,9 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
                   <div className="w-16 h-16 bg-[#26847F]/10 rounded-lg flex items-center justify-center mx-auto mb-6 shadow-sm">
                     <Database className="w-8 h-8 text-[#26847F]" />
                   </div>
-                  <CardTitle className="text-xl text-gray-900 mb-4">Nessun Protocollo di Allenamento</CardTitle>
+                  <CardTitle className="text-xl text-gray-900 mb-4">{t('workouts.noPlan')}</CardTitle>
                   <p className="text-gray-600 mb-6">
-                    Genera il tuo piano personalizzato dal database di {allExercises.length} esercizi per iniziare.
+                    {t('workouts.noPlanDesc', { count: allExercises.length })}
                   </p>
                 </CardContent>
               </Card>
