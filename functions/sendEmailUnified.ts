@@ -112,18 +112,25 @@ function generateEmailHtml(template, variables, language = 'it') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        .logo-cell { padding: 60px 30px 10px 30px; }
-        .content-cell { padding: 15px 30px; }
-        .content-cell p { margin: 3px 0; line-height: 1.5; }
-        .content-cell ul, .content-cell ol { margin: 3px 0; padding-left: 20px; line-height: 1.5; }
-        .content-cell li { margin: 1.5px 0; }
+        .logo-cell { padding: 40px 20px 20px 20px; }
+        .content-cell { padding: 20px; }
+        .content-cell p { margin: 0 0 16px 0; line-height: 1.7; }
+        .content-cell ul, .content-cell ol { margin: 0 0 16px 0; padding-left: 20px; line-height: 1.7; }
+        .content-cell li { margin: 8px 0; }
+        .content-cell strong { font-weight: 600; }
+        .logo-img { height: 32px; width: auto; display: block; max-width: 100%; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; }
         @media only screen and (min-width: 600px) {
-            .logo-cell { padding: 60px 60px 10px 60px !important; }
-            .content-cell { padding: 15px 60px 60px 60px !important; }
+            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .content-cell { padding: 24px 60px 60px 60px !important; }
+            .logo-img { height: 36px !important; }
         }
         @media only screen and (max-width: 600px) {
             .container { width: 100% !important; border-radius: 0 !important; }
             .outer-wrapper { padding: 0 !important; }
+            .content-cell p { font-size: 15px !important; line-height: 1.8 !important; }
+            .cta-button { display: block !important; padding: 18px 24px !important; font-size: 15px !important; }
+            .footer-text { font-size: 11px !important; }
         }
     </style>
     </head>
@@ -135,24 +142,24 @@ function generateEmailHtml(template, variables, language = 'it') {
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
                         <td class="logo-cell">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 30px; width: auto; display: block;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" class="logo-img" style="height: 32px; width: auto; display: block; max-width: 100%;">
                         </td>
                     </tr>
                     <tr>
                         <td class="content-cell">
-                            ${greeting ? `<p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${greeting}</p>` : ''}
-                            <div style="color: #374151; line-height: 1.6; font-size: 16px;">${mainContent}</div>
+                            ${greeting ? `<p style="color: #111827; font-size: 16px; margin: 0 0 24px 0; font-weight: 400;">${greeting}</p>` : ''}
+                            <div style="color: #374151; line-height: 1.7; font-size: 16px;">${mainContent}</div>
                             ${template.call_to_action_text ? `
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0 16px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                        <a href="${ctaUrl}" class="cta-button" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
                                             ${template.call_to_action_text}
                                         </a>
                                     </td>
                                 </tr>
                             </table>` : ''}
-                            ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
+                            ${footerText ? `<p class="footer-text" style="color: #6b7280; text-align: center; font-size: 13px; margin: 24px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
                         </td>
                     </tr>
                 </table>
