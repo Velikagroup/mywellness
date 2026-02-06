@@ -13,21 +13,9 @@ Deno.serve(async (req) => {
 
         console.log(`👤 Loading transactions for user: ${user.id} (${user.email})`);
 
-        // Parse date filters from request body
-        const { from_date, to_date } = await req.json().catch(() => ({}));
-        
-        let filter = { user_id: user.id };
-        if (from_date && to_date) {
-            filter.payment_date = {
-                $gte: from_date,
-                $lte: to_date
-            };
-            console.log(`🗓️ Filtering transactions from ${from_date} to ${to_date}`);
-        }
-
         // Usa service role per bypassare RLS e filtra per user_id
         const transactions = await base44.asServiceRole.entities.Transaction.filter(
-            filter,
+            { user_id: user.id },
             '-payment_date',
             50
         );

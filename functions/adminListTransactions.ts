@@ -16,22 +16,8 @@ Deno.serve(async (req) => {
             return Response.json({ success: false, error: 'Admin only' }, { status: 403 });
         }
 
-        // Parse date filters from request body
-        const { from_date, to_date } = await req.json().catch(() => ({}));
-        
-        let filter = {};
-        if (from_date && to_date) {
-            filter = {
-                payment_date: {
-                    $gte: from_date,
-                    $lte: to_date
-                }
-            };
-            console.log(`🗓️ Filtering transactions from ${from_date} to ${to_date}`);
-        }
-
         // Usa service role per bypassare RLS
-        const transactions = await base44.asServiceRole.entities.Transaction.filter(filter);
+        const transactions = await base44.asServiceRole.entities.Transaction.filter({});
         
         console.log(`✅ Found ${transactions.length} transactions`);
 
