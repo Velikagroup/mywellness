@@ -589,6 +589,18 @@ export default function QuizContainer({ translations, language = 'it' }) {
         console.warn('⚠️ Weight error:', weightError);
       }
 
+      // 📬 Sync utente con Resend Audience
+      try {
+        console.log('📬 Syncing user to Resend audience...');
+        await base44.functions.invoke('syncUserToResend', {
+          user_email: user.email,
+          full_name: user.full_name || 'User'
+        });
+        console.log(`✅ User ${user.email} synced to Resend`);
+      } catch (resendError) {
+        console.error('⚠️ Resend sync failed:', resendError.message);
+      }
+
       // Traccia affiliate se presente
       const affiliateCode = localStorage.getItem('affiliateCode');
       if (affiliateCode) {
