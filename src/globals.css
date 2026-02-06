@@ -13,16 +13,16 @@ html, body {
 }
 
 .quiz-button-fixed {
-  position: fixed;
-  bottom: 40px;
-  left: 20px;
-  right: 20px;
-  z-index: 50;
+  position: fixed !important;
+  bottom: 40px !important;
+  left: 20px !important;
+  right: 20px !important;
+  z-index: 50 !important;
 }
 
 @media (min-width: 768px) {
   .quiz-button-fixed {
-    bottom: 20px;
+    bottom: 20px !important;
   }
 }
 
