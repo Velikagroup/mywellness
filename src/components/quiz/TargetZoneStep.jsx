@@ -62,15 +62,13 @@ export default function TargetZoneStep({ data, onDataChange, onNext, translation
         ))}
       </div>
 
-      <div>
-        <Button
-          onClick={onNext}
-          disabled={selectedZones.length === 0}
-          className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold quiz-button-fixed"
-        >
-          {t.quizContinue || 'Continua'}
-        </Button>
-      </div>
+      <Button
+        onClick={onNext}
+        disabled={selectedZones.length === 0}
+        className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold quiz-button-fixed"
+      >
+        {t.quizContinue || 'Continua'}
+      </Button>
     </div>
   );
 }
