@@ -1140,23 +1140,33 @@ export default function PricingPageContent() {
                     } overflow-hidden`}
                   >
                     <div className="px-6 pb-6">
-                      <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
-                      {index === 0 && openFaqIndex === index && (
-                        <div className="mt-4 flex items-start gap-2 bg-[var(--brand-primary-light)] border border-[var(--brand-primary)]/30 rounded-lg p-3">
-                          <Info className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                          <p className="text-xs text-gray-700 leading-relaxed">
-                            Per sapere bene delle policy, i termini e le condizioni riguardanti alla cancellazione, visita i nostri{' '}
-                            <a 
-                              href="https://projectmywellness.com/terms" 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="font-semibold text-[var(--brand-primary)] hover:underline"
-                            >
-                              termini e condizioni
-                            </a>.
-                          </p>
-                        </div>
-                      )}
+                      <div className="flex items-start gap-2">
+                        <p className="text-gray-700 leading-relaxed flex-1">{faq.answer}</p>
+                        {index === 0 && openFaqIndex === index && (
+                          <TooltipProvider delayDuration={0}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--brand-primary-light)] border border-[var(--brand-primary)] flex items-center justify-center cursor-help">
+                                  <Info className="w-3 h-3 text-[var(--brand-primary)]" />
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-xs p-3 bg-white border border-gray-200 shadow-xl">
+                                <p className="text-sm text-gray-700 leading-relaxed">
+                                  Per sapere bene delle policy, i termini e le condizioni riguardanti alla cancellazione, visita i nostri{' '}
+                                  <a 
+                                    href="https://projectmywellness.com/terms" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    className="font-semibold text-[var(--brand-primary)] hover:underline"
+                                  >
+                                    termini e condizioni
+                                  </a>.
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
