@@ -139,7 +139,12 @@ export default function BodyScanAnimatedPreview() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="absolute inset-0 w-full h-full animated-gradient-bg overflow-y-auto"
+            className="absolute inset-0 w-full h-full overflow-y-auto"
+            style={{
+              backgroundImage: 'url(https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/b0bb1d6ad_mywellness-background-4k.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
           >
             <div className="p-5 space-y-4">
               {/* Status Bar */}
