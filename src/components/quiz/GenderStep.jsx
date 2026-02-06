@@ -78,19 +78,17 @@ export default function GenderStep({ data, onDataChange, onNext, t, currentStep,
         </button>
       </div>
 
-      <div className="pt-8">
-        <button
-          onClick={onNext}
-          disabled={!data.gender}
-          className={`w-full py-4 rounded-full text-base font-medium transition-all ${
-            data.gender
-              ? 'bg-gray-800 text-white hover:bg-gray-900'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          {t?.('quiz.quizContinue') || 'Continua'}
-        </button>
-      </div>
+      <button
+        onClick={onNext}
+        disabled={!data.gender}
+        className={`w-full py-4 rounded-full text-base font-medium transition-all quiz-button-fixed ${
+          data.gender
+            ? 'bg-gray-800 text-white hover:bg-gray-900'
+            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+        }`}
+      >
+        {t?.('quiz.quizContinue') || 'Continua'}
+      </button>
     </div>
   );
 }
