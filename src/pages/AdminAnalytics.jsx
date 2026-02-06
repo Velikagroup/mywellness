@@ -125,9 +125,12 @@ export default function AdminAnalytics() {
       const parentRecurringVariableExpenses = expensesData.filter(e => e.recurring_variable && !e.parent_expense_id);
       setRecurringExpenses(parentRecurringVariableExpenses);
 
-      // Load transactions via backend function (admin can see all)
+      // Load transactions via backend function (admin can see all) - with date filters
       try {
-        const txResponse = await base44.functions.invoke('adminListTransactions');
+        const txResponse = await base44.functions.invoke('adminListTransactions', {
+          from_date: dateRange.from.toISOString(),
+          to_date: dateRange.to.toISOString()
+        });
         const txData = txResponse.data || txResponse;
         if (txData.success && txData.transactions) {
           setTransactions(txData.transactions);
@@ -151,10 +154,13 @@ export default function AdminAnalytics() {
         // and then filtering them client-side for the current dateRange
         const allUsers = await base44.entities.User.list();
         
-        // Load transactions via backend function (admin can see all)
+        // Load transactions via backend function (admin can see all) - with date filters
         let allTransactions = [];
         try {
-          const txResponse = await base44.functions.invoke('adminListTransactions');
+          const txResponse = await base44.functions.invoke('adminListTransactions', {
+            from_date: dateRange.from.toISOString(),
+            to_date: dateRange.to.toISOString()
+          });
           const txData = txResponse.data || txResponse;
           if (txData.success && txData.transactions) {
             allTransactions = txData.transactions;
