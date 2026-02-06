@@ -725,6 +725,18 @@ Deno.serve(async (req) => {
                         } catch (emailError) {
                             console.error('⚠️ Welcome email failed:', emailError.message);
                         }
+
+                        // 📬 Sync utente con Resend Audience
+                        try {
+                            console.log('📬 Syncing user to Resend audience...');
+                            await base44.asServiceRole.functions.invoke('syncUserToResend', {
+                                user_email: user.email,
+                                full_name: user.full_name || 'User'
+                            });
+                            console.log(`✅ User ${user.email} synced to Resend`);
+                        } catch (resendError) {
+                            console.error('⚠️ Resend sync failed:', resendError.message);
+                        }
                     } else if (event.type === 'customer.subscription.updated') {
                         console.log('⏭️ Skipping welcome email for subscription.updated event to avoid duplicates');
                     }
