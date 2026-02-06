@@ -50,9 +50,26 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
+        // 🎯 REDIRECT: se loggato ma NON ha completato quiz → vai al quiz
+        const currentPath = location.pathname.toLowerCase();
+        const isQuizPage = currentPath.includes('quiz');
+        if (currentUser && !currentUser.quiz_completed && !isQuizPage) {
+          const userLanguage = currentUser.preferred_language || 'it';
+          const langQuizMap = {
+            it: '/itquiz',
+            en: '/enquiz',
+            es: '/esquiz',
+            pt: '/ptquiz',
+            de: '/dequiz',
+            fr: '/frquiz'
+          };
+          const targetUrl = langQuizMap[userLanguage] || '/itquiz';
+          navigate(targetUrl, { replace: true });
+          return;
+        }
+
         // 🚫 BLOCCO: se subscription non valida e sta cercando di accedere a pagine protette
         const protectedPages = ['/dashboard', '/meals', '/workouts', '/settings'];
-        const currentPath = location.pathname.toLowerCase();
         const isProtectedPage = protectedPages.some(p => currentPath.includes(p));
 
         if (isProtectedPage && currentUser) {
