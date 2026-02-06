@@ -15,19 +15,42 @@ Deno.serve(async (req) => {
     const payload = JSON.parse(body);
     
     if (RESEND_WEBHOOK_SECRET && signature) {
-      // Verify signature (Resend uses Svix for webhooks)
-      const signedContent = `${svixId}.${timestamp}.${body}`;
-      const expectedSignature = await crypto.subtle.digest(
-        'SHA-256',
-        new TextEncoder().encode(`${RESEND_WEBHOOK_SECRET}${signedContent}`)
-      );
-      const expectedSig = Array.from(new Uint8Array(expectedSignature))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
-      
-      if (!signature.includes(expectedSig)) {
-        console.error('Invalid webhook signature');
-        return Response.json({ error: 'Invalid signature' }, { status: 401 });
+      try {
+        // Svix signature verification
+        const signedContent = `${svixId}.${timestamp}.${body}`;
+        
+        // Remove "whsec_" prefix and decode base64
+        const secret = RESEND_WEBHOOK_SECRET.replace('whsec_', '');
+        const secretBytes = Uint8Array.from(atob(secret), c => c.charCodeAt(0));
+        
+        // Import key for HMAC
+        const key = await crypto.subtle.importKey(
+          'raw',
+          secretBytes,
+          { name: 'HMAC', hash: 'SHA-256' },
+          false,
+          ['sign']
+        );
+        
+        // Calculate HMAC
+        const signatureBytes = await crypto.subtle.sign(
+          'HMAC',
+          key,
+          new TextEncoder().encode(signedContent)
+        );
+        
+        const expectedSig = btoa(String.fromCharCode(...new Uint8Array(signatureBytes)));
+        
+        // Signature header has format: v1,signature1 v1,signature2
+        const signatures = signature.split(' ').map(s => s.split(',')[1]);
+        
+        if (!signatures.includes(expectedSig)) {
+          console.error('Invalid webhook signature');
+          return Response.json({ error: 'Invalid signature' }, { status: 401 });
+        }
+      } catch (error) {
+        console.error('Signature verification error:', error);
+        return Response.json({ error: 'Signature verification failed' }, { status: 401 });
       }
     }
 
