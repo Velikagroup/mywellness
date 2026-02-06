@@ -50,6 +50,19 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
+        // 📬 Sync con Resend Audience (sempre, indipendentemente da quiz/subscription)
+        if (currentUser && currentUser.email) {
+          try {
+            await base44.functions.invoke('syncUserToResend', {
+              user_email: currentUser.email,
+              full_name: currentUser.full_name || 'User'
+            });
+            console.log(`✅ User ${currentUser.email} synced to Resend`);
+          } catch (resendError) {
+            console.warn('⚠️ Resend sync failed:', resendError.message);
+          }
+        }
+
         // 🎯 REDIRECT: se loggato ma NON ha completato quiz → vai al quiz
         const currentPath = location.pathname.toLowerCase();
         const isQuizPage = currentPath.includes('quiz');
