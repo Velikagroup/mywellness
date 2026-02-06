@@ -2,7 +2,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp, Tag, Gift, Globe } from 'lucide-react';
+import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp, Tag, Gift, Globe, Info } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -1126,7 +1127,34 @@ export default function PricingPageContent() {
                     onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
                     className="w-full p-6 text-left flex items-center justify-between gap-4 hover:bg-white/20 transition-all"
                   >
-                    <h3 className="font-bold text-lg text-gray-900">{faq.question}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-bold text-lg text-gray-900">{faq.question}</h3>
+                      {index === 1 && (
+                        <TooltipProvider delayDuration={0}>
+                          <Tooltip>
+                            <TooltipTrigger asChild onClick={(e) => e.stopPropagation()}>
+                              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--brand-primary-light)] border border-[var(--brand-primary)] flex items-center justify-center cursor-help">
+                                <Info className="w-3 h-3 text-[var(--brand-primary)]" />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs p-3 bg-white border border-gray-200 shadow-xl">
+                              <p className="text-sm text-gray-700 leading-relaxed">
+                                Per sapere bene delle policy, i termini e le condizioni riguardanti alla cancellazione, visita i nostri{' '}
+                                <a 
+                                  href="https://projectmywellness.com/terms" 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="font-semibold text-[var(--brand-primary)] hover:underline"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  termini e condizioni
+                                </a>.
+                              </p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                    </div>
                     <div className={`transform transition-transform duration-300 ${openFaqIndex === index ? 'rotate-180' : ''}`}>
                       <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
