@@ -139,7 +139,7 @@ export default function BodyScanAnimatedPreview() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="absolute inset-0 w-full h-full bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 overflow-y-auto"
+            className="absolute inset-0 w-full h-full animated-gradient-bg overflow-y-auto"
           >
             <div className="p-5 space-y-4">
               {/* Status Bar */}
@@ -147,7 +147,9 @@ export default function BodyScanAnimatedPreview() {
 
               {/* Header */}
               <div className="text-center">
-                <h2 className="text-3xl font-black text-gray-900">Body <span className="text-teal-500">Scan</span></h2>
+                <h2 className="text-3xl font-black text-gray-900">
+                  Body <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">Scan</span>
+                </h2>
                 <p className="text-xs text-gray-600 mt-2">{t('home.bodyScanSubtitle')}</p>
               </div>
 
@@ -161,7 +163,7 @@ export default function BodyScanAnimatedPreview() {
                 {/* Stats Grid 2x2 */}
                 <div className="grid grid-cols-2 gap-3">
                   {/* Biological Age - Green */}
-                  <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-400 rounded-3xl p-4">
+                  <div className="water-glass-effect rounded-3xl p-4 border border-gray-200/50">
                     <div className="text-xs font-bold text-emerald-700 mb-2 flex items-center gap-1">
                       👤 {t('home.bodyScanBiologicalAge').toUpperCase()}
                     </div>
@@ -170,7 +172,7 @@ export default function BodyScanAnimatedPreview() {
                   </div>
 
                   {/* Somatotype - Purple */}
-                  <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-400 rounded-3xl p-4">
+                  <div className="water-glass-effect rounded-3xl p-4 border border-gray-200/50">
                     <div className="text-xs font-bold text-purple-700 mb-2 flex items-center gap-1">
                       👤 {t('home.bodyScanSomatotype').toUpperCase()}
                     </div>
@@ -178,7 +180,7 @@ export default function BodyScanAnimatedPreview() {
                   </div>
 
                   {/* Body Fat - Orange */}
-                  <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-400 rounded-3xl p-4">
+                  <div className="water-glass-effect rounded-3xl p-4 border border-gray-200/50">
                     <div className="text-xs font-bold text-orange-700 mb-2 flex items-center gap-1">
                       📊 {t('home.bodyScanBodyFat').toUpperCase()}
                     </div>
@@ -186,7 +188,7 @@ export default function BodyScanAnimatedPreview() {
                   </div>
 
                   {/* Definition - Blue */}
-                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-400 rounded-3xl p-4">
+                  <div className="water-glass-effect rounded-3xl p-4 border border-gray-200/50">
                     <div className="text-xs font-bold text-blue-700 mb-2 flex items-center gap-1">
                       📐 {t('home.bodyScanDefinition').toUpperCase()}
                     </div>
@@ -195,7 +197,7 @@ export default function BodyScanAnimatedPreview() {
                   </div>
 
                   {/* Areas To Focus */}
-                  <div className="mt-4 bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-400 rounded-3xl p-4">
+                  <div className="mt-4 water-glass-effect rounded-3xl p-4 border border-gray-200/50">
                   <div className="text-xs font-bold text-red-700 mb-2 flex items-center gap-1">
                     ⚡ {t('home.bodyScanAreasToFocus').toUpperCase()}
                   </div>
@@ -203,7 +205,7 @@ export default function BodyScanAnimatedPreview() {
                   </div>
 
                   {/* Strengths */}
-                  <div className="mt-3 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-400 rounded-3xl p-4">
+                  <div className="mt-3 water-glass-effect rounded-3xl p-4 border border-gray-200/50">
                   <div className="text-xs font-bold text-green-700 mb-2 flex items-center gap-1">
                     📈 {t('home.bodyScanStrengths').toUpperCase()}
                   </div>
