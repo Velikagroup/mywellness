@@ -152,7 +152,7 @@ export default function BodyScanAnimatedPreview() {
 
               {/* Header */}
               <div className="text-center">
-                <h2 className="text-3xl font-black text-gray-900">
+                <h2 className="text-3xl font-bold text-gray-900">
                   Body <span className="bg-gradient-to-r from-emerald-500 to-teal-500 bg-clip-text text-transparent">Scan</span>
                 </h2>
                 <p className="text-xs text-gray-600 mt-2">{t('home.bodyScanSubtitle')}</p>
