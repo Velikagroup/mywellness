@@ -1127,34 +1127,7 @@ export default function PricingPageContent() {
                     onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
                     className="w-full p-6 text-left flex items-center justify-between gap-4 hover:bg-white/20 transition-all"
                   >
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-lg text-gray-900">{faq.question}</h3>
-                      {index === 1 && (
-                        <TooltipProvider delayDuration={0}>
-                          <Tooltip>
-                            <TooltipTrigger asChild onClick={(e) => e.stopPropagation()}>
-                              <div className="flex-shrink-0 w-5 h-5 rounded-full bg-[var(--brand-primary-light)] border border-[var(--brand-primary)] flex items-center justify-center cursor-help">
-                                <Info className="w-3 h-3 text-[var(--brand-primary)]" />
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent className="max-w-xs p-3 bg-white border border-gray-200 shadow-xl">
-                              <p className="text-sm text-gray-700 leading-relaxed">
-                                Per sapere bene delle policy, i termini e le condizioni riguardanti alla cancellazione, visita i nostri{' '}
-                                <a 
-                                  href="https://projectmywellness.com/terms" 
-                                  target="_blank" 
-                                  rel="noopener noreferrer"
-                                  className="font-semibold text-[var(--brand-primary)] hover:underline"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  termini e condizioni
-                                </a>.
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      )}
-                    </div>
+                    <h3 className="font-bold text-lg text-gray-900">{faq.question}</h3>
                     <div className={`transform transition-transform duration-300 ${openFaqIndex === index ? 'rotate-180' : ''}`}>
                       <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -1166,7 +1139,25 @@ export default function PricingPageContent() {
                       openFaqIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                     } overflow-hidden`}
                   >
-                    <p className="text-gray-700 leading-relaxed px-6 pb-6">{faq.answer}</p>
+                    <div className="px-6 pb-6">
+                      <p className="text-gray-700 leading-relaxed">{faq.answer}</p>
+                      {index === 0 && openFaqIndex === index && (
+                        <div className="mt-4 flex items-start gap-2 bg-[var(--brand-primary-light)] border border-[var(--brand-primary)]/30 rounded-lg p-3">
+                          <Info className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                          <p className="text-xs text-gray-700 leading-relaxed">
+                            Per sapere bene delle policy, i termini e le condizioni riguardanti alla cancellazione, visita i nostri{' '}
+                            <a 
+                              href="https://projectmywellness.com/terms" 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="font-semibold text-[var(--brand-primary)] hover:underline"
+                            >
+                              termini e condizioni
+                            </a>.
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
