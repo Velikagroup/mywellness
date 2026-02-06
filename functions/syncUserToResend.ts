@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           email: userEmail,
-          first_name: userData.full_name || '',
+          first_name: fullName || '',
           unsubscribed: false
         })
       }
