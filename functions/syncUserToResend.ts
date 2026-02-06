@@ -18,12 +18,12 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const payload = await req.json();
 
-    // Get user data from automation payload
-    const userData = payload.data;
-    const userEmail = userData?.email;
+    // Get email from payload (either direct params or automation data)
+    const userEmail = payload.user_email || payload.data?.email;
+    const fullName = payload.full_name || payload.data?.full_name;
 
     if (!userEmail) {
-      console.error('No email found in user data');
+      console.error('No email found in payload');
       return Response.json({ error: 'No email found' }, { status: 400 });
     }
 
