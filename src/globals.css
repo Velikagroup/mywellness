@@ -22,6 +22,12 @@ html, body {
 
 @media (min-width: 768px) {
   .quiz-button-fixed {
+    bottom: 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .quiz-button-fixed {
     position: relative;
     bottom: auto;
     left: auto;
