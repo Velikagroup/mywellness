@@ -28,7 +28,7 @@ const CONTENT = {
       <p><strong>3.2 Automatic Renewal:</strong> At the end of the trial period, the subscription will automatically renew to the selected plan (Base, Pro or Premium) with monthly or annual billing according to your choice.</p>
       <p><strong>3.3 Pricing:</strong> Prices are shown in Euro (€) and may vary. The applicable price is the one displayed at the time of purchase.</p>
       <p><strong>3.4 Cancellation:</strong> You can cancel your subscription at any time through your account settings. The cancellation will take effect at the end of the current billing period.</p>
-      <p><strong>3.5 Subscription Management:</strong> The management of your subscription must be done exclusively through the Stripe portal.</p>
+      <p><strong>3.5 Subscription Management:</strong> The management of your subscription must be done exclusively through the <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; cursor: pointer;">Stripe portal</a>.</p>
 
       <h2>4. User Account</h2>
       <p><strong>4.1 Registration:</strong> To use the Service, you must create an account by providing accurate and complete information.</p>
@@ -109,7 +109,7 @@ const CONTENT = {
       <p><strong>3.2 Rinnovo Automatico:</strong> Alla scadenza del periodo di prova, l'abbonamento si rinnoverà automaticamente al piano selezionato (Base, Pro o Premium) con fatturazione mensile o annuale secondo la tua scelta.</p>
       <p><strong>3.3 Prezzi:</strong> I prezzi sono indicati in Euro (€) e possono variare. Il prezzo applicabile è quello visualizzato al momento dell'acquisto.</p>
       <p><strong>3.4 Cancellazione:</strong> Puoi cancellare il tuo abbonamento in qualsiasi momento attraverso le impostazioni del tuo account. La cancellazione avrà effetto alla fine del periodo di fatturazione corrente.</p>
-      <p><strong>3.5 Gestione dell'Abbonamento:</strong> La gestione del tuo abbonamento deve avvenire esclusivamente attraverso il portale di Stripe.</p>
+      <p><strong>3.5 Gestione dell'Abbonamento:</strong> La gestione del tuo abbonamento deve avvenire esclusivamente attraverso il <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; cursor: pointer;">portale di Stripe</a>.</p>
 
       <h2>4. Account Utente</h2>
       <p><strong>4.1 Registrazione:</strong> Per utilizzare il Servizio, devi creare un account fornendo informazioni accurate e complete.</p>
@@ -190,7 +190,7 @@ const CONTENT = {
       <p><strong>3.2 Renovación Automática:</strong> Al final del período de prueba, la suscripción se renovará automáticamente al plan seleccionado (Base, Pro o Premium) con facturación mensual o anual según tu elección.</p>
       <p><strong>3.3 Precios:</strong> Los precios se muestran en Euros (€) y pueden variar. El precio aplicable es el que se muestra en el momento de la compra.</p>
       <p><strong>3.4 Cancelación:</strong> Puedes cancelar tu suscripción en cualquier momento a través de la configuración de tu cuenta. La cancelación tendrá efecto al final del período de facturación actual.</p>
-      <p><strong>3.5 Gestión de Suscripción:</strong> La gestión de tu suscripción debe realizarse exclusivamente a través del portal de Stripe.</p>
+      <p><strong>3.5 Gestión de Suscripción:</strong> La gestión de tu suscripción debe realizarse exclusivamente a través del <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; cursor: pointer;">portal de Stripe</a>.</p>
 
       <h2>4. Cuenta de Usuario</h2>
       <p><strong>4.1 Registro:</strong> Para utilizar el Servicio, debes crear una cuenta proporcionando información precisa y completa.</p>
@@ -271,7 +271,7 @@ const CONTENT = {
       <p><strong>3.2 Renovação Automática:</strong> Ao final do período de teste, a assinatura será renovada automaticamente para o plano selecionado (Base, Pro ou Premium) com faturamento mensal ou anual de acordo com sua escolha.</p>
       <p><strong>3.3 Preços:</strong> Os preços são mostrados em Euros (€) e podem variar. O preço aplicável é o exibido no momento da compra.</p>
       <p><strong>3.4 Cancelamento:</strong> Você pode cancelar sua assinatura a qualquer momento através das configurações da sua conta. O cancelamento terá efeito no final do período de faturamento atual.</p>
-      <p><strong>3.5 Gestão da Assinatura:</strong> A gestão da sua assinatura deve ser feita exclusivamente através do portal Stripe.</p>
+      <p><strong>3.5 Gestão da Assinatura:</strong> A gestão da sua assinatura deve ser feita exclusivamente através do <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; cursor: pointer;">portal Stripe</a>.</p>
 
       <h2>4. Conta de Usuário</h2>
       <p><strong>4.1 Registro:</strong> Para usar o Serviço, você deve criar uma conta fornecendo informações precisas e completas.</p>
@@ -352,7 +352,7 @@ const CONTENT = {
       <p><strong>3.2 Automatische Verlängerung:</strong> Am Ende des Testzeitraums verlängert sich das Abonnement automatisch auf den gewählten Plan (Base, Pro oder Premium) mit monatlicher oder jährlicher Abrechnung gemäß Ihrer Wahl.</p>
       <p><strong>3.3 Preise:</strong> Die Preise werden in Euro (€) angezeigt und können variieren. Der gültige Preis ist der zum Zeitpunkt des Kaufs angezeigte.</p>
       <p><strong>3.4 Kündigung:</strong> Sie können Ihr Abonnement jederzeit über Ihre Kontoeinstellungen kündigen. Die Kündigung wird am Ende des aktuellen Abrechnungszeitraums wirksam.</p>
-      <p><strong>3.5 Abonnementverwaltung:</strong> Die Verwaltung Ihres Abonnements muss ausschließlich über das Stripe-Portal erfolgen.</p>
+      <p><strong>3.5 Abonnementverwaltung:</strong> Die Verwaltung Ihres Abonnements muss ausschließlich über das <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; cursor: pointer;">Stripe-Portal</a> erfolgen.</p>
 
       <h2>4. Benutzerkonto</h2>
       <p><strong>4.1 Registrierung:</strong> Um den Dienst zu nutzen, müssen Sie ein Konto erstellen und genaue und vollständige Informationen angeben.</p>
@@ -433,7 +433,7 @@ const CONTENT = {
       <p><strong>3.2 Renouvellement Automatique:</strong> À la fin de la période d'essai, l'abonnement se renouvellera automatiquement au plan sélectionné (Base, Pro ou Premium) avec facturation mensuelle ou annuelle selon votre choix.</p>
       <p><strong>3.3 Prix:</strong> Les prix sont affichés en Euros (€) et peuvent varier. Le prix applicable est celui affiché au moment de l'achat.</p>
       <p><strong>3.4 Annulation:</strong> Vous pouvez annuler votre abonnement à tout moment via les paramètres de votre compte. L'annulation prendra effet à la fin de la période de facturation en cours.</p>
-      <p><strong>3.5 Gestion de l'Abonnement:</strong> La gestion de votre abonnement doit se faire exclusivement via le portail Stripe.</p>
+      <p><strong>3.5 Gestion de l'Abonnement:</strong> La gestion de votre abonnement doit se faire exclusivement via le <a href="https://billing.stripe.com/p/login/6oU8wIbUs08heL0dI08k800" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none; cursor: pointer;">portail Stripe</a>.</p>
 
       <h2>4. Compte Utilisateur</h2>
       <p><strong>4.1 Inscription:</strong> Pour utiliser le Service, vous devez créer un compte en fournissant des informations précises et complètes.</p>
