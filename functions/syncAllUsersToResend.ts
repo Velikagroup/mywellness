@@ -58,8 +58,8 @@ Deno.serve(async (req) => {
           console.error(`❌ Failed to sync ${user.email}:`, data.message);
         }
 
-        // Rate limiting: 100ms delay tra chiamate
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Rate limiting: 500ms delay (2 requests/sec = max Resend rate limit)
+        await new Promise(resolve => setTimeout(resolve, 500));
 
       } catch (error) {
         errorCount++;
