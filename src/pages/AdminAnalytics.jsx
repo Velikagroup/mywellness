@@ -822,12 +822,12 @@ export default function AdminAnalytics() {
                 {/* Breakdown acquisti per tipo */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pl-20">
                   <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                    <p className="text-sm text-blue-700 mb-1">Standard → Base/Pro/Premium</p>
-                    <p className="text-2xl font-bold text-blue-900">{stats.paidUsers}</p>
+                    <p className="text-sm text-blue-700 mb-1">Mensile (€9.99)</p>
+                    <p className="text-2xl font-bold text-blue-900">{stats.monthlyUsers}</p>
                   </div>
-                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                    <p className="text-sm text-purple-700 mb-1">Landing Offer (€67)</p>
-                    <p className="text-2xl font-bold text-purple-900">{stats.landingOfferPurchases}</p>
+                  <div className="bg-teal-50 rounded-lg p-4 border border-teal-200">
+                    <p className="text-sm text-teal-700 mb-1">Annuale (€49.99)</p>
+                    <p className="text-2xl font-bold text-teal-900">{stats.yearlyUsers}</p>
                   </div>
                 </div>
 
