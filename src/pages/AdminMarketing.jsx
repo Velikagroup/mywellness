@@ -1337,20 +1337,6 @@ export default function AdminMarketing() {
                       <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
                         <div className="flex items-center justify-between mb-3">
                           <p className="text-xs text-indigo-600 font-semibold">Codice Referral Quiz</p>
-                          <div className="flex items-center gap-2">
-                            <div className="flex items-center gap-1 bg-orange-600 text-white px-2 py-1 rounded-full" title="Codici confermati nel quiz">
-                              <span className="text-xs font-bold">{influencer.referral_code_confirmed_count || 0}</span>
-                              <span className="text-xs">quiz</span>
-                            </div>
-                            <div className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-full" title="Email registrate dopo quiz">
-                              <span className="text-xs font-bold">{influencer.email_registered_count || 0}</span>
-                              <span className="text-xs">mail</span>
-                            </div>
-                            <div className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded-full" title="Subscription attivate">
-                              <span className="text-xs font-bold">{influencer.subscription_activated_count || 0}</span>
-                              <span className="text-xs">sub</span>
-                            </div>
-                          </div>
                         </div>
                         <div className="flex items-center justify-between">
                           <code className="text-lg font-bold text-indigo-900">{influencer.referral_code}</code>
