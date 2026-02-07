@@ -95,6 +95,30 @@ Deno.serve(async (req) => {
             trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null
         });
 
+        // Track trial_started in QuizEvent
+        try {
+            const existingTrialEvents = await base44.asServiceRole.entities.QuizEvent.filter({
+                user_id: user.id,
+                event_name: 'trial_started'
+            });
+            
+            if (existingTrialEvents.length === 0) {
+                await base44.asServiceRole.entities.QuizEvent.create({
+                    user_id: user.id,
+                    event_name: 'trial_started',
+                    step_index: 999,
+                    step_name: 'Trial Started',
+                    metadata: {
+                        subscription_id: subscription.id,
+                        plan: 'premium_trial'
+                    }
+                });
+                console.log('✅ trial_started tracked in QuizEvent');
+            }
+        } catch (eventError) {
+            console.error('⚠️ Error tracking trial_started:', eventError);
+        }
+
         // Track: Step 3 - Subscription attivata (trial o pagamento)
         if (user.influencer_id) {
             try {
