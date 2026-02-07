@@ -960,7 +960,7 @@ export default function AdminMarketing() {
               <p className="text-sm text-gray-500 mb-4">Vendite da attività organica</p>
 
               {/* Funnel Totale Organico */}
-              <div className={`grid grid-cols-1 ${selectedFunnel === 'landing' ? 'md:grid-cols-4' : 'md:grid-cols-4'} gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200`}>
+              <div className={`grid grid-cols-1 ${selectedFunnel === 'landing' ? 'md:grid-cols-3' : 'md:grid-cols-3'} gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200`}>
                 <div className="text-center">
                   <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
                   <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
@@ -972,11 +972,7 @@ export default function AdminMarketing() {
                   </div>
                 }
                 <div className="text-center">
-                  <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
-                  <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-xs text-gray-600 mb-1">Acquisti</p>
+                  <p className="text-xs text-gray-600 mb-1">Accessi e Acquisti</p>
                   <p className="text-2xl font-bold text-emerald-600">{totalOrganicFunnel.purchases}</p>
                 </div>
                 <div className="text-center bg-white/50 rounded-lg py-2">
@@ -1036,12 +1032,8 @@ export default function AdminMarketing() {
                                 <span className="font-bold text-purple-600">{platform.funnel.landing}</span>
                               </div>
                             }
-                            <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
-                              <span className="text-gray-700">Checkout</span>
-                              <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
-                            </div>
                             <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
-                              <span className="text-gray-700">Acquisti</span>
+                              <span className="text-gray-700">Accessi e Acquisti</span>
                               <span className="font-bold text-emerald-600">{platform.funnel.purchases}</span>
                             </div>
                             <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
@@ -1190,12 +1182,8 @@ export default function AdminMarketing() {
                             <span className="font-bold text-purple-600">{funnel.landing}</span>
                           </div>
                         }
-                        <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
-                          <span className="text-gray-700">Checkout Iniziati</span>
-                          <span className="font-bold text-cyan-600">{funnel.checkout}</span>
-                        </div>
                         <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
-                          <span className="text-gray-700">Acquisti</span>
+                          <span className="text-gray-700">Accessi e Acquisti</span>
                           <span className="font-bold text-emerald-600">{funnel.purchases}</span>
                         </div>
                         <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
@@ -1313,12 +1301,8 @@ export default function AdminMarketing() {
                               <span className="font-bold text-purple-600">{metrics.funnel.landing}</span>
                             </div>
                           )}
-                          <div className="flex items-center justify-between p-2 bg-cyan-500/10 rounded text-xs">
-                            <span className="text-gray-700">Checkout</span>
-                            <span className="font-bold text-cyan-600">{metrics.funnel.checkout}</span>
-                          </div>
                           <div className="flex items-center justify-between p-2 bg-emerald-500/10 rounded text-xs">
-                            <span className="text-gray-700">Acquisti</span>
+                            <span className="text-gray-700">Accessi e Acquisti</span>
                             <span className="font-bold text-emerald-600">{metrics.funnel.purchases}</span>
                           </div>
                           <div className="p-2 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded border border-indigo-200">
