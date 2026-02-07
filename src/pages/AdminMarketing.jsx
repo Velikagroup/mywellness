@@ -207,17 +207,21 @@ export default function AdminMarketing() {
       const totalLandingViews = selectedFunnel === 'landing' ? totalQuizCompleted : 0;
 
       platforms.forEach((platform) => {
+        const totalAccessi = allUsersData.filter(u => 
+          (selectedFunnel === 'trial' ? u.purchased_plan_type === 'subscription' : u.purchased_landing_offer === true)
+        ).length;
+        
         if (selectedFunnel === 'landing') {
           funnelData[platform] = {
             quiz: Math.floor(totalQuizCompleted / platforms.length),
             landing: Math.floor(totalLandingViews / platforms.length),
-            checkout: Math.floor(totalCheckoutStarted / platforms.length),
+            accessi: Math.floor(totalAccessi / platforms.length),
             purchases: Math.floor(totalPurchases / platforms.length)
           };
         } else {
           funnelData[platform] = {
             quiz: Math.floor(totalQuizCompleted / platforms.length),
-            checkout: Math.floor(totalCheckoutStarted / platforms.length),
+            accessi: Math.floor(totalAccessi / platforms.length),
             purchases: Math.floor(totalPurchases / platforms.length)
           };
         }
@@ -243,7 +247,7 @@ export default function AdminMarketing() {
             totalClicks: 0,
             totalImpressions: 0,
             // Use the simplified distributed funnel data for paid campaigns
-            funnel: funnelData[platform] || (selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 })
+            funnel: funnelData[platform] || (selectedFunnel === 'landing' ? { quiz: 0, landing: 0, accessi: 0, purchases: 0 } : { quiz: 0, accessi: 0, purchases: 0 })
           };
         }
 
@@ -362,7 +366,7 @@ export default function AdminMarketing() {
     // Now count funnel steps based on these associated users' profiles
     const quizCompleted = associatedUsers.filter((u) => u.quiz_completed === true).length;
     const landingViews = selectedFunnel === 'landing' ? quizCompleted : 0;
-    const checkoutStarted = associatedUsers.filter((u) => u.billing_name && u.billing_name.length > 0).length;
+    const accessi = associatedUsers.length; // Utenti unici che hanno fatto accesso
     // Purchases are already correctly represented by platformData.sales (total successful transactions for this platform and date range)
     const purchases = platformData.sales;
 
@@ -372,7 +376,7 @@ export default function AdminMarketing() {
         funnel: {
           quiz: quizCompleted,
           landing: landingViews,
-          checkout: checkoutStarted,
+          accessi: accessi,
           purchases: purchases
         }
       };
@@ -381,7 +385,7 @@ export default function AdminMarketing() {
         ...platformData,
         funnel: {
           quiz: quizCompleted,
-          checkout: checkoutStarted,
+          accessi: accessi,
           purchases: purchases
         }
       };
@@ -397,17 +401,17 @@ export default function AdminMarketing() {
       return {
         quiz: acc.quiz + platform.funnel.quiz,
         landing: acc.landing + platform.funnel.landing,
-        checkout: acc.checkout + platform.funnel.checkout,
+        accessi: acc.accessi + platform.funnel.accessi,
         purchases: acc.purchases + platform.funnel.purchases
       };
     } else {
       return {
         quiz: acc.quiz + platform.funnel.quiz,
-        checkout: acc.checkout + platform.funnel.checkout,
+        accessi: acc.accessi + platform.funnel.accessi,
         purchases: acc.purchases + platform.funnel.purchases
       };
     }
-  }, selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 });
+  }, selectedFunnel === 'landing' ? { quiz: 0, landing: 0, accessi: 0, purchases: 0 } : { quiz: 0, accessi: 0, purchases: 0 });
 
   const totalOrganicConversionRate = totalOrganicFunnel.quiz > 0 ?
     (totalOrganicFunnel.purchases / totalOrganicFunnel.quiz * 100).toFixed(1) :
@@ -576,7 +580,7 @@ export default function AdminMarketing() {
 
     const quizCompleted = associatedUsers.filter(u => u.quiz_completed === true).length;
     const landingViews = selectedFunnel === 'landing' ? quizCompleted : 0;
-    const checkoutStarted = associatedUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
+    const accessi = associatedUsers.length; // Utenti unici che hanno fatto accesso
     const purchases = sales;
 
     const conversionRate = quizCompleted > 0 ? ((purchases / quizCompleted) * 100).toFixed(1) : '0.0';
@@ -605,8 +609,8 @@ export default function AdminMarketing() {
       roas,
       profit,
       funnel: selectedFunnel === 'landing'
-        ? { quiz: quizCompleted, landing: landingViews, checkout: checkoutStarted, purchases }
-        : { quiz: quizCompleted, checkout: checkoutStarted, purchases },
+        ? { quiz: quizCompleted, landing: landingViews, accessi, purchases }
+        : { quiz: quizCompleted, accessi, purchases },
       conversionRate,
       transactions: influencerTransactions,
       referralUsers: usersWithReferralCode,
@@ -960,7 +964,7 @@ export default function AdminMarketing() {
               <p className="text-sm text-gray-500 mb-4">Vendite da attività organica</p>
 
               {/* Funnel Totale Organico */}
-              <div className={`grid grid-cols-1 ${selectedFunnel === 'landing' ? 'md:grid-cols-3' : 'md:grid-cols-3'} gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200`}>
+              <div className={`grid grid-cols-1 ${selectedFunnel === 'landing' ? 'md:grid-cols-5' : 'md:grid-cols-4'} gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200`}>
                 <div className="text-center">
                   <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
                   <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
@@ -972,7 +976,11 @@ export default function AdminMarketing() {
                   </div>
                 }
                 <div className="text-center">
-                  <p className="text-xs text-gray-600 mb-1">Accessi e Acquisti</p>
+                  <p className="text-xs text-gray-600 mb-1">Accessi</p>
+                  <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.accessi}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-gray-600 mb-1">Acquisti</p>
                   <p className="text-2xl font-bold text-emerald-600">{totalOrganicFunnel.purchases}</p>
                 </div>
                 <div className="text-center bg-white/50 rounded-lg py-2">
@@ -1032,8 +1040,12 @@ export default function AdminMarketing() {
                                 <span className="font-bold text-purple-600">{platform.funnel.landing}</span>
                               </div>
                             }
+                            <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
+                              <span className="text-gray-700">Accessi</span>
+                              <span className="font-bold text-cyan-600">{platform.funnel.accessi}</span>
+                            </div>
                             <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
-                              <span className="text-gray-700">Accessi e Acquisti</span>
+                              <span className="text-gray-700">Acquisti</span>
                               <span className="font-bold text-emerald-600">{platform.funnel.purchases}</span>
                             </div>
                             <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
@@ -1072,7 +1084,7 @@ export default function AdminMarketing() {
               const isConnected = campaignsByPlatform.some((p) => p.platform === platformKey && p.campaigns.length > 0);
 
               const platformGroup = campaignsByPlatform.find((p) => p.platform === platformKey);
-              const funnel = platformGroup?.funnel || (selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 });
+              const funnel = platformGroup?.funnel || (selectedFunnel === 'landing' ? { quiz: 0, landing: 0, accessi: 0, purchases: 0 } : { quiz: 0, accessi: 0, purchases: 0 });
 
               const platformSpend = platformGroup?.totalSpend || 0;
               const platformRevenue = platformGroup?.totalRevenue || 0;
@@ -1182,8 +1194,12 @@ export default function AdminMarketing() {
                             <span className="font-bold text-purple-600">{funnel.landing}</span>
                           </div>
                         }
+                        <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
+                          <span className="text-gray-700">Accessi</span>
+                          <span className="font-bold text-cyan-600">{funnel.accessi}</span>
+                        </div>
                         <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
-                          <span className="text-gray-700">Accessi e Acquisti</span>
+                          <span className="text-gray-700">Acquisti</span>
                           <span className="font-bold text-emerald-600">{funnel.purchases}</span>
                         </div>
                         <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
@@ -1301,8 +1317,12 @@ export default function AdminMarketing() {
                               <span className="font-bold text-purple-600">{metrics.funnel.landing}</span>
                             </div>
                           )}
+                          <div className="flex items-center justify-between p-2 bg-cyan-500/10 rounded text-xs">
+                            <span className="text-gray-700">Accessi</span>
+                            <span className="font-bold text-cyan-600">{metrics.funnel.accessi}</span>
+                          </div>
                           <div className="flex items-center justify-between p-2 bg-emerald-500/10 rounded text-xs">
-                            <span className="text-gray-700">Accessi e Acquisti</span>
+                            <span className="text-gray-700">Acquisti</span>
                             <span className="font-bold text-emerald-600">{metrics.funnel.purchases}</span>
                           </div>
                           <div className="p-2 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded border border-indigo-200">
@@ -1317,16 +1337,16 @@ export default function AdminMarketing() {
                       <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
                         <div className="flex items-center justify-between mb-3">
                           <p className="text-xs text-indigo-600 font-semibold">Codice Referral Quiz</p>
-                          <div className="flex flex-wrap items-center gap-2">
+                          <div className="flex items-center gap-2">
                             <div className="flex items-center gap-1 bg-orange-600 text-white px-2 py-1 rounded-full" title="Codici confermati nel quiz">
                               <span className="text-xs font-bold">{influencer.referral_code_confirmed_count || 0}</span>
                               <span className="text-xs">quiz</span>
                             </div>
-                            <div className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-full" title="Email registrate">
+                            <div className="flex items-center gap-1 bg-blue-600 text-white px-2 py-1 rounded-full" title="Email registrate dopo quiz">
                               <span className="text-xs font-bold">{influencer.email_registered_count || 0}</span>
                               <span className="text-xs">mail</span>
                             </div>
-                            <div className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded-full" title="Subscription attive">
+                            <div className="flex items-center gap-1 bg-green-600 text-white px-2 py-1 rounded-full" title="Subscription attivate">
                               <span className="text-xs font-bold">{influencer.subscription_activated_count || 0}</span>
                               <span className="text-xs">sub</span>
                             </div>
