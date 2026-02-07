@@ -39,6 +39,7 @@ export default function AdminAnalytics() {
   const [transactions, setTransactions] = useState([]);
   const [quizEvents, setQuizEvents] = useState([]);
   const [quizPeriod, setQuizPeriod] = useState('7d'); // 7d, 30d, all
+  const [isPopulatingQuizEvents, setIsPopulatingQuizEvents] = useState(false);
 
   // Date range: last 3 months
   const [dateRange] = useState({
@@ -732,6 +733,27 @@ export default function AdminAnalytics() {
                 <option value="30d">Last 30 days</option>
                 <option value="all">All time</option>
               </select>
+              <Button
+                onClick={async () => {
+                  setIsPopulatingQuizEvents(true);
+                  try {
+                    const result = await base44.functions.invoke('populateHistoricalQuizEvents');
+                    console.log('📊 Population result:', result);
+                    alert(`✅ ${result.data?.eventsCreated || 0} eventi creati per ${result.data?.usersProcessed || 0} utenti`);
+                    await loadData();
+                  } catch (error) {
+                    console.error('Error populating:', error);
+                    alert('❌ Errore: ' + error.message);
+                  }
+                  setIsPopulatingQuizEvents(false);
+                }}
+                disabled={isPopulatingQuizEvents}
+                variant="outline"
+                className="border-purple-300 text-purple-700 hover:bg-purple-50"
+              >
+                <Activity className={`w-4 h-4 mr-2 ${isPopulatingQuizEvents ? 'animate-spin' : ''}`} />
+                {isPopulatingQuizEvents ? 'Populating...' : 'Populate Historical Data'}
+              </Button>
               <Button
                 onClick={loadData}
                 className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
