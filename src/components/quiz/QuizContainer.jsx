@@ -322,10 +322,29 @@ export default function QuizContainer({ translations, language = 'it' }) {
     setQuizData(prev => ({ ...prev, ...data }));
   };
 
-  const nextStep = () => {
+  const nextStep = async () => {
     if (currentStep < dynamicSteps.length - 1) {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
+      
+      // 📊 Track step completion
+      if (user?.id) {
+        try {
+          const stepFieldMap = {
+            1: 'quiz_step_1_completed',
+            2: 'quiz_step_2_completed',
+            3: 'quiz_step_3_completed',
+            4: 'quiz_step_4_completed'
+          };
+          const fieldName = stepFieldMap[newStep];
+          if (fieldName) {
+            await base44.auth.updateMe({ [fieldName]: true });
+            console.log(`✅ Step ${newStep} tracked: ${fieldName}`);
+          }
+        } catch (error) {
+          console.warn(`⚠️ Error tracking step ${newStep}:`, error);
+        }
+      }
       
       // Preserva il parametro from=dashboard se presente
       const searchParams = new URLSearchParams();
