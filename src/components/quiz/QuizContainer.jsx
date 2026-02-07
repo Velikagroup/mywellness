@@ -640,29 +640,38 @@ export default function QuizContainer({ translations, language = 'it' }) {
       // Traccia influencer referral se presente
       const influencerCode = localStorage.getItem('influencerReferralCode');
       const influencerId = localStorage.getItem('influencerId');
+      console.log('🔍 ACCESSI CHECK - influencerCode:', influencerCode, 'influencerId:', influencerId);
+      
       if (influencerCode && influencerId) {
         try {
+          console.log('📝 Updating user with influencer data...');
           await base44.auth.updateMe({
             influencer_referral_code: influencerCode,
             influencer_id: influencerId
           });
+          console.log('✅ User updated with influencer data');
 
           // Track: Step 2 - Email registrata con codice referral
           try {
-            await base44.functions.invoke('trackInfluencerEvent', {
+            console.log('🎯 Calling trackInfluencerEvent for email_registered...');
+            const result = await base44.functions.invoke('trackInfluencerEvent', {
               influencerId: influencerId,
               eventType: 'email_registered'
             });
-            console.log(`✅ Email registered tracked for influencer: ${influencerId}`);
+            console.log(`✅ Email registered tracked for influencer: ${influencerId}`, result);
           } catch (trackError) {
             console.error('❌ Error tracking email registration:', trackError);
+            alert(`DEBUG: Email registration tracking failed - ${trackError.message}`);
           }
         } catch (infError) {
           console.warn('⚠️ Influencer tracking error:', infError);
+          alert(`DEBUG: Influencer update failed - ${infError.message}`);
         }
 
         localStorage.removeItem('influencerReferralCode');
         localStorage.removeItem('influencerId');
+      } else {
+        console.log('⚠️ No influencer code/id found - skipping email_registered tracking');
       }
       
       localStorage.removeItem(`quizData_${language}`);
