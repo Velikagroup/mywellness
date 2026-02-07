@@ -1144,16 +1144,16 @@ export default function AdminAnalytics() {
                 )}
                 <div className="mt-4 space-y-2">
                   <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                    <span className="text-sm font-medium">Base (€19/mese)</span>
-                    <span className="font-bold">{planBreakdown.base} utenti</span>
+                    <span className="text-sm font-medium">Mensile (€9.99/mese)</span>
+                    <span className="font-bold">{planBreakdown.monthly} utenti</span>
                   </div>
                   <div className="flex items-center justify-between p-2 bg-teal-50 rounded">
-                    <span className="text-sm font-medium">Pro (€29/mese)</span>
-                    <span className="font-bold">{planBreakdown.pro} utenti</span>
+                    <span className="text-sm font-medium">Annuale (€49.99/anno • €4.17/mese)</span>
+                    <span className="font-bold">{planBreakdown.yearly} utenti</span>
                   </div>
                   <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
-                    <span className="text-sm font-medium">Premium (€39/mese)</span>
-                    <span className="font-bold">{planBreakdown.premium} utenti</span>
+                    <span className="text-sm font-medium">Trial (3 giorni • solo annuale)</span>
+                    <span className="font-bold">{trialUsers} utenti</span>
                   </div>
                 </div>
               </CardContent>
