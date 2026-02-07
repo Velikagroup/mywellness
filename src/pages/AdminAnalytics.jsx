@@ -84,6 +84,28 @@ export default function AdminAnalytics() {
     setIsLoading(false);
   };
 
+  const handleRefreshData = async () => {
+    setIsRefreshing(true);
+    try {
+      // Sync Stripe transactions
+      const syncResponse = await base44.functions.invoke('syncStripeTransactions');
+      const syncData = syncResponse.data || syncResponse;
+      
+      if (syncData.success) {
+        console.log(`✅ Stripe sync: ${syncData.totalCreated} create, ${syncData.totalSkipped} skip`);
+      }
+
+      // Reload all data
+      await loadData();
+      
+      alert('✅ Dati aggiornati con successo!');
+    } catch (error) {
+      console.error('Error refreshing data:', error);
+      alert('❌ Errore nell\'aggiornamento dati: ' + error.message);
+    }
+    setIsRefreshing(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
