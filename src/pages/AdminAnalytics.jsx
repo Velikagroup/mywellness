@@ -88,20 +88,40 @@ export default function AdminAnalytics() {
   const handleRefreshData = async () => {
     setIsRefreshing(true);
     try {
+      console.log('🔄 Inizio sincronizzazione...');
+      
       // Sync Stripe transactions
       const syncResponse = await base44.functions.invoke('syncStripeTransactions');
       const syncData = syncResponse.data || syncResponse;
       
       if (syncData.success) {
-        console.log(`✅ Stripe sync: ${syncData.totalCreated} create, ${syncData.totalSkipped} skip`);
+        console.log(`✅ Stripe sync: ${syncData.totalCreated} transazioni create, ${syncData.totalSkipped} già esistenti`);
+        console.log(`📊 Utenti processati: ${syncData.usersProcessed}`);
       }
 
-      // Reload all data
-      await loadData();
+      // Reload all data from database
+      console.log('🔄 Ricarico dati dal database...');
+      const [usersData] = await Promise.all([
+        base44.entities.User.list()
+      ]);
+      setUsers(usersData);
+      console.log(`✅ ${usersData.length} utenti caricati`);
+
+      // Reload transactions
+      try {
+        const txResponse = await base44.functions.invoke('adminListTransactions');
+        const txData = txResponse.data || txResponse;
+        if (txData.success && txData.transactions) {
+          setTransactions(txData.transactions);
+          console.log(`✅ ${txData.transactions.length} transazioni caricate`);
+        }
+      } catch (txError) {
+        console.error('⚠️ Errore nel caricare transazioni:', txError);
+      }
       
-      alert('✅ Dati aggiornati con successo!');
+      alert(`✅ Sincronizzazione completata!\n\n${syncData.totalCreated || 0} nuove transazioni\n${usersData.length} utenti totali`);
     } catch (error) {
-      console.error('Error refreshing data:', error);
+      console.error('❌ Errore sincronizzazione:', error);
       alert('❌ Errore nell\'aggiornamento dati: ' + error.message);
     }
     setIsRefreshing(false);
