@@ -33,6 +33,7 @@ export default function AdminAnalytics() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [users, setUsers] = useState([]);
   const [transactions, setTransactions] = useState([]);
 
