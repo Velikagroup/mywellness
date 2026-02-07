@@ -95,6 +95,19 @@ Deno.serve(async (req) => {
             trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null
         });
 
+        // Track: Step 3 - Subscription attivata (trial o pagamento)
+        if (user.influencer_id) {
+            try {
+                await base44.functions.invoke('trackInfluencerEvent', {
+                    influencerId: user.influencer_id,
+                    eventType: 'subscription_activated'
+                });
+                console.log(`✅ Subscription activated tracked for influencer: ${user.influencer_id}`);
+            } catch (trackError) {
+                console.error('❌ Error tracking subscription activation:', trackError);
+            }
+        }
+
         return Response.json({
             success: true,
             subscription_id: subscription.id,
