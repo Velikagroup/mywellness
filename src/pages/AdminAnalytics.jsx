@@ -37,9 +37,6 @@ export default function AdminAnalytics() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [users, setUsers] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [quizEvents, setQuizEvents] = useState([]);
-  const [quizPeriod, setQuizPeriod] = useState('7d'); // 7d, 30d, all
-  const [isPopulatingQuizEvents, setIsPopulatingQuizEvents] = useState(false);
 
   // Date range: last 3 months
   const [dateRange] = useState({
@@ -67,12 +64,10 @@ export default function AdminAnalytics() {
 
   const loadData = async () => {
     try {
-      const [usersData, quizEventsData] = await Promise.all([
-        base44.entities.User.list(),
-        base44.entities.QuizEvent.list('-created_date', 5000)
+      const [usersData] = await Promise.all([
+        base44.entities.User.list()
       ]);
       setUsers(usersData);
-      setQuizEvents(quizEventsData);
 
       try {
         const txResponse = await base44.functions.invoke('adminListTransactions');
@@ -106,14 +101,11 @@ export default function AdminAnalytics() {
 
       // Reload all data from database
       console.log('🔄 Ricarico dati dal database...');
-      const [usersData, quizEventsData] = await Promise.all([
-        base44.entities.User.list(),
-        base44.entities.QuizEvent.list('-created_date', 5000)
+      const [usersData] = await Promise.all([
+        base44.entities.User.list()
       ]);
       setUsers(usersData);
-      setQuizEvents(quizEventsData);
       console.log(`✅ ${usersData.length} utenti caricati`);
-      console.log(`✅ ${quizEventsData.length} quiz events caricati`);
 
       // Reload transactions
       try {
@@ -258,110 +250,6 @@ export default function AdminAnalytics() {
   const quizCompletedUsers = quizCompleted;
   const usersWithTrial = trialUsers;
   const payingUsers = totalActiveUsers;
-
-  // ============================================
-  // QUIZ FUNNEL CALCULATIONS
-  // ============================================
-
-  // Filter events by period
-  const getFilteredQuizEvents = () => {
-    console.log('📊 Total quiz events loaded:', quizEvents.length);
-    console.log('📊 Sample events:', quizEvents.slice(0, 3));
-    
-    if (quizPeriod === 'all') return quizEvents;
-    
-    const now = new Date();
-    const cutoffDate = quizPeriod === '7d' 
-      ? new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
-      : new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-    
-    return quizEvents.filter(e => new Date(e.created_date) >= cutoffDate);
-  };
-
-  const filteredQuizEvents = getFilteredQuizEvents();
-  console.log('📊 Filtered quiz events:', filteredQuizEvents.length);
-
-  // Count unique users for each event
-  const getUniqueUsersForEvent = (eventName) => {
-    return new Set(filteredQuizEvents.filter(e => e.event_name === eventName).map(e => e.user_id)).size;
-  };
-
-  const quizStartedCount = getUniqueUsersForEvent('quiz_started');
-  const step1Count = getUniqueUsersForEvent('step_1_completed');
-  const step2Count = getUniqueUsersForEvent('step_2_completed');
-  const step3Count = getUniqueUsersForEvent('step_3_completed');
-  const step4Count = getUniqueUsersForEvent('step_4_completed');
-  const step5Count = getUniqueUsersForEvent('step_5_completed');
-  const step6Count = getUniqueUsersForEvent('step_6_completed');
-  const step7Count = getUniqueUsersForEvent('step_7_completed');
-  const step8Count = getUniqueUsersForEvent('step_8_completed');
-  const quizCompletedCount = getUniqueUsersForEvent('quiz_completed');
-  const emailSavedCount = getUniqueUsersForEvent('email_saved');
-  const trialStartedCount = getUniqueUsersForEvent('trial_started');
-
-  // Build funnel steps
-  const quizFunnelSteps = [
-    { name: 'Quiz Started', count: quizStartedCount },
-    { name: 'Step 1 Completed', count: step1Count },
-    { name: 'Step 2 Completed', count: step2Count },
-    { name: 'Step 3 Completed', count: step3Count },
-    { name: 'Step 4 Completed', count: step4Count },
-    { name: 'Step 5 Completed', count: step5Count },
-    { name: 'Step 6 Completed', count: step6Count },
-    { name: 'Step 7 Completed', count: step7Count },
-    { name: 'Step 8 Completed', count: step8Count },
-    { name: 'Quiz Completed', count: quizCompletedCount },
-    { name: 'Email Saved', count: emailSavedCount },
-    { name: 'Trial Started', count: trialStartedCount }
-  ].filter(s => s.count > 0); // Only show steps with data
-
-  // Calculate drop-off
-  const funnelWithDropoff = quizFunnelSteps.map((step, index) => {
-    const prevCount = index > 0 ? quizFunnelSteps[index - 1].count : step.count;
-    const conversionRate = prevCount > 0 ? ((step.count / prevCount) * 100).toFixed(1) : 100;
-    const dropoff = prevCount > 0 ? (100 - parseFloat(conversionRate)).toFixed(1) : 0;
-    
-    return {
-      ...step,
-      conversionRate: parseFloat(conversionRate),
-      dropoff: parseFloat(dropoff)
-    };
-  });
-
-  // Find biggest drop-off
-  const biggestDropoff = funnelWithDropoff.reduce((max, step) => 
-    step.dropoff > max.dropoff ? step : max
-  , { dropoff: 0, name: '-' });
-
-  // Quiz KPIs
-  const quizCompletionRate = quizStartedCount > 0 
-    ? ((quizCompletedCount / quizStartedCount) * 100).toFixed(1) 
-    : 0;
-  const quizToEmailRate = quizCompletedCount > 0 
-    ? ((emailSavedCount / quizCompletedCount) * 100).toFixed(1) 
-    : 0;
-  const quizToTrialRate = quizCompletedCount > 0 
-    ? ((trialStartedCount / quizCompletedCount) * 100).toFixed(1) 
-    : 0;
-
-  // Timeline data (completions by day)
-  const getQuizTimeline = () => {
-    const completedEvents = filteredQuizEvents.filter(e => e.event_name === 'quiz_completed');
-    const dailyData = {};
-    
-    completedEvents.forEach(event => {
-      const date = new Date(event.created_date).toISOString().split('T')[0];
-      dailyData[date] = (dailyData[date] || 0) + 1;
-    });
-    
-    const sortedDates = Object.keys(dailyData).sort();
-    return sortedDates.map(date => ({
-      date: format(new Date(date), 'dd MMM', { locale: it }),
-      completions: dailyData[date]
-    }));
-  };
-
-  const quizTimeline = getQuizTimeline();
 
   // ============================================
   // RENDER
@@ -714,206 +602,6 @@ export default function AdminAnalytics() {
               </div>
             </CardContent>
           </Card>
-        </div>
-
-        {/* SECTION 7: Quiz Funnel Analytics */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900">Quiz Funnel Analytics</h2>
-              <p className="text-sm text-gray-600">Dove si fermano gli utenti nel quiz</p>
-            </div>
-            <div className="flex items-center gap-3">
-              <select
-                value={quizPeriod}
-                onChange={(e) => setQuizPeriod(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium"
-              >
-                <option value="7d">Last 7 days</option>
-                <option value="30d">Last 30 days</option>
-                <option value="all">All time</option>
-              </select>
-              <Button
-                onClick={async () => {
-                  setIsPopulatingQuizEvents(true);
-                  try {
-                    const result = await base44.functions.invoke('populateHistoricalQuizEvents');
-                    console.log('📊 Population result:', result);
-                    alert(`✅ ${result.data?.eventsCreated || 0} eventi creati per ${result.data?.usersProcessed || 0} utenti`);
-                    await loadData();
-                  } catch (error) {
-                    console.error('Error populating:', error);
-                    alert('❌ Errore: ' + error.message);
-                  }
-                  setIsPopulatingQuizEvents(false);
-                }}
-                disabled={isPopulatingQuizEvents}
-                variant="outline"
-                className="border-purple-300 text-purple-700 hover:bg-purple-50"
-              >
-                <Activity className={`w-4 h-4 mr-2 ${isPopulatingQuizEvents ? 'animate-spin' : ''}`} />
-                {isPopulatingQuizEvents ? 'Populating...' : 'Populate Historical Data'}
-              </Button>
-              <Button
-                onClick={loadData}
-                className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Refresh Quiz Data
-              </Button>
-            </div>
-          </div>
-
-          {/* Debug Info - Remove after testing */}
-          {quizEvents.length === 0 && (
-            <Card className="bg-yellow-50 border-yellow-200 mb-6">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="w-6 h-6 text-yellow-600" />
-                  <div>
-                    <p className="text-sm font-bold text-yellow-900">
-                      ⚠️ No Quiz Events Data Yet
-                    </p>
-                    <p className="text-xs text-yellow-700 mt-1">
-                      The QuizEvent entity was just created. Data will appear as users complete the quiz.
-                      Total events in database: {quizEvents.length}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <p className="text-sm font-semibold text-gray-700 mb-2">Quiz Completion Rate</p>
-                <p className="text-4xl font-black text-indigo-900">{quizCompletionRate}%</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {quizCompletedCount} / {quizStartedCount} completati
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <p className="text-sm font-semibold text-gray-700 mb-2">Quiz → Email Rate</p>
-                <p className="text-4xl font-black text-purple-900">{quizToEmailRate}%</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {emailSavedCount} email salvate
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <p className="text-sm font-semibold text-gray-700 mb-2">Quiz → Trial Rate</p>
-                <p className="text-4xl font-black text-green-900">{quizToTrialRate}%</p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {trialStartedCount} trial attivati
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Biggest Drop-off Alert */}
-          {biggestDropoff.dropoff > 0 && (
-            <Card className="bg-red-50 border-red-200 mb-6">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="w-8 h-8 text-red-600" />
-                  <div>
-                    <p className="text-lg font-bold text-red-900">
-                      ⚠️ Biggest drop-off: {biggestDropoff.name} (-{biggestDropoff.dropoff}%)
-                    </p>
-                    <p className="text-sm text-red-700">
-                      Focus optimization efforts here for maximum impact
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Funnel Visualization */}
-          <Card className="water-glass-effect border-gray-200/30 mb-6">
-            <CardHeader>
-              <CardTitle>Step-by-Step Funnel</CardTitle>
-            </CardHeader>
-            <CardContent className="p-8">
-              <div className="space-y-4">
-                {funnelWithDropoff.map((step, index) => {
-                  const prevCount = index > 0 ? funnelWithDropoff[index - 1].count : step.count;
-                  const barWidth = prevCount > 0 ? (step.count / prevCount) * 100 : 100;
-                  const isHighDropoff = step.dropoff > 30;
-                  
-                  return (
-                    <div key={index} className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-semibold text-gray-900">{step.name}</span>
-                        <div className="flex items-center gap-4">
-                          <span className="text-gray-600">{step.count} users</span>
-                          <span className="text-green-600 font-bold">{step.conversionRate}%</span>
-                          {step.dropoff > 0 && (
-                            <span className={`font-bold ${isHighDropoff ? 'text-red-600' : 'text-orange-500'}`}>
-                              -{step.dropoff}%
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      <div className="relative h-12 bg-gray-100 rounded-lg overflow-hidden">
-                        <div
-                          className={`absolute inset-y-0 left-0 ${
-                            isHighDropoff ? 'bg-red-500' : 'bg-gradient-to-r from-indigo-500 to-purple-500'
-                          } transition-all duration-500`}
-                          style={{ width: `${barWidth}%` }}
-                        >
-                          <div className="h-full flex items-center justify-center text-white font-bold">
-                            {step.count}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Timeline Chart */}
-          {quizTimeline.length > 0 && (
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardHeader>
-                <CardTitle>Quiz Completions Timeline</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={quizTimeline}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis dataKey="date" stroke="#6b7280" />
-                      <YAxis stroke="#6b7280" />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px'
-                        }}
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="completions" 
-                        stroke="#8b5cf6" 
-                        strokeWidth={3}
-                        dot={{ fill: '#8b5cf6', r: 6 }}
-                      />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </div>
 
       </div>
