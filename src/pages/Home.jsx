@@ -119,8 +119,8 @@ function HomeContent() {
   // Removed automatic redirect to Quiz - let users browse the Home page freely
 
   useEffect(() => {
-    const referenceDate = new Date('2025-11-06T00:00:00Z').getTime();
-    const baseKg = 203112;
+    const referenceDate = new Date('2026-02-07T00:00:00Z').getTime();
+    const baseKg = 0;
     const incrementIntervalSeconds = 10;
 
     const calculateLiveStats = () => {
