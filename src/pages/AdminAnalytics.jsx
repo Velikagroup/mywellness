@@ -215,9 +215,19 @@ export default function AdminAnalytics() {
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-4xl font-black text-gray-900 mb-2">Analytics</h1>
-          <p className="text-gray-600">Dashboard strategica per decisioni business</p>
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-4xl font-black text-gray-900 mb-2">Analytics</h1>
+            <p className="text-gray-600">Dashboard strategica per decisioni business</p>
+          </div>
+          <Button
+            onClick={handleRefreshData}
+            disabled={isRefreshing}
+            className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Aggiornamento...' : 'Aggiorna Dati'}
+          </Button>
         </div>
 
         {/* SECTION 1: Overview KPI */}
