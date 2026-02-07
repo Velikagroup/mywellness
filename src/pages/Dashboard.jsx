@@ -673,9 +673,9 @@ export default function Dashboard() {
         />
       )}
 
-      <div className="min-h-screen pb-20 overflow-x-hidden">
+      <div className="min-h-screen pb-20">
         <PullToRefresh onRefresh={loadUserData}>
-        <div className="max-w-7xl mx-auto px-4 pt-0 pb-4 sm:p-6 space-y-4 sm:space-y-8">
+        <div className="max-w-7xl mx-auto px-4 pt-0 pb-4 sm:p-6 space-y-4 sm:space-y-8" style={{ overflowX: 'clip' }}>
 
           <div className="flex justify-center">
             <div className="w-full max-w-5xl space-y-6 sm:space-y-8 onboarding-dashboard-overview">
