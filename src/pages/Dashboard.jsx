@@ -30,7 +30,7 @@ import CalorieBalanceChart from "../components/dashboard/CalorieBalanceChart";
 import TermsAcceptanceModal from "../components/dashboard/TermsAcceptanceModal";
 import { useLanguage } from "../components/i18n/LanguageContext";
 import { rememberMeManager } from "../components/utils/rememberMeManager";
-import PullToRefresh from "../components/mobile/PullToRefresh";
+
 
 export default function Dashboard() {
   const navigate = useNavigate();
