@@ -120,20 +120,44 @@ export default function AdminAnalytics() {
   // ============================================
 
   // Section 1: Overview KPI
-  const activeMonthlyUsers = users.filter(u => 
-    u.subscription_status === 'active' && 
-    (u.billing_period === 'monthly' || u.subscription_plan === 'monthly')
-  ).length;
+  // DEBUG: Log per capire i dati
+  console.log('📊 Total users:', users.length);
+  console.log('📊 Sample user data:', users.slice(0, 3).map(u => ({
+    id: u.id,
+    status: u.subscription_status,
+    billing: u.billing_period,
+    plan: u.subscription_plan
+  })));
 
-  const activeYearlyUsers = users.filter(u => 
-    u.subscription_status === 'active' && 
-    (u.billing_period === 'yearly' || u.subscription_plan === 'yearly')
-  ).length;
+  const activeMonthlyUsers = users.filter(u => {
+    const isActive = u.subscription_status === 'active';
+    const isMonthly = u.billing_period === 'monthly' || 
+                      u.subscription_plan === 'monthly' ||
+                      u.billing_period === 'month' ||
+                      u.subscription_plan === 'month';
+    return isActive && isMonthly;
+  }).length;
+
+  const activeYearlyUsers = users.filter(u => {
+    const isActive = u.subscription_status === 'active';
+    const isYearly = u.billing_period === 'yearly' || 
+                     u.subscription_plan === 'yearly' ||
+                     u.billing_period === 'annual' ||
+                     u.subscription_plan === 'annual' ||
+                     u.billing_period === 'year' ||
+                     u.subscription_plan === 'year';
+    return isActive && isYearly;
+  }).length;
+
+  console.log('📊 Active monthly:', activeMonthlyUsers);
+  console.log('📊 Active yearly:', activeYearlyUsers);
 
   const totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
 
   const trialUsers = users.filter(u => 
-    u.subscription_status === 'trial' || u.subscription_status === 'pending_trial'
+    u.subscription_status === 'trial' || 
+    u.subscription_status === 'pending_trial' ||
+    u.subscription_status === 'trialing'
   ).length;
 
   // Section 2: Funnel
