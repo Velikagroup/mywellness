@@ -264,6 +264,9 @@ export default function AdminAnalytics() {
 
   // Filter events by period
   const getFilteredQuizEvents = () => {
+    console.log('📊 Total quiz events loaded:', quizEvents.length);
+    console.log('📊 Sample events:', quizEvents.slice(0, 3));
+    
     if (quizPeriod === 'all') return quizEvents;
     
     const now = new Date();
@@ -275,6 +278,7 @@ export default function AdminAnalytics() {
   };
 
   const filteredQuizEvents = getFilteredQuizEvents();
+  console.log('📊 Filtered quiz events:', filteredQuizEvents.length);
 
   // Count unique users for each event
   const getUniqueUsersForEvent = (eventName) => {
@@ -737,6 +741,26 @@ export default function AdminAnalytics() {
               </Button>
             </div>
           </div>
+
+          {/* Debug Info - Remove after testing */}
+          {quizEvents.length === 0 && (
+            <Card className="bg-yellow-50 border-yellow-200 mb-6">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="w-6 h-6 text-yellow-600" />
+                  <div>
+                    <p className="text-sm font-bold text-yellow-900">
+                      ⚠️ No Quiz Events Data Yet
+                    </p>
+                    <p className="text-xs text-yellow-700 mt-1">
+                      The QuizEvent entity was just created. Data will appear as users complete the quiz.
+                      Total events in database: {quizEvents.length}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
