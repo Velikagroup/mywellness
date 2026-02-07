@@ -691,14 +691,11 @@ Deno.serve(async (req) => {
                     // Track: Step 3 - Subscription attivata per influencer (se subscription.created e status != incomplete)
                     if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete' && user.influencer_id) {
                         try {
-                            const influencers = await base44.asServiceRole.entities.Influencer.filter({ id: user.influencer_id });
-                            if (influencers.length > 0) {
-                                const currentCount = influencers[0].subscription_activated_count || 0;
-                                await base44.asServiceRole.entities.Influencer.update(user.influencer_id, {
-                                    subscription_activated_count: currentCount + 1
-                                });
-                                console.log(`✅ Subscription activated: ${currentCount} → ${currentCount + 1}`);
-                            }
+                            await base44.asServiceRole.functions.invoke('trackInfluencerEvent', {
+                                influencerId: user.influencer_id,
+                                eventType: 'subscription_activated'
+                            });
+                            console.log(`✅ Subscription activated tracked for influencer: ${user.influencer_id}`);
                         } catch (infError) {
                             console.error('❌ Influencer subscription tracking error:', infError);
                         }
