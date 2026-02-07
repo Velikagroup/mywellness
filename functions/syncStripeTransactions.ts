@@ -34,6 +34,54 @@ Deno.serve(async (req) => {
             try {
                 console.log(`\n📦 Processing user: ${appUser.email} (${appUser.stripe_customer_id})`);
 
+                // 🔄 AGGIORNAMENTO STATO UTENTE DA STRIPE
+                try {
+                    const subscriptions = await stripe.subscriptions.list({
+                        customer: appUser.stripe_customer_id,
+                        status: 'all',
+                        limit: 10
+                    });
+
+                    if (subscriptions.data.length > 0) {
+                        // Prendi la subscription più recente
+                        const latestSub = subscriptions.data.sort((a, b) => b.created - a.created)[0];
+                        const subStatus = latestSub.status; // active, trialing, canceled, etc
+                        const interval = latestSub.items?.data?.[0]?.price?.recurring?.interval; // month, year
+                        
+                        const updates = {};
+                        
+                        // Mappa lo status Stripe → app status
+                        if (subStatus === 'active') {
+                            updates.subscription_status = 'active';
+                        } else if (subStatus === 'trialing') {
+                            updates.subscription_status = 'trial';
+                        } else if (subStatus === 'canceled' || subStatus === 'unpaid') {
+                            updates.subscription_status = 'cancelled';
+                        }
+                        
+                        // Aggiorna billing_period
+                        if (interval === 'year') {
+                            updates.billing_period = 'yearly';
+                        } else if (interval === 'month') {
+                            updates.billing_period = 'monthly';
+                        }
+                        
+                        // Aggiorna subscription_plan se presente nei metadata
+                        const planFromMetadata = latestSub.metadata?.plan || latestSub.items?.data?.[0]?.price?.metadata?.plan;
+                        if (planFromMetadata) {
+                            updates.subscription_plan = planFromMetadata;
+                        }
+                        
+                        // Applica gli update
+                        if (Object.keys(updates).length > 0) {
+                            await base44.asServiceRole.entities.User.update(appUser.id, updates);
+                            console.log(`✅ Updated user ${appUser.email}:`, updates);
+                        }
+                    }
+                } catch (subError) {
+                    console.warn(`⚠️ Could not sync subscription for ${appUser.email}:`, subError.message);
+                }
+
                 // Recupera tutti i PaymentIntents del customer
                 const paymentIntents = await stripe.paymentIntents.list({
                     customer: appUser.stripe_customer_id,
