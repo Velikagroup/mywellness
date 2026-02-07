@@ -14,7 +14,8 @@ import {
   AlertCircle,
   Activity,
   CheckCircle2,
-  Clock
+  Clock,
+  RefreshCw
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth, parseISO, isWithinInterval } from 'date-fns';
