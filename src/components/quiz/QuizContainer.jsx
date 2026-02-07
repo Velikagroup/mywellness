@@ -649,14 +649,11 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
           // Track: Step 2 - Email registrata con codice referral
           try {
-            const influencers = await base44.asServiceRole.entities.Influencer.filter({ id: influencerId });
-            if (influencers.length > 0) {
-              const currentCount = influencers[0].email_registered_count || 0;
-              await base44.asServiceRole.entities.Influencer.update(influencerId, {
-                email_registered_count: currentCount + 1
-              });
-              console.log(`✅ Email registered: ${currentCount} → ${currentCount + 1}`);
-            }
+            await base44.functions.invoke('trackInfluencerEvent', {
+              influencerId: influencerId,
+              eventType: 'email_registered'
+            });
+            console.log(`✅ Email registered tracked for influencer: ${influencerId}`);
           } catch (trackError) {
             console.error('❌ Error tracking email registration:', trackError);
           }
