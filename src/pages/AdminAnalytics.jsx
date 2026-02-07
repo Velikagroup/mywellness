@@ -207,9 +207,12 @@ export default function AdminAnalytics() {
         const totalExpenses = fetchedExpenses.reduce((sum, e) => sum + e.amount, 0); // Using the server-filtered expenses
         const netProfit = totalRevenue - totalExpenses;
 
-        const baseUsers = currentUsersForStats.filter(u => u.subscription_plan === 'base' && u.subscription_status === 'active').length;
-        const proUsers = currentUsersForStats.filter(u => u.subscription_plan === 'pro' && u.subscription_status === 'active').length;
-        const premiumUsers = currentUsersForStats.filter(u => u.subscription_plan === 'premium' && u.subscription_status === 'active').length;
+        const monthlyUsers = currentUsersForStats.filter(u => 
+          (u.billing_period === 'monthly' || u.subscription_plan === 'monthly') && u.subscription_status === 'active'
+        ).length;
+        const yearlyUsers = currentUsersForStats.filter(u => 
+          (u.billing_period === 'yearly' || u.subscription_plan === 'yearly') && u.subscription_status === 'active'
+        ).length;
 
         // MRR: Monthly Recurring Revenue. Outline calculates from 'monthly' billing_period transactions.
         const mrr = currentTransactionsForStats
