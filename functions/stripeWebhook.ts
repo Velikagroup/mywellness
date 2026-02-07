@@ -688,6 +688,33 @@ Deno.serve(async (req) => {
                     await base44.asServiceRole.entities.User.update(user.id, updateData);
                     console.log(`✅ Subscription updated for user ${user.id} with stripe_customer_id: ${customerId}`);
 
+                    // Track trial_started in QuizEvent (for subscription.created only)
+                    if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete') {
+                        try {
+                            const existingTrialEvents = await base44.asServiceRole.entities.QuizEvent.filter({
+                                user_id: user.id,
+                                event_name: 'trial_started'
+                            });
+                            
+                            if (existingTrialEvents.length === 0) {
+                                await base44.asServiceRole.entities.QuizEvent.create({
+                                    user_id: user.id,
+                                    event_name: 'trial_started',
+                                    step_index: 999,
+                                    step_name: 'Trial Started',
+                                    metadata: {
+                                        subscription_id: subscription.id,
+                                        stripe_customer_id: customerId,
+                                        source: 'webhook_subscription_created'
+                                    }
+                                });
+                                console.log('✅ trial_started tracked in QuizEvent via subscription.created');
+                            }
+                        } catch (eventError) {
+                            console.error('⚠️ Error tracking trial_started in webhook:', eventError);
+                        }
+                    }
+
                     // Track: Step 3 - Subscription attivata per influencer (se subscription.created e status != incomplete)
                     if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete' && user.influencer_id) {
                         try {
