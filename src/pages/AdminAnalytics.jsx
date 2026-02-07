@@ -848,25 +848,21 @@ export default function AdminAnalytics() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle className="text-base">Breakdown: Standard Plan</CardTitle>
+                <CardTitle className="text-base">Breakdown: Piano Mensile</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <span className="text-sm font-medium text-blue-900">Quiz → Standard Plan</span>
-                    <span className="font-bold text-blue-900">{stats.trialUsers + stats.paidUsers}</span>
+                    <span className="text-sm font-medium text-blue-900">Abbonamenti Mensili Attivi</span>
+                    <span className="font-bold text-blue-900">{stats.monthlyUsers}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                    <span className="font-medium text-green-900">Standard → Piano Base/Pro/Premium</span>
-                    <span className="font-bold text-green-900">{stats.paidUsers}</span>
+                    <span className="font-medium text-green-900">MRR da Piano Mensile</span>
+                    <span className="font-bold text-green-900">€{(stats.monthlyUsers * PRICE_MAP.monthly).toFixed(2)}</span>
                   </div>
                   <div className="p-3 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
-                    <p className="text-xs text-gray-600 mb-1">Conversione Standard → Pagante</p>
-                    <p className="text-2xl font-bold text-blue-900">
-                      {(stats.trialUsers + stats.paidUsers) > 0 
-                        ? ((stats.paidUsers / (stats.trialUsers + stats.paidUsers)) * 100).toFixed(1) 
-                        : '0.0'}%
-                    </p>
+                    <p className="text-xs text-gray-600 mb-1">Trial → Conversione (non applicabile - trial solo su annuale)</p>
+                    <p className="text-2xl font-bold text-blue-900">N/A</p>
                   </div>
                 </div>
               </CardContent>
@@ -874,23 +870,23 @@ export default function AdminAnalytics() {
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle className="text-base">Breakdown: Landing Checkout</CardTitle>
+                <CardTitle className="text-base">Breakdown: Piano Annuale</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg">
-                    <span className="font-medium text-cyan-900">Quiz → Checkout Iniziati</span>
-                    <span className="font-bold text-cyan-900">{stats.checkoutStartedUsers}</span>
+                  <div className="flex items-center justify-between p-3 bg-teal-50 rounded-lg">
+                    <span className="text-sm font-medium text-teal-900">Abbonamenti Annuali Attivi</span>
+                    <span className="font-bold text-teal-900">{stats.yearlyUsers}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                    <span className="font-medium text-purple-900">Checkout → Acquisti Landing</span>
-                    <span className="font-bold text-purple-900">{stats.landingOfferPurchases}</span>
+                    <span className="font-medium text-purple-900">Trial Attivi (3 giorni)</span>
+                    <span className="font-bold text-purple-900">{stats.trialUsers}</span>
                   </div>
-                  <div className="p-3 bg-gradient-to-r from-cyan-50 to-purple-50 rounded-lg border border-cyan-200">
-                    <p className="text-xs text-gray-600 mb-1">Conversione Landing</p>
-                    <p className="text-2xl font-bold text-purple-900">
-                      {stats.checkoutStartedUsers > 0 
-                        ? ((stats.landingOfferPurchases / stats.checkoutStartedUsers) * 100).toFixed(1) 
+                  <div className="p-3 bg-gradient-to-r from-teal-50 to-purple-50 rounded-lg border border-teal-200">
+                    <p className="text-xs text-gray-600 mb-1">Conversione Trial → Annuale</p>
+                    <p className="text-2xl font-bold text-teal-900">
+                      {stats.trialUsers + stats.yearlyUsers > 0 
+                        ? ((stats.yearlyUsers / (stats.trialUsers + stats.yearlyUsers)) * 100).toFixed(1) 
                         : '0.0'}%
                     </p>
                   </div>
