@@ -277,12 +277,35 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (!isLoadingUser && !quizActivityTracked && currentStep === 1) {
       const trackQuizStarted = async () => {
         try {
-          const userIdentifier = user?.email || quizData.email || 'anonymous';
+          const userIdentifier = user?.id || user?.email || quizData.email || 'anonymous';
+          
+          // Track in UserActivity (existing)
           await base44.entities.UserActivity.create({
             user_id: userIdentifier,
             event_type: 'quiz_started',
             event_data: { step: currentStep }
           });
+          
+          // Track in QuizEvent (new)
+          const existingEvents = await base44.entities.QuizEvent.filter({
+            user_id: userIdentifier,
+            event_name: 'quiz_started'
+          });
+          
+          if (existingEvents.length === 0) {
+            await base44.entities.QuizEvent.create({
+              user_id: userIdentifier,
+              event_name: 'quiz_started',
+              step_index: 0,
+              step_name: 'Quiz Started',
+              metadata: {
+                referral_code: localStorage.getItem('influencerReferralCode') || null,
+                quiz_language: language
+              }
+            });
+            console.log('✅ quiz_started tracked in QuizEvent');
+          }
+          
           setQuizActivityTracked(true);
         } catch (error) {
           console.error('Error tracking quiz start:', error);
@@ -291,7 +314,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
       
       trackQuizStarted();
     }
-  }, [currentStep, isLoadingUser, quizActivityTracked, user, quizData.email]);
+  }, [currentStep, isLoadingUser, quizActivityTracked, user, quizData.email, language]);
 
   useEffect(() => {
     localStorage.setItem(`quizData_${language}`, JSON.stringify(quizData));
@@ -322,9 +345,43 @@ export default function QuizContainer({ translations, language = 'it' }) {
     setQuizData(prev => ({ ...prev, ...data }));
   };
 
+  const trackQuizStep = async (stepIndex) => {
+    try {
+      const userIdentifier = user?.id || user?.email || quizData.email || 'anonymous';
+      const stepName = dynamicSteps[stepIndex]?.label || `Step ${stepIndex}`;
+      const eventName = `step_${stepIndex}_completed`;
+      
+      // Check if event already exists
+      const existingEvents = await base44.entities.QuizEvent.filter({
+        user_id: userIdentifier,
+        event_name: eventName
+      });
+      
+      if (existingEvents.length === 0) {
+        await base44.entities.QuizEvent.create({
+          user_id: userIdentifier,
+          event_name: eventName,
+          step_index: stepIndex,
+          step_name: stepName,
+          metadata: {
+            referral_code: localStorage.getItem('influencerReferralCode') || null,
+            quiz_language: language
+          }
+        });
+        console.log(`✅ Quiz step ${stepIndex} tracked: ${stepName}`);
+      }
+    } catch (error) {
+      console.error('Error tracking quiz step:', error);
+    }
+  };
+
   const nextStep = () => {
     if (currentStep < dynamicSteps.length - 1) {
       const newStep = currentStep + 1;
+      
+      // Track step completion
+      trackQuizStep(currentStep);
+      
       setCurrentStep(newStep);
       
       // Preserva il parametro from=dashboard se presente
@@ -337,12 +394,35 @@ export default function QuizContainer({ translations, language = 'it' }) {
     } else {
       const trackQuizCompleted = async () => {
         try {
-          const userIdentifier = user?.email || quizData.email || 'anonymous';
+          const userIdentifier = user?.id || user?.email || quizData.email || 'anonymous';
+          
+          // Track in UserActivity (existing)
           await base44.entities.UserActivity.create({
             user_id: userIdentifier,
             event_type: 'quiz_completed',
             event_data: { total_steps: dynamicSteps.length }
           });
+          
+          // Track in QuizEvent (new)
+          const existingEvents = await base44.entities.QuizEvent.filter({
+            user_id: userIdentifier,
+            event_name: 'quiz_completed'
+          });
+          
+          if (existingEvents.length === 0) {
+            await base44.entities.QuizEvent.create({
+              user_id: userIdentifier,
+              event_name: 'quiz_completed',
+              step_index: dynamicSteps.length - 1,
+              step_name: 'Quiz Completed',
+              metadata: {
+                total_steps: dynamicSteps.length,
+                referral_code: localStorage.getItem('influencerReferralCode') || null,
+                quiz_language: language
+              }
+            });
+            console.log('✅ quiz_completed tracked in QuizEvent');
+          }
 
           // 📊 TikTok Event: CompleteRegistration
           try {
@@ -577,6 +657,30 @@ export default function QuizContainer({ translations, language = 'it' }) {
       }
 
       await base44.auth.updateMe(userDataToSave);
+
+      // Track email_saved event
+      try {
+        const existingEmailEvents = await base44.entities.QuizEvent.filter({
+          user_id: user.id,
+          event_name: 'email_saved'
+        });
+        
+        if (existingEmailEvents.length === 0) {
+          await base44.entities.QuizEvent.create({
+            user_id: user.id,
+            event_name: 'email_saved',
+            step_index: dynamicSteps.length,
+            step_name: 'Email Saved',
+            metadata: {
+              email: user.email,
+              quiz_language: language
+            }
+          });
+          console.log('✅ email_saved tracked in QuizEvent');
+        }
+      } catch (eventError) {
+        console.error('Error tracking email_saved:', eventError);
+      }
 
       const today = new Date().toISOString().split('T')[0];
       try {
