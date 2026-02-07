@@ -15,13 +15,11 @@ import {
   Activity,
   CheckCircle2,
   Clock,
-  RefreshCw,
-  BarChart3
+  RefreshCw
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth, parseISO, isWithinInterval } from 'date-fns';
 import { it } from 'date-fns/locale';
-import QuizFunnelModal from '../components/admin/QuizFunnelModal';
 
 const COLORS = {
   monthly: '#3b82f6',
@@ -39,7 +37,6 @@ export default function AdminAnalytics() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [users, setUsers] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [showQuizFunnel, setShowQuizFunnel] = useState(false);
 
   // Date range: last 3 months
   const [dateRange] = useState({
@@ -267,24 +264,14 @@ export default function AdminAnalytics() {
             <h1 className="text-4xl font-black text-gray-900 mb-2">Analytics</h1>
             <p className="text-gray-600">Dashboard strategica per decisioni business</p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button
-              onClick={() => setShowQuizFunnel(true)}
-              variant="outline"
-              className="border-2 border-indigo-300 text-indigo-700 hover:bg-indigo-50"
-            >
-              <BarChart3 className="w-4 h-4 mr-2" />
-              Quiz Analytics
-            </Button>
-            <Button
-              onClick={handleRefreshData}
-              disabled={isRefreshing}
-              className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
-            >
-              <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-              {isRefreshing ? 'Aggiornamento...' : 'Aggiorna Dati'}
-            </Button>
-          </div>
+          <Button
+            onClick={handleRefreshData}
+            disabled={isRefreshing}
+            className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Aggiornamento...' : 'Aggiorna Dati'}
+          </Button>
         </div>
 
         {/* SECTION 1: Overview KPI */}
@@ -618,11 +605,6 @@ export default function AdminAnalytics() {
         </div>
 
       </div>
-
-      <QuizFunnelModal
-        isOpen={showQuizFunnel}
-        onClose={() => setShowQuizFunnel(false)}
-      />
     </div>
   );
 }
