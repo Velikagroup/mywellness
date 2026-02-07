@@ -201,7 +201,7 @@ export default function AdminAnalytics() {
   };
 
   const mrr = activeMonthlyUsers * PRICE_MAP.monthly;
-  const arr = (activeYearlyUsers * PRICE_MAP.yearly) + (mrr * 12);
+  const arr = activeYearlyUsers * PRICE_MAP.yearly;
   const totalActiveRevenue = mrr + (activeYearlyUsers * PRICE_MAP.yearly);
 
   // Revenue trend (last 6 months)
