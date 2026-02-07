@@ -558,9 +558,8 @@ export default function AdminAnalytics() {
 
   // Pie chart data
   const subscriptionPieData = [
-    { name: 'Base', value: planBreakdown.base, color: '#3b82f6' },
-    { name: 'Pro', value: planBreakdown.pro, color: '#26847F' },
-    { name: 'Premium', value: planBreakdown.premium, color: '#a855f7' }
+    { name: 'Mensile (€9.99)', value: planBreakdown.monthly, color: '#3b82f6' },
+    { name: 'Annuale (€49.99)', value: planBreakdown.yearly, color: '#26847F' }
   ].filter(item => item.value > 0);
 
   const expensesByCategory = filteredExpenses.reduce((acc, expense) => {
