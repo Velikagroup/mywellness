@@ -52,13 +52,26 @@ Deno.serve(async (req) => {
 
         for (const entityName of entitiesToClean) {
             try {
-                const records = await base44.asServiceRole.entities[entityName].filter({ user_id: user.id });
-                for (const record of records) {
-                    await base44.asServiceRole.entities[entityName].delete(record.id);
+                // Skip se l'entità non esiste nel database
+                if (!base44.asServiceRole.entities[entityName]) {
+                    console.log(`⏭️ Skipping ${entityName} (entity not found)`);
+                    continue;
                 }
-                console.log(`✅ Deleted ${records.length} records from ${entityName}`);
+                
+                const records = await base44.asServiceRole.entities[entityName].filter({ user_id: user.id });
+                
+                if (records && records.length > 0) {
+                    for (const record of records) {
+                        await base44.asServiceRole.entities[entityName].delete(record.id);
+                    }
+                    console.log(`✅ Deleted ${records.length} records from ${entityName}`);
+                } else {
+                    console.log(`⏭️ No records to delete in ${entityName}`);
+                }
             } catch (error) {
                 console.warn(`⚠️ Error deleting from ${entityName}:`, error.message);
+                // Non bloccare l'eliminazione se un'entity fallisce
+                continue;
             }
         }
 
