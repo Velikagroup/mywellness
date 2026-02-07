@@ -241,9 +241,8 @@ export default function AdminAnalytics() {
           totalRevenue,
           mrr,
           retentionRate,
-          baseUsers,
-          proUsers,
-          premiumUsers,
+          monthlyUsers,
+          yearlyUsers,
           totalExpenses,
           netProfit,
           monthlyExpenses
