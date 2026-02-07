@@ -451,11 +451,14 @@ export default function AdminAnalytics() {
 
   const netRevenue = totalRevenueExisting - totalRefunds;
 
-  // Subscription breakdown by plan
+  // Subscription breakdown by billing period
   const planBreakdown = {
-    base: filteredUsers.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'base').length,
-    pro: filteredUsers.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'pro').length,
-    premium: filteredUsers.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'premium').length
+    monthly: filteredUsers.filter(u => 
+      u.subscription_status === 'active' && (u.billing_period === 'monthly' || u.subscription_plan === 'monthly')
+    ).length,
+    yearly: filteredUsers.filter(u => 
+      u.subscription_status === 'active' && (u.billing_period === 'yearly' || u.subscription_plan === 'yearly')
+    ).length
   };
 
   // Churn rate
