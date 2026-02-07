@@ -411,20 +411,25 @@ export default function AdminAnalytics() {
   const cancelledUsers = filteredUsers.filter(u => u.subscription_status === 'cancelled').length;
   const expiredUsers = filteredUsers.filter(u => u.subscription_status === 'expired').length;
 
-  // MRR Calculation (Existing, based on price map)
+  // MRR Calculation (nuovi piani: mensile 9,99€ e annuale 49,99€)
   const PRICE_MAP = {
-    base: { monthly: 19, yearly: 15.2 },
-    pro: { monthly: 29, yearly: 23.2 },
-    premium: { monthly: 39, yearly: 31.2 }
+    monthly: 9.99,
+    yearly: 49.99 / 12 // ~4.17€/mese
   };
 
   const calculateMRR = () => {
     const recurringRevenue = filteredUsers
-      .filter(u => u.subscription_status === 'active' && u.subscription_plan)
+      .filter(u => u.subscription_status === 'active')
       .reduce((sum, u) => {
-        const plan = u.subscription_plan || 'base';
-        const monthlyValue = PRICE_MAP[plan]?.monthly || 19;
-        return sum + monthlyValue;
+        // Se ha billing_period, usa quello, altrimenti fallback su subscription_plan
+        const period = u.billing_period || u.subscription_plan;
+        if (period === 'monthly') {
+          return sum + PRICE_MAP.monthly;
+        } else if (period === 'yearly') {
+          return sum + PRICE_MAP.yearly;
+        }
+        // Default a monthly se non specificato
+        return sum + PRICE_MAP.monthly;
       }, 0);
 
     return recurringRevenue;
