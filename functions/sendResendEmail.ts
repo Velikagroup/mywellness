@@ -48,11 +48,8 @@ Deno.serve(async (req) => {
             emailPayload = {
                 from: `MyWellness <${fromEmail}>`,
                 to: [to],
-                react: resendTemplateId,
-                ...(subject && { subject }),
-                ...(Object.keys(variables).length > 0 && { 
-                    react_data: variables 
-                })
+                template_id: resendTemplateId,
+                template_data: variables
             };
         } else if (templateId) {
             // Genera HTML da database template
