@@ -281,7 +281,11 @@ export default function BodyScanPage() {
                       <TrendingDown className="w-4 h-4" />
                       {t('bodyScan.criticalAreas')}
                     </p>
-...
+                    <ul className="space-y-1">
+                      {latestScan.problem_areas.map((area, idx) => (
+                        <li key={idx} className="text-sm text-gray-700">• {area}</li>
+                      ))}
+                    </ul>
                   </div>
                 )}
 
@@ -299,6 +303,39 @@ export default function BodyScanPage() {
                   </div>
                 )}
               </div>
+
+              {/* Consigli AI - Punti Critici */}
+              {(latestScan.recommended_diet_focus || latestScan.recommended_workout_focus) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {latestScan.recommended_diet_focus && latestScan.recommended_diet_focus.length > 0 && (
+                    <div className="bg-amber-100/60 backdrop-blur-md rounded-2xl p-4 border-2 border-amber-400">
+                      <p className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">🍎 {t('bodyScan.dietFocus')}</p>
+                      <ul className="space-y-2">
+                        {latestScan.recommended_diet_focus.map((focus, idx) => (
+                          <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
+                            <span className="text-amber-600 font-bold">•</span>
+                            <span>{focus}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {latestScan.recommended_workout_focus && latestScan.recommended_workout_focus.length > 0 && (
+                    <div className="bg-blue-100/60 backdrop-blur-md rounded-2xl p-4 border-2 border-blue-400">
+                      <p className="text-xs font-bold text-blue-700 uppercase tracking-wide mb-2">💪 {t('bodyScan.workoutFocus')}</p>
+                      <ul className="space-y-2">
+                        {latestScan.recommended_workout_focus.map((focus, idx) => (
+                          <li key={idx} className="text-sm text-gray-700 flex items-start gap-2">
+                            <span className="text-blue-600 font-bold">•</span>
+                            <span>{focus}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
         </motion.div>
       ) : (
@@ -496,7 +533,11 @@ export default function BodyScanPage() {
                               {scan.problem_areas && scan.problem_areas.length > 0 && (
                                 <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                                   <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-2">{t('bodyScan.criticalAreas')}</p>
-...
+                                  <ul className="space-y-1">
+                                    {scan.problem_areas.map((area, idx) => (
+                                      <li key={idx} className="text-sm text-red-800">• {area}</li>
+                                    ))}
+                                  </ul>
                                 </div>
                               )}
                               {scan.strong_areas && scan.strong_areas.length > 0 && (
@@ -510,6 +551,33 @@ export default function BodyScanPage() {
                                 </div>
                               )}
                             </div>
+
+                            {/* Consigli AI Storici */}
+                            {(scan.recommended_diet_focus || scan.recommended_workout_focus) && (
+                              <div className="grid grid-cols-2 gap-3 mt-3">
+                                {scan.recommended_diet_focus && scan.recommended_diet_focus.length > 0 && (
+                                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                                    <p className="text-xs font-bold text-amber-700 uppercase tracking-wide mb-2">🍎 {t('bodyScan.dietFocus')}</p>
+                                    <ul className="space-y-1">
+                                      {scan.recommended_diet_focus.map((focus, idx) => (
+                                        <li key={idx} className="text-xs text-amber-800">• {focus}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+
+                                {scan.recommended_workout_focus && scan.recommended_workout_focus.length > 0 && (
+                                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                    <p className="text-xs font-bold text-blue-700 uppercase tracking-wide mb-2">💪 {t('bodyScan.workoutFocus')}</p>
+                                    <ul className="space-y-1">
+                                      {scan.recommended_workout_focus.map((focus, idx) => (
+                                        <li key={idx} className="text-xs text-blue-800">• {focus}</li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </div>
                       </motion.div>
