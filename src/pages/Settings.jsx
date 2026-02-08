@@ -764,7 +764,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="w-6 h-6 text-amber-600" />
-                  HealthKit Sync
+                  {t('settings.healthKitSync')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -773,17 +773,17 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     <div className="flex items-center gap-2 mb-2">
                       <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                       <p className="text-sm text-green-900 font-semibold">
-                        ✅ HealthKit connesso
+                        {t('settings.healthKitConnected')}
                       </p>
                     </div>
                     <p className="text-sm text-green-800">
-                      I tuoi dati di attività vengono sincronizzati automaticamente.
+                      {t('settings.healthKitConnectedDesc')}
                     </p>
                   </div>
                 ) : (
                   <>
                     <p className="text-sm text-gray-700">
-                      Sincronizza automaticamente calorie bruciate e attività fisica da HealthKit.
+                      {t('settings.healthKitSyncDesc')}
                     </p>
                     <Button
                       onClick={handleConnectHealthKit}
@@ -793,10 +793,10 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       {isSyncingHealthKit ? (
                         <div className="flex items-center gap-2">
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                          <span>Connessione in corso...</span>
+                          <span>{t('settings.healthKitConnecting')}</span>
                         </div>
                       ) : (
-                        '🍎 Connetti HealthKit'
+                        t('settings.healthKitConnect')
                       )}
                     </Button>
                   </>
