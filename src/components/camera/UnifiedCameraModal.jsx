@@ -695,7 +695,7 @@ IMPORTANT: Return valid JSON only, no extra text.`,
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black">
+    <div className="fixed top-0 left-0 right-0 bottom-0 md:bottom-24 z-[40] bg-black">
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-10 pt-12 px-6">
         <div className="flex items-center justify-between">
