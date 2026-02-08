@@ -559,7 +559,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
       {!location.pathname.toLowerCase().includes('quiz') && (
         <>
-          <div className={`hidden md:flex fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 items-center gap-2 ${showUnifiedCamera ? 'invisible' : ''}`}>
+          <div className={`hidden md:flex fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 items-center gap-2 transition-opacity ${showUnifiedCamera ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
             <LiquidGlassNav 
               navItems={allNavItems} 
               onActionClick={handleActionClick}
@@ -581,7 +581,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             </button>
           </div>
 
-          <div className="md:hidden fixed bottom-6 left-4 right-4 z-50 flex items-center gap-3" data-menu="mobile-nav">
+          <div className={`md:hidden fixed bottom-6 left-4 right-4 z-50 flex items-center gap-3 transition-opacity ${showUnifiedCamera ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} data-menu="mobile-nav">
             <div className="flex-1">
               <LiquidGlassNav 
                 navItems={allNavItems} 
