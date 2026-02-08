@@ -16,16 +16,26 @@ Deno.serve(async (req) => {
         const target48h = new Date(now.getTime() - (48 * 60 * 60 * 1000));
         const target47h = new Date(now.getTime() - (47 * 60 * 60 * 1000));
         
-        console.log(`🔍 Looking for users created between ${target48h.toISOString()} and ${target47h.toISOString()}`);
+        console.log(`🔍 Looking for trial starts between ${target48h.toISOString()} and ${target47h.toISOString()}`);
 
-        // Recupera tutti gli utenti
-        const allUsers = await base44.asServiceRole.entities.User.list();
+        // Recupera transazioni di tipo trial_setup nelle ultime 48h
+        const allTransactions = await base44.asServiceRole.entities.Transaction.list();
         
-        // Filtra utenti creati 48h fa
-        const targetUsers = allUsers.filter(user => {
-            const createdDate = new Date(user.created_date);
-            return createdDate >= target48h && createdDate <= target47h;
+        // Filtra transazioni trial_setup create esattamente 48h fa
+        const targetTransactions = allTransactions.filter(tx => {
+            if (tx.type !== 'trial_setup') return false;
+            const txDate = new Date(tx.payment_date || tx.created_date);
+            return txDate >= target48h && txDate <= target47h;
         });
+
+        console.log(`💳 Found ${targetTransactions.length} trial starts 48h ago`);
+
+        // Ottieni gli user_id univoci
+        const userIds = [...new Set(targetTransactions.map(tx => tx.user_id))];
+        
+        // Recupera gli utenti
+        const allUsers = await base44.asServiceRole.entities.User.list();
+        const targetUsers = allUsers.filter(user => userIds.includes(user.id));
 
         console.log(`👥 Found ${targetUsers.length} users created 48h ago`);
 
