@@ -1351,6 +1351,8 @@ export const translations = {
       language: "Lingua",
       selectLanguage: "Seleziona Lingua",
       changeLanguage: "Cambia Lingua",
+      appLockTitle: "ℹ️ Utenti iOS/Android - App Lock",
+      appLockDesc: "Se hai l'app mobile (iOS o Android) e vuoi gestire l'App Lock (blocco con Face ID/Touch ID/Impronta), clicca casualmente 3 volte sullo schermo per accedere alle impostazioni nascoste.",
       // Tabs
       tabAccount: "Account",
       tabSubscription: "Abbonamento",
@@ -3751,6 +3753,8 @@ export const translations = {
       language: "Language",
       selectLanguage: "Select Language",
       changeLanguage: "Change Language",
+      appLockTitle: "ℹ️ iOS/Android Users - App Lock",
+      appLockDesc: "If you have the mobile app (iOS or Android) and want to manage App Lock (lock with Face ID/Touch ID/Fingerprint), tap randomly 3 times on the screen to access hidden settings.",
       // Tabs
       tabAccount: "Account",
       tabSubscription: "Subscription",
@@ -6063,6 +6067,8 @@ export const translations = {
       language: "Idioma",
       selectLanguage: "Seleccionar Idioma",
       changeLanguage: "Cambiar Idioma",
+      appLockTitle: "ℹ️ Usuarios iOS/Android - App Lock",
+      appLockDesc: "Si tienes la app móvil (iOS o Android) y quieres gestionar el App Lock (bloqueo con Face ID/Touch ID/Huella), toca aleatoriamente 3 veces en la pantalla para acceder a los ajustes ocultos.",
       // Tabs
       tabAccount: "Cuenta",
       tabSubscription: "Suscripción",
@@ -8429,6 +8435,8 @@ export const translations = {
       language: "Idioma",
       selectLanguage: "Selecionar Idioma",
       changeLanguage: "Alterar Idioma",
+      appLockTitle: "ℹ️ Usuários iOS/Android - App Lock",
+      appLockDesc: "Se você tem o app mobile (iOS ou Android) e quer gerenciar o App Lock (bloqueio com Face ID/Touch ID/Impressão Digital), toque aleatoriamente 3 vezes na tela para acessar as configurações ocultas.",
       // Tabs
       tabAccount: "Conta",
       tabSubscription: "Assinatura",
@@ -10794,6 +10802,8 @@ export const translations = {
       language: "Sprache",
       selectLanguage: "Sprache Auswählen",
       changeLanguage: "Sprache Ändern",
+      appLockTitle: "ℹ️ iOS/Android-Benutzer - App Lock",
+      appLockDesc: "Wenn Sie die mobile App (iOS oder Android) haben und App Lock (Sperre mit Face ID/Touch ID/Fingerabdruck) verwalten möchten, tippen Sie zufällig 3 Mal auf den Bildschirm, um auf versteckte Einstellungen zuzugreifen.",
       // Tabs
       tabAccount: "Konto",
       tabSubscription: "Abonnement",
@@ -13159,6 +13169,8 @@ export const translations = {
       language: "Langue",
       selectLanguage: "Sélectionner la Langue",
       changeLanguage: "Changer la Langue",
+      appLockTitle: "ℹ️ Utilisateurs iOS/Android - App Lock",
+      appLockDesc: "Si vous avez l'app mobile (iOS ou Android) et souhaitez gérer App Lock (verrouillage avec Face ID/Touch ID/Empreinte), appuyez aléatoirement 3 fois sur l'écran pour accéder aux paramètres cachés.",
       // Tabs
       tabAccount: "Compte",
       tabSubscription: "Abonnement",
