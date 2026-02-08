@@ -1229,6 +1229,35 @@ IMPORTANT: Return valid JSON only, no extra text.`,
                 )}
               </div>
 
+              {/* Consigli AI - Punti Critici */}
+              {bodyScanResult.recommended_diet_focus && bodyScanResult.recommended_diet_focus.length > 0 && (
+                <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-amber-700 uppercase tracking-wide mb-3">{t('dashboard.dietFocus')}</p>
+                  <ul className="space-y-2">
+                    {bodyScanResult.recommended_diet_focus.map((focus, idx) => (
+                      <li key={idx} className="text-sm text-amber-900 flex items-start gap-2">
+                        <span className="text-amber-600 font-bold">•</span>
+                        <span>{focus}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {bodyScanResult.recommended_workout_focus && bodyScanResult.recommended_workout_focus.length > 0 && (
+                <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-blue-700 uppercase tracking-wide mb-3">{t('dashboard.workoutFocus')}</p>
+                  <ul className="space-y-2">
+                    {bodyScanResult.recommended_workout_focus.map((focus, idx) => (
+                      <li key={idx} className="text-sm text-blue-900 flex items-start gap-2">
+                        <span className="text-blue-600 font-bold">•</span>
+                        <span>{focus}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
               {/* Pulsanti Azione */}
               <div className="flex gap-3">
                 <Button
