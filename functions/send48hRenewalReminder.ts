@@ -62,16 +62,15 @@ Deno.serve(async (req) => {
 
                 // Determina lingua utente
                 const userLang = user.preferred_language || 'it';
-                const templateId = `plan_renewal_reminder_48h_${userLang}`;
 
                 console.log(`📧 Sending reminder to ${user.email} (lang: ${userLang})`);
 
-                // Invia email tramite Resend
+                // Invia email tramite Resend template
                 await base44.asServiceRole.functions.invoke('sendResendEmail', {
                     to: user.email,
-                    templateId: templateId,
+                    resendTemplateId: 'plan-renewal-reminder',
                     variables: {
-                        user_name: user.full_name || 'Utente'
+                        USER_NAME: user.full_name || 'Utente'
                     },
                     language: userLang
                 });
