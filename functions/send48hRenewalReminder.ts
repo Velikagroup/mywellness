@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
                     to: user.email,
                     resendTemplateId: 'plan-renewal-reminder',
                     variables: {
-                        USER_NAME: user.full_name || 'Utente'
+                        NAME: user.full_name || 'Utente'
                     },
                     language: userLang
                 });
