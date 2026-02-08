@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
             throw new Error('RESEND_API_KEY not configured');
         }
 
-        const fromEmail = template.from_email || 'info@projectmywellness.com';
+        const fromEmail = 'info@notification.projectmywellness.com';
         
         console.log('📤 Calling Resend API...');
         
