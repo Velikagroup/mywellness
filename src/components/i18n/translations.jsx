@@ -1359,6 +1359,9 @@ export const translations = {
       healthKitSyncDesc: "Sincronizza automaticamente calorie bruciate e attività fisica da HealthKit.",
       healthKitConnecting: "Connessione in corso...",
       healthKitConnect: "🍎 Connetti HealthKit",
+      passwordTitle: "Password",
+      googleOAuthTitle: "ℹ️ Accesso con Google OAuth",
+      googleOAuthDesc: "Per impostare una password e accedere anche con email/password, usa il link \"Password dimenticata?\" dalla pagina di login.",
       // Tabs
       tabAccount: "Account",
       tabSubscription: "Abbonamento",
@@ -3767,6 +3770,9 @@ export const translations = {
       healthKitSyncDesc: "Automatically sync burned calories and physical activity from HealthKit.",
       healthKitConnecting: "Connecting...",
       healthKitConnect: "🍎 Connect HealthKit",
+      passwordTitle: "Password",
+      googleOAuthTitle: "ℹ️ Google OAuth Access",
+      googleOAuthDesc: "To set a password and also access with email/password, use the \"Forgot password?\" link from the login page.",
       // Tabs
       tabAccount: "Account",
       tabSubscription: "Subscription",
@@ -6087,6 +6093,9 @@ export const translations = {
       healthKitSyncDesc: "Sincroniza automáticamente calorías quemadas y actividad física desde HealthKit.",
       healthKitConnecting: "Conectando...",
       healthKitConnect: "🍎 Conectar HealthKit",
+      passwordTitle: "Contraseña",
+      googleOAuthTitle: "ℹ️ Acceso con Google OAuth",
+      googleOAuthDesc: "Para establecer una contraseña y acceder también con email/contraseña, usa el enlace \"¿Olvidaste tu contraseña?\" desde la página de inicio de sesión.",
       // Tabs
       tabAccount: "Cuenta",
       tabSubscription: "Suscripción",
@@ -8461,6 +8470,9 @@ export const translations = {
       healthKitSyncDesc: "Sincronize automaticamente calorias queimadas e atividade física do HealthKit.",
       healthKitConnecting: "Conectando...",
       healthKitConnect: "🍎 Conectar HealthKit",
+      passwordTitle: "Senha",
+      googleOAuthTitle: "ℹ️ Acesso com Google OAuth",
+      googleOAuthDesc: "Para definir uma senha e acessar também com email/senha, use o link \"Esqueceu a senha?\" na página de login.",
       // Tabs
       tabAccount: "Conta",
       tabSubscription: "Assinatura",
@@ -10834,6 +10846,9 @@ export const translations = {
       healthKitSyncDesc: "Automatische Synchronisierung von verbrannten Kalorien und körperlicher Aktivität aus HealthKit.",
       healthKitConnecting: "Verbindung läuft...",
       healthKitConnect: "🍎 HealthKit Verbinden",
+      passwordTitle: "Passwort",
+      googleOAuthTitle: "ℹ️ Zugang mit Google OAuth",
+      googleOAuthDesc: "Um ein Passwort festzulegen und auch mit E-Mail/Passwort zuzugreifen, verwenden Sie den Link \"Passwort vergessen?\" auf der Anmeldeseite.",
       // Tabs
       tabAccount: "Konto",
       tabSubscription: "Abonnement",
@@ -13207,6 +13222,9 @@ export const translations = {
       healthKitSyncDesc: "Synchronisez automatiquement les calories brûlées et l'activité physique depuis HealthKit.",
       healthKitConnecting: "Connexion en cours...",
       healthKitConnect: "🍎 Connecter HealthKit",
+      passwordTitle: "Mot de Passe",
+      googleOAuthTitle: "ℹ️ Accès avec Google OAuth",
+      googleOAuthDesc: "Pour définir un mot de passe et accéder aussi avec email/mot de passe, utilisez le lien \"Mot de passe oublié?\" depuis la page de connexion.",
       // Tabs
       tabAccount: "Compte",
       tabSubscription: "Abonnement",

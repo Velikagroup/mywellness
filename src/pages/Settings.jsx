@@ -848,15 +848,15 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle>Password</CardTitle>
+                <CardTitle>{t('settings.passwordTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                   <p className="text-sm text-blue-900 font-semibold mb-2">
-                    ℹ️ Accesso con Google OAuth
+                    {t('settings.googleOAuthTitle')}
                   </p>
                   <p className="text-sm text-blue-800">
-                    Per impostare una password e accedere anche con email/password, usa il link "Password dimenticata?" dalla pagina di login.
+                    {t('settings.googleOAuthDesc')}
                   </p>
                 </div>
               </CardContent>
