@@ -15,8 +15,10 @@ Deno.serve(async (req) => {
         const { 
             to,
             templateId,
+            resendTemplateId,
             variables = {},
-            language = 'it'
+            language = 'it',
+            subject
         } = body;
 
         if (!to) {
@@ -26,50 +28,65 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        if (!templateId) {
-            return Response.json({ 
-                success: false, 
-                error: 'Missing templateId' 
-            }, { status: 400 });
-        }
-
         console.log(`📧 Sending email to ${to} via Resend API`);
-        console.log(`📋 Template: ${templateId}`);
 
-        // Carica template dal database
-        const templates = await base44.asServiceRole.entities.EmailTemplate.filter({ 
-            template_id: templateId,
-            is_active: true 
-        });
-        
-        if (templates.length === 0) {
-            throw new Error(`Template not found or inactive: ${templateId}`);
+        const fromEmail = 'info@notifications.projectmywellness.com';
+
+        // Chiama API Resend
+        const resendApiKey = Deno.env.get('RESEND_API_KEY');
+        if (!resendApiKey) {
+            throw new Error('RESEND_API_KEY not configured');
         }
+        
+        console.log('📤 Calling Resend API...');
+        
+        let emailPayload;
+        
+        if (resendTemplateId) {
+            // Usa template diretto da Resend
+            console.log(`📋 Using Resend template: ${resendTemplateId}`);
+            emailPayload = {
+                from: `MyWellness <${fromEmail}>`,
+                to: [to],
+                react: resendTemplateId,
+                ...(subject && { subject }),
+                ...(Object.keys(variables).length > 0 && { 
+                    react_data: variables 
+                })
+            };
+        } else if (templateId) {
+            // Genera HTML da database template
+            console.log(`📋 Template: ${templateId}`);
+            const templates = await base44.asServiceRole.entities.EmailTemplate.filter({ 
+                template_id: templateId,
+                is_active: true 
+            });
+            
+            if (templates.length === 0) {
+                throw new Error(`Template not found or inactive: ${templateId}`);
+            }
 
-        const template = templates[0];
-        
-        // Genera HTML usando la stessa logica di sendEmailUnified
-        const appUrl = 'https://projectmywellness.com';
-        const userName = variables.user_name || 'Utente';
-        
-        let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
-        let mainContent = (template.main_content || '').replace(/{user_name}/g, userName);
-        let subject = (template.subject || 'MyWellness').replace(/{user_name}/g, userName);
-        let ctaText = template.call_to_action_text || 'Vai alla Dashboard';
-        let ctaUrl = (template.call_to_action_url || `${appUrl}/Dashboard`)
-            .replace(/{app_url}/g, appUrl);
-        
-        // Sostituisci altre variabili
-        Object.keys(variables).forEach(key => {
-            const value = variables[key] || '';
-            const regex = new RegExp(`\\{${key}\\}`, 'g');
-            greeting = greeting.replace(regex, value);
-            mainContent = mainContent.replace(regex, value);
-            subject = subject.replace(regex, value);
-            ctaUrl = ctaUrl.replace(regex, value);
-        });
+            const template = templates[0];
+            const appUrl = 'https://projectmywellness.com';
+            const userName = variables.user_name || 'Utente';
+            
+            let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
+            let mainContent = (template.main_content || '').replace(/{user_name}/g, userName);
+            let emailSubject = (template.subject || 'MyWellness').replace(/{user_name}/g, userName);
+            let ctaText = template.call_to_action_text || 'Vai alla Dashboard';
+            let ctaUrl = (template.call_to_action_url || `${appUrl}/Dashboard`)
+                .replace(/{app_url}/g, appUrl);
+            
+            Object.keys(variables).forEach(key => {
+                const value = variables[key] || '';
+                const regex = new RegExp(`\\{${key}\\}`, 'g');
+                greeting = greeting.replace(regex, value);
+                mainContent = mainContent.replace(regex, value);
+                emailSubject = emailSubject.replace(regex, value);
+                ctaUrl = ctaUrl.replace(regex, value);
+            });
 
-        const html = `<!DOCTYPE html>
+            const html = `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -127,15 +144,15 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-        // Chiama API Resend
-        const resendApiKey = Deno.env.get('RESEND_API_KEY');
-        if (!resendApiKey) {
-            throw new Error('RESEND_API_KEY not configured');
+            emailPayload = {
+                from: `MyWellness <${fromEmail}>`,
+                to: [to],
+                subject: emailSubject,
+                html: html
+            };
+        } else {
+            throw new Error('Either templateId or resendTemplateId is required');
         }
-
-        const fromEmail = 'info@notifications.projectmywellness.com';
-        
-        console.log('📤 Calling Resend API...');
         
         const response = await fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -143,12 +160,7 @@ Deno.serve(async (req) => {
                 'Authorization': `Bearer ${resendApiKey}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                from: `MyWellness <${fromEmail}>`,
-                to: [to],
-                subject: subject,
-                html: html
-            })
+            body: JSON.stringify(emailPayload)
         });
 
         const result = await response.json();
@@ -164,8 +176,8 @@ Deno.serve(async (req) => {
         try {
             await base44.asServiceRole.entities.EmailLog.create({
                 user_email: to,
-                template_id: templateId,
-                subject: subject,
+                template_id: resendTemplateId || templateId || 'unknown',
+                subject: subject || emailPayload?.subject || 'N/A',
                 status: 'sent',
                 provider: 'resend',
                 message_id: result.id,
