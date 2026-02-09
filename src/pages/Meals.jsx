@@ -1747,7 +1747,7 @@ STRICT RULES:
 
   return (
     <>
-      <div className="min-h-screen overflow-y-auto pb-40">
+      <div className="pb-40">
         <PullToRefresh onRefresh={loadMealPlans}>
         <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
