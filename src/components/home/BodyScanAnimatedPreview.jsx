@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FlipHorizontal, X, Image, Camera, ScanLine } from 'lucide-react';
+import { FlipHorizontal, X, Image, Camera, ScanLine, Download } from 'lucide-react';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 import { BarChart3 } from 'lucide-react';
+import html2canvas from 'html2canvas';
 
 export default function BodyScanAnimatedPreview() {
   const { t } = useLanguage();
   const [phase, setPhase] = useState('scan'); // 'scan' o 'results'
+  const phoneRef = useRef(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -16,8 +18,36 @@ export default function BodyScanAnimatedPreview() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleDownloadImage = async () => {
+    if (!phoneRef.current) return;
+    
+    try {
+      const canvas = await html2canvas(phoneRef.current, {
+        backgroundColor: 'transparent',
+        scale: 2,
+        logging: false
+      });
+      
+      const link = document.createElement('a');
+      link.download = 'mywellness-bodyscan-preview.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (error) {
+      console.error('Error downloading image:', error);
+      alert('Errore durante il download');
+    }
+  };
+
   return (
-    <div className="relative w-full max-w-[340px] mx-auto aspect-[9/16] bg-black rounded-[40px] overflow-hidden shadow-2xl border-8 border-gray-900">
+    <div className="relative">
+      <button
+        onClick={handleDownloadImage}
+        className="absolute -top-12 right-0 z-50 px-4 py-2 bg-[#26847F] hover:bg-[#1f6b66] text-white rounded-lg font-semibold flex items-center gap-2 shadow-lg transition-all"
+      >
+        <Download className="w-4 h-4" />
+        Scarica
+      </button>
+      <div ref={phoneRef} className="relative w-full max-w-[340px] mx-auto aspect-[9/16] bg-black rounded-[40px] overflow-hidden shadow-2xl border-8 border-gray-900">
       {/* Scanning Phase - First 3 seconds */}
       <AnimatePresence mode="wait">
         {phase === 'scan' && (
@@ -223,6 +253,7 @@ export default function BodyScanAnimatedPreview() {
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
     </div>
   );
 }
