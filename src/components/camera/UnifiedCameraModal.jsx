@@ -1002,9 +1002,9 @@ IMPORTANT: Return valid JSON only, no extra text.`,
       {/* Calorie Analysis Result */}
       {/* Nutrition Table Analyzing */}
       {mode === 'nutrition_table' && nutritionAnalyzing && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-20">
-          <div className="text-center text-white">
-            <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
+        <div className="absolute inset-0 flex items-center justify-center bg-white z-20">
+          <div className="text-center text-gray-900">
+            <div className="w-16 h-16 border-4 border-gray-300 border-t-[#26847F] rounded-full animate-spin mx-auto mb-4" />
             <p className="text-lg font-semibold">{t('dashboard.analyzingTable')}</p>
           </div>
         </div>
