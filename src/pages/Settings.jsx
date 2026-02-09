@@ -760,7 +760,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
+            <Card className="hidden bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="w-6 h-6 text-amber-600" />
