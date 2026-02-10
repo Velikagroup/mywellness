@@ -83,16 +83,14 @@ Deno.serve(async (req) => {
         
         console.log(`📧 Sending welcome email to ${userEmail} (${templateId})`);
         
-        // Invia email tramite sistema unificato
-        await base44.asServiceRole.functions.invoke('sendEmailUnified', {
-            userId: user.id,
-            userEmail: userEmail,
-            templateId: templateId,
+        // Invia email tramite Resend
+        await base44.asServiceRole.functions.invoke('sendResendEmail', {
+            to: userEmail,
+            resendTemplateId: 'plan-renewal-reminder',
             variables: {
-                user_name: user.full_name || 'Utente'
+                NAME: user.full_name || 'Utente'
             },
-            language: userLang,
-            triggerSource: 'sendWelcomeEmailOnPurchase'
+            language: userLang
         });
         
         console.log(`✅ Welcome email sent to ${userEmail}`);
