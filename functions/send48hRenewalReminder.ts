@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
                 // Verifica se email già inviata (controlla EmailLog)
                 const existingLogs = await base44.asServiceRole.entities.EmailLog.filter({
                     user_email: user.email,
-                    template_id: 'plan_renewal_reminder_48h',
+                    template_id: 'plan_renewal_reminder_1h',
                     status: 'sent'
                 });
 
