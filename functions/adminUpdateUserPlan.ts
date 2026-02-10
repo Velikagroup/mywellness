@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
             return Response.json({ success: false, error: 'Unauthorized - Admin or Customer Support only' }, { status: 401 });
         }
 
-        const { userEmail, newPlan, customRole } = await req.json();
+        const { userEmail, newPlan, customRole, updates } = await req.json();
         
         if (!userEmail) {
             return Response.json({ success: false, error: 'Missing userEmail' }, { status: 400 });
@@ -49,6 +49,11 @@ Deno.serve(async (req) => {
             } else {
                 return Response.json({ success: false, error: 'Invalid customRole. Must be: customer_support or null' }, { status: 400 });
             }
+        }
+
+        // Apply generic updates if provided
+        if (updates && typeof updates === 'object') {
+            Object.assign(updateData, updates);
         }
 
         if (Object.keys(updateData).length === 0) {
