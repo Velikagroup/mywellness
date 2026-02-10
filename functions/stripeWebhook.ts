@@ -641,7 +641,8 @@ Deno.serve(async (req) => {
                         stripe_subscription_id: subscription.id,
                         subscription_status: subscription.status === 'active' ? 'active' :
                                            subscription.status === 'trialing' ? 'trial' :
-                                           subscription.status === 'canceled' ? 'cancelled' : 'expired'
+                                           subscription.status === 'canceled' ? 'cancelled' : 'expired',
+                        subscription_start_date: new Date().toISOString()
                     };
 
                     // Solo aggiungi period_end se valido

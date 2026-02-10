@@ -92,7 +92,8 @@ Deno.serve(async (req) => {
             subscription_status: 'trial',
             stripe_subscription_id: subscription.id,
             subscription_plan: 'premium',
-            trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null
+            trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null,
+            subscription_start_date: new Date().toISOString()
         });
 
         // Track: Step 3 - Subscription attivata (trial o pagamento)
