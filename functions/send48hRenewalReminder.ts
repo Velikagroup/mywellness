@@ -1,8 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 /**
- * ⏰ AUTOMAZIONE: Invia reminder 48h dopo registrazione
- * Trova utenti creati esattamente 48h fa e invia email "Plan Renewal Reminder" tramite Resend
+ * ⏰ AUTOMAZIONE: Invia reminder 1h dopo registrazione
+ * Trova utenti creati esattamente 1h fa e invia email "Plan Renewal Reminder" tramite Resend
  */
 
 Deno.serve(async (req) => {
@@ -11,22 +11,22 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
 
-        // Calcola data 48h fa (con tolleranza di 1 ora)
+        // Calcola data 1h fa (con tolleranza di 30 minuti)
         const now = new Date();
-        const target48h = new Date(now.getTime() - (48 * 60 * 60 * 1000));
-        const target47h = new Date(now.getTime() - (47 * 60 * 60 * 1000));
+        const target1h = new Date(now.getTime() - (1 * 60 * 60 * 1000));
+        const target30min = new Date(now.getTime() - (0.5 * 60 * 60 * 1000));
         
-        console.log(`🔍 Looking for trial starts between ${target48h.toISOString()} and ${target47h.toISOString()}`);
+        console.log(`🔍 Looking for trial starts between ${target1h.toISOString()} and ${target30min.toISOString()}`);
 
         // Recupera TUTTI gli utenti
         const allUsers = await base44.asServiceRole.entities.User.list();
         
-        // Filtra utenti con subscription_start_date esattamente 48h fa
+        // Filtra utenti con subscription_start_date esattamente 1h fa
         const targetUsers = allUsers.filter(user => {
             if (!user.subscription_start_date) return false;
             
             const startDate = new Date(user.subscription_start_date);
-            const isInWindow = startDate >= target48h && startDate <= target47h;
+            const isInWindow = startDate >= target1h && startDate <= target30min;
             
             if (isInWindow) {
                 console.log(`✅ Found user ${user.email} with trial start ${startDate.toISOString()}`);
@@ -35,12 +35,12 @@ Deno.serve(async (req) => {
             return isInWindow;
         });
 
-        console.log(`👥 Found ${targetUsers.length} users with trial started 48h ago`);
+        console.log(`👥 Found ${targetUsers.length} users with trial started 1h ago`);
 
         if (targetUsers.length === 0) {
             return Response.json({
                 success: true,
-                message: 'No users found for 48h reminder',
+                message: 'No users found for 1h reminder',
                 sent_count: 0
             });
         }
@@ -106,7 +106,7 @@ Deno.serve(async (req) => {
             }
         }
 
-        console.log(`🎉 48h renewal reminders sent: ${sentCount}/${targetUsers.length}`);
+        console.log(`🎉 1h renewal reminders sent: ${sentCount}/${targetUsers.length}`);
 
         return Response.json({
             success: true,
