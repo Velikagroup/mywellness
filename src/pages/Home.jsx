@@ -64,6 +64,20 @@ function HomeContent() {
   const [showQuizPopup, setShowQuizPopup] = useState(false);
   const [user, setUser] = useState(null);
 
+  // Facebook Domain Verification
+  useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'facebook-domain-verification';
+    meta.content = 't2adi6q544ye6ia4iiuuq1nqxwa5fl';
+    document.head.appendChild(meta);
+    
+    return () => {
+      if (meta.parentNode) {
+        meta.parentNode.removeChild(meta);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     // Carica l'utente corrente per verificare se è loggato
     const loadCurrentUser = async () => {
