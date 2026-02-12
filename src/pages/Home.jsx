@@ -1439,6 +1439,20 @@ function HomeContent() {
 export default function Home() {
   const navigate = useNavigate();
 
+  // Facebook Domain Verification - deve essere qui per funzionare anche su "/"
+  React.useEffect(() => {
+    const meta = document.createElement('meta');
+    meta.name = 'facebook-domain-verification';
+    meta.content = 't2adi6q544ye6ia4iiuuq1nqxwa5fl';
+    document.head.appendChild(meta);
+    
+    return () => {
+      if (meta.parentNode) {
+        meta.parentNode.removeChild(meta);
+      }
+    };
+  }, []);
+
   React.useEffect(() => {
     const currentPath = window.location.pathname.toLowerCase();
     
