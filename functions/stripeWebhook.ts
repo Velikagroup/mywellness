@@ -177,6 +177,27 @@ Deno.serve(async (req) => {
 
                     console.log(`✅ Transaction recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
 
+                    // 📊 Track Meta Pixel: Purchase
+                    try {
+                        const userLang = user.preferred_language || 'it';
+                        await base44.asServiceRole.functions.invoke('sendTikTokEvent', {
+                            eventName: 'Purchase',
+                            eventId: `purchase_${transaction.id}`,
+                            userData: {
+                                email: user.email,
+                                external_id: user.id
+                            },
+                            properties: {
+                                value: amount,
+                                currency: 'EUR',
+                                content_language: userLang
+                            }
+                        });
+                        console.log(`📊 Meta Pixel Purchase tracked: €${amount}`);
+                    } catch (pixelError) {
+                        console.warn('⚠️ Meta Pixel tracking failed:', pixelError.message);
+                    }
+
                     // ✅ UPDATE USER SUBSCRIPTION STATUS AND PLAN
                     await base44.asServiceRole.entities.User.update(user.id, {
                         subscription_status: 'active',
@@ -688,6 +709,52 @@ Deno.serve(async (req) => {
                     updateData.stripe_customer_id = customerId;  // 🔗 SALVA il stripe_customer_id
                     await base44.asServiceRole.entities.User.update(user.id, updateData);
                     console.log(`✅ Subscription updated for user ${user.id} with stripe_customer_id: ${customerId}`);
+
+                    // 📊 Track Meta Pixel events
+                    if (event.type === 'customer.subscription.created' && subscription.status === 'trialing') {
+                        try {
+                            const userLang = user.preferred_language || 'it';
+                            await base44.asServiceRole.functions.invoke('sendTikTokEvent', {
+                                eventName: 'StartTrial',
+                                eventId: `trial_${user.id}_${Date.now()}`,
+                                userData: {
+                                    email: user.email,
+                                    external_id: user.id
+                                },
+                                properties: {
+                                    value: 0,
+                                    currency: 'EUR',
+                                    content_language: userLang,
+                                    predicted_ltv: subscription.items?.data?.[0]?.price?.unit_amount / 100 || 0
+                                }
+                            });
+                            console.log('📊 Meta Pixel StartTrial tracked');
+                        } catch (pixelError) {
+                            console.warn('⚠️ Meta Pixel StartTrial failed:', pixelError.message);
+                        }
+                    } else if (event.type === 'customer.subscription.created' && subscription.status === 'active') {
+                        try {
+                            const userLang = user.preferred_language || 'it';
+                            const value = subscription.items?.data?.[0]?.price?.unit_amount / 100 || 0;
+                            await base44.asServiceRole.functions.invoke('sendTikTokEvent', {
+                                eventName: 'Subscribe',
+                                eventId: `subscribe_${user.id}_${Date.now()}`,
+                                userData: {
+                                    email: user.email,
+                                    external_id: user.id
+                                },
+                                properties: {
+                                    value: value,
+                                    currency: 'EUR',
+                                    content_language: userLang,
+                                    predicted_ltv: value
+                                }
+                            });
+                            console.log(`📊 Meta Pixel Subscribe tracked: €${value}`);
+                        } catch (pixelError) {
+                            console.warn('⚠️ Meta Pixel Subscribe failed:', pixelError.message);
+                        }
+                    }
 
                     // Track: Step 3 - Subscription attivata per influencer (se subscription.created e status != incomplete)
                     if (event.type === 'customer.subscription.created' && subscription.status !== 'incomplete' && user.influencer_id) {
