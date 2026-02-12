@@ -177,25 +177,25 @@ Deno.serve(async (req) => {
 
                     console.log(`✅ Transaction recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
 
-                    // 📊 Track Meta Pixel: Purchase
+                    // 📊 Track Meta Conversions API: Purchase
                     try {
                         const userLang = user.preferred_language || 'it';
-                        await base44.asServiceRole.functions.invoke('sendTikTokEvent', {
-                            eventName: 'Purchase',
-                            eventId: `purchase_${transaction.id}`,
-                            userData: {
+                        await base44.asServiceRole.functions.invoke('metaConversionsAPI', {
+                            event_name: 'Purchase',
+                            user_data: {
                                 email: user.email,
                                 external_id: user.id
                             },
-                            properties: {
+                            custom_data: {
                                 value: amount,
                                 currency: 'EUR',
+                                content_name: `${plan} - ${metadata.billing_period || 'monthly'}`,
                                 content_language: userLang
                             }
                         });
-                        console.log(`📊 Meta Pixel Purchase tracked: €${amount}`);
-                    } catch (pixelError) {
-                        console.warn('⚠️ Meta Pixel tracking failed:', pixelError.message);
+                        console.log(`📊 Meta CAPI Purchase tracked: €${amount}`);
+                    } catch (capiError) {
+                        console.warn('⚠️ Meta CAPI tracking failed:', capiError.message);
                     }
 
                     // ✅ UPDATE USER SUBSCRIPTION STATUS AND PLAN
@@ -710,49 +710,48 @@ Deno.serve(async (req) => {
                     await base44.asServiceRole.entities.User.update(user.id, updateData);
                     console.log(`✅ Subscription updated for user ${user.id} with stripe_customer_id: ${customerId}`);
 
-                    // 📊 Track Meta Pixel events
+                    // 📊 Track Meta Conversions API events
                     if (event.type === 'customer.subscription.created' && subscription.status === 'trialing') {
                         try {
                             const userLang = user.preferred_language || 'it';
-                            await base44.asServiceRole.functions.invoke('sendTikTokEvent', {
-                                eventName: 'StartTrial',
-                                eventId: `trial_${user.id}_${Date.now()}`,
-                                userData: {
+                            const predictedLtv = subscription.items?.data?.[0]?.price?.unit_amount / 100 || 0;
+                            await base44.asServiceRole.functions.invoke('metaConversionsAPI', {
+                                event_name: 'StartTrial',
+                                user_data: {
                                     email: user.email,
                                     external_id: user.id
                                 },
-                                properties: {
+                                custom_data: {
                                     value: 0,
                                     currency: 'EUR',
                                     content_language: userLang,
-                                    predicted_ltv: subscription.items?.data?.[0]?.price?.unit_amount / 100 || 0
+                                    predicted_ltv: predictedLtv
                                 }
                             });
-                            console.log('📊 Meta Pixel StartTrial tracked');
-                        } catch (pixelError) {
-                            console.warn('⚠️ Meta Pixel StartTrial failed:', pixelError.message);
+                            console.log('📊 Meta CAPI StartTrial tracked');
+                        } catch (capiError) {
+                            console.warn('⚠️ Meta CAPI StartTrial failed:', capiError.message);
                         }
                     } else if (event.type === 'customer.subscription.created' && subscription.status === 'active') {
                         try {
                             const userLang = user.preferred_language || 'it';
                             const value = subscription.items?.data?.[0]?.price?.unit_amount / 100 || 0;
-                            await base44.asServiceRole.functions.invoke('sendTikTokEvent', {
-                                eventName: 'Subscribe',
-                                eventId: `subscribe_${user.id}_${Date.now()}`,
-                                userData: {
+                            await base44.asServiceRole.functions.invoke('metaConversionsAPI', {
+                                event_name: 'Subscribe',
+                                user_data: {
                                     email: user.email,
                                     external_id: user.id
                                 },
-                                properties: {
+                                custom_data: {
                                     value: value,
                                     currency: 'EUR',
                                     content_language: userLang,
                                     predicted_ltv: value
                                 }
                             });
-                            console.log(`📊 Meta Pixel Subscribe tracked: €${value}`);
-                        } catch (pixelError) {
-                            console.warn('⚠️ Meta Pixel Subscribe failed:', pixelError.message);
+                            console.log(`📊 Meta CAPI Subscribe tracked: €${value}`);
+                        } catch (capiError) {
+                            console.warn('⚠️ Meta CAPI Subscribe failed:', capiError.message);
                         }
                     }
 
