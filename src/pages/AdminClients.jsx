@@ -687,11 +687,13 @@ export default function AdminClients() {
                   <UserCheck className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Uomini / Donne</p>
-                  <div className="flex items-center gap-2">
+                  <p className="text-sm text-gray-500">Uomini / Donne / N/A</p>
+                  <div className="flex items-center gap-1.5">
                     <span className="text-lg font-bold text-blue-600">{stats.maleCount}</span>
                     <span className="text-gray-400">/</span>
                     <span className="text-lg font-bold text-pink-600">{stats.femaleCount}</span>
+                    <span className="text-gray-400">/</span>
+                    <span className="text-lg font-bold text-gray-500">{stats.unknownCount}</span>
                   </div>
                 </div>
               </div>
