@@ -687,9 +687,9 @@ export default function AdminClients() {
                 <div>
                   <p className="text-sm text-gray-500">Uomini / Donne</p>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-blue-600">{stats.malePercentage.toFixed(0)}%</span>
+                    <span className="text-lg font-bold text-blue-600">{stats.maleCount}</span>
                     <span className="text-gray-400">/</span>
-                    <span className="text-lg font-bold text-pink-600">{stats.femalePercentage.toFixed(0)}%</span>
+                    <span className="text-lg font-bold text-pink-600">{stats.femaleCount}</span>
                   </div>
                 </div>
               </div>
