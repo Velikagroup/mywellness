@@ -167,6 +167,7 @@ export default function AdminClients() {
     const totalClients = clientsList.length;
     const maleCount = clientsList.filter(c => c.gender === 'male').length;
     const femaleCount = clientsList.filter(c => c.gender === 'female').length;
+    const unknownCount = totalClients - maleCount - femaleCount;
     
     const clientsWithPurchases = clientsList.filter(c => c.last_payment_amount && c.last_payment_amount > 0);
     const totalRevenue = clientsList.reduce((sum, c) => sum + (c.last_payment_amount || 0), 0);
