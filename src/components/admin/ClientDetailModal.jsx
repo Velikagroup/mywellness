@@ -242,56 +242,35 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
 
         <div className="space-y-6 pt-4">
           {/* Quick Actions */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <Button
-              onClick={handleCancelSubscription}
-              disabled={isProcessing || client.subscription_status !== 'active'}
-              variant="outline"
-              className="border-red-200 text-red-600 hover:bg-red-50"
-            >
-              <XCircle className="w-4 h-4 mr-2" />
-              Cancella Abb.
-            </Button>
-            
-            <Button
-              onClick={handleRenewSubscription}
-              disabled={isProcessing || client.subscription_status === 'active'}
-              variant="outline"
-              className="border-green-200 text-green-600 hover:bg-green-50"
+              onClick={async () => {
+                if (!confirm(`Dare accesso LIFETIME TOTALE a ${client.full_name || client.email}?`)) return;
+                setIsProcessing(true);
+                try {
+                  await base44.functions.invoke('adminUpdateUserPlan', {
+                    userEmail: client.email,
+                    newPlan: 'premium',
+                    customRole: null
+                  });
+                  await base44.entities.User.update(client.id, {
+                    subscription_status: 'active',
+                    subscription_plan: 'premium',
+                    subscription_period_end: null
+                  });
+                  alert('✅ Accesso lifetime premium attivato!');
+                  await onUpdate();
+                  onClose();
+                } catch (error) {
+                  alert('❌ Errore: ' + error.message);
+                }
+                setIsProcessing(false);
+              }}
+              disabled={isProcessing}
+              className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:from-purple-700 hover:to-indigo-700"
             >
               <CheckCircle className="w-4 h-4 mr-2" />
-              Rinnova Abb.
-            </Button>
-            
-            <Button
-              onClick={handleToggleLandingOffer}
-              disabled={isProcessing}
-              variant="outline"
-              className="border-purple-200 text-purple-600 hover:bg-purple-50"
-            >
-              <ShoppingBag className="w-4 h-4 mr-2" />
-              {client.purchased_landing_offer ? 'Disattiva' : 'Attiva'} Landing
-            </Button>
-            
-            <Button
-              onClick={() => {
-                setNewPlan(client.subscription_plan || 'base');
-                setShowPlanDialog(true);
-              }}
-              variant="outline"
-              className="border-amber-200 text-amber-600 hover:bg-amber-50"
-            >
-              <TrendingUp className="w-4 h-4 mr-2" />
-              Cambia Piano
-            </Button>
-            
-            <Button
-              onClick={() => setShowCreditDialog(true)}
-              variant="outline"
-              className="border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]"
-            >
-              <Gift className="w-4 h-4 mr-2" />
-              Dai Crediti
+              Accesso Lifetime Premium
             </Button>
             
             <Button
