@@ -15,8 +15,11 @@ export default function TargetWeightStep({ data, onDataChange, translations, cur
   const handleSliderChange = (value) => {
     const newWeight = value[0];
     setSelectedWeight(newWeight);
-    onDataChange({ target_weight: newWeight });
   };
+
+  useEffect(() => {
+    onDataChange({ target_weight: selectedWeight });
+  }, [selectedWeight]);
 
   const handleUnitToggle = () => {
     setIsMetric(!isMetric);
