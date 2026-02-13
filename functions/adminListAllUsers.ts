@@ -6,12 +6,12 @@ Deno.serve(async (req) => {
     
     // Verifica che l'utente sia autenticato e admin
     const user = await base44.auth.me();
-    if (!user || user.role !== 'admin') {
+    if (!user || (user.role !== 'admin' && user.custom_role !== 'customer_support')) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Recupera tutti gli utenti - base44 gestisce i permessi admin automaticamente
-    const allUsers = await base44.entities.User.filter({});
+    // Recupera tutti gli utenti con permessi service role
+    const allUsers = await base44.asServiceRole.entities.User.filter({});
     
     return Response.json({ users: allUsers });
   } catch (error) {
