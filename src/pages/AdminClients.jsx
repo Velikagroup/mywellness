@@ -182,6 +182,7 @@ export default function AdminClients() {
       totalClients,
       maleCount,
       femaleCount,
+      unknownCount,
       malePercentage: totalClients > 0 ? (maleCount / totalClients) * 100 : 0,
       femalePercentage: totalClients > 0 ? (femaleCount / totalClients) * 100 : 0,
       repurchaseRate,
