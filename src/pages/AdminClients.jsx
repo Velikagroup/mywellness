@@ -53,8 +53,10 @@ export default function AdminClients() {
     totalClients: 0,
     maleCount: 0,
     femaleCount: 0,
+    unknownCount: 0,
     malePercentage: 0,
     femalePercentage: 0,
+    unknownPercentage: 0,
     repurchaseRate: 0,
     avgLifetimeValue: 0
   });
