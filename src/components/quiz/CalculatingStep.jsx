@@ -14,24 +14,25 @@ export default function CalculatingStep({ translations }) {
   ];
 
   useEffect(() => {
+    let progressValue = 0;
     const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 99) {
-          clearInterval(progressInterval);
-          return 99;
-        }
-        return prev + 1;
-      });
+      progressValue += 1;
+      if (progressValue >= 99) {
+        clearInterval(progressInterval);
+        setProgress(99);
+      } else {
+        setProgress(progressValue);
+      }
     }, 50);
 
+    let itemIndex = 0;
     const itemInterval = setInterval(() => {
-      setCompletedItems(prev => {
-        if (prev.length >= items.length) {
-          clearInterval(itemInterval);
-          return prev;
-        }
-        return [...prev, items[prev.length].id];
-      });
+      if (itemIndex < items.length) {
+        setCompletedItems(prev => [...prev, items[itemIndex].id]);
+        itemIndex += 1;
+      } else {
+        clearInterval(itemInterval);
+      }
     }, 1000);
 
     return () => {
