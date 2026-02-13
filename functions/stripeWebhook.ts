@@ -198,6 +198,27 @@ Deno.serve(async (req) => {
                         console.warn('⚠️ Meta CAPI tracking failed:', capiError.message);
                     }
 
+                    // 🎯 Track TikTok Conversions API: Purchase
+                    try {
+                        const userLang = user.preferred_language || 'it';
+                        await base44.asServiceRole.functions.invoke('tiktokConversionsAPI', {
+                            event_name: 'Purchase',
+                            user_data: {
+                                email: user.email,
+                                external_id: user.id
+                            },
+                            custom_data: {
+                                value: amount,
+                                currency: 'EUR',
+                                content_category: 'subscription',
+                                content_language: userLang
+                            }
+                        });
+                        console.log(`🎯 TikTok CAPI Purchase tracked: €${amount}`);
+                    } catch (tiktokError) {
+                        console.warn('⚠️ TikTok CAPI tracking failed:', tiktokError.message);
+                    }
+
                     // ✅ UPDATE USER SUBSCRIPTION STATUS AND PLAN
                     await base44.asServiceRole.entities.User.update(user.id, {
                         subscription_status: 'active',
