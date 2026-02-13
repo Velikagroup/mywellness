@@ -185,6 +185,7 @@ export default function AdminClients() {
       unknownCount,
       malePercentage: totalClients > 0 ? (maleCount / totalClients) * 100 : 0,
       femalePercentage: totalClients > 0 ? (femaleCount / totalClients) * 100 : 0,
+      unknownPercentage: totalClients > 0 ? (unknownCount / totalClients) * 100 : 0,
       repurchaseRate,
       avgLifetimeValue
     });
@@ -689,11 +690,11 @@ export default function AdminClients() {
                 <div>
                   <p className="text-sm text-gray-500">Uomini / Donne / N/A</p>
                   <div className="flex items-center gap-1.5">
-                    <span className="text-lg font-bold text-blue-600">{stats.maleCount}</span>
+                    <span className="text-lg font-bold text-blue-600">{stats.malePercentage.toFixed(0)}%</span>
                     <span className="text-gray-400">/</span>
-                    <span className="text-lg font-bold text-pink-600">{stats.femaleCount}</span>
+                    <span className="text-lg font-bold text-pink-600">{stats.femalePercentage.toFixed(0)}%</span>
                     <span className="text-gray-400">/</span>
-                    <span className="text-lg font-bold text-gray-500">{stats.unknownCount}</span>
+                    <span className="text-lg font-bold text-gray-500">{stats.unknownPercentage.toFixed(0)}%</span>
                   </div>
                 </div>
               </div>
