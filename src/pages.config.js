@@ -77,7 +77,6 @@ import Sfondo from './pages/Sfondo';
 import Terms from './pages/Terms';
 import ThankYou from './pages/ThankYou';
 import TikTokTest from './pages/TikTokTest';
-import TrialSetup from './pages/TrialSetup';
 import Workouts from './pages/Workouts';
 import blogarticle from './pages/blogarticle';
 import de from './pages/de';
@@ -154,7 +153,6 @@ export const PAGES = {
     "Terms": Terms,
     "ThankYou": ThankYou,
     "TikTokTest": TikTokTest,
-    "TrialSetup": TrialSetup,
     "Workouts": Workouts,
     "blogarticle": blogarticle,
     "de": de,
