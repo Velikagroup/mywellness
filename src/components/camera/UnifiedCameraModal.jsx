@@ -1002,9 +1002,9 @@ IMPORTANT: Return valid JSON only, no extra text.`,
       {/* Calorie Analysis Result */}
       {/* Nutrition Table Analyzing */}
       {mode === 'nutrition_table' && nutritionAnalyzing && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white z-20">
-          <div className="text-center text-gray-900">
-            <div className="w-16 h-16 border-4 border-gray-300 border-t-[#26847F] rounded-full animate-spin mx-auto mb-4" />
+        <div className="absolute inset-0 flex items-center justify-center bg-black z-20">
+          <div className="text-center text-white">
+            <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
             <p className="text-lg font-semibold">{t('dashboard.analyzingTable')}</p>
           </div>
         </div>
@@ -1012,8 +1012,8 @@ IMPORTANT: Return valid JSON only, no extra text.`,
 
       {/* Nutrition Table Result */}
       {mode === 'nutrition_table' && nutritionResult && (
-        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-6 overflow-y-auto">
-          <div className="w-full max-w-md bg-[var(--bg-secondary)] rounded-3xl shadow-2xl my-auto">
+        <div className="absolute inset-0 bg-white z-20 flex items-center justify-center p-6 overflow-y-auto">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl my-auto border border-gray-200">
             {nutritionResult.photo_url && (
               <div className="relative w-full h-48 rounded-t-3xl overflow-hidden bg-gray-100">
                 <img 
