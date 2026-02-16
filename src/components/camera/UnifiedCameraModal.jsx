@@ -307,8 +307,20 @@ IMPORTANT: Return valid JSON only, no extra text.`,
       const file = new File([blob], 'nutrition_table.jpg', { type: 'image/jpeg' });
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
 
+      const languageInstructions = {
+        it: 'Italian',
+        en: 'English',
+        es: 'Spanish',
+        pt: 'Portuguese',
+        de: 'German',
+        fr: 'French'
+      };
+      const langName = languageInstructions[language] || 'Italian';
+
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analizza questa tabella nutrizionale e fornisci una valutazione della qualità nutritiva dell'alimento.
+        prompt: `CRITICAL: Respond in ${langName.toUpperCase()} language for ALL text content.
+
+Analizza questa tabella nutrizionale e fornisci una valutazione della qualità nutritiva dell'alimento.
 
         Estrai le informazioni principali e assegna uno score da 0 a 10 basato su:
         - Contenuto di zuccheri (meno è meglio)
