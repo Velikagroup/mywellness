@@ -292,10 +292,15 @@ export default function QuizContainer({ translations, language = 'it' }) {
     }
   }, [currentStep, isLoadingUser, quizActivityTracked, user, quizData.email]);
 
+  // dynamicSteps calcolato in modo derivato — nessuno stato separato
+  const dynamicSteps = React.useMemo(
+    () => buildDynamicSteps(translations, quizData),
+    [quizData, translations]
+  );
+
   useEffect(() => {
     localStorage.setItem(`quizData_${language}`, JSON.stringify(quizData));
-    setDynamicSteps(buildDynamicSteps(translations, quizData));
-  }, [quizData, language, translations]);
+  }, [quizData, language]);
 
   const isCurrentStepValid = () => {
     const stepComponent = dynamicSteps[currentStep]?.component;
