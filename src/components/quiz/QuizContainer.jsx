@@ -874,18 +874,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
     );
   }
 
-  const handleCalculatingComplete = () => {
-    setIsCalculating(false);
-    if (isRecalibrateFlow) {
-      handleRevealBodyFat();
-    } else {
-      setShowBodyFatReveal(true);
-    }
-  };
-
   if (isCalculating) {
     return (
-      <CalculatingStep translations={translations} onComplete={handleCalculatingComplete} />
+      <CalculatingStep translations={translations} />
     );
   }
 
