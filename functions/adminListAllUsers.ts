@@ -10,10 +10,16 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Recupera tutti gli utenti con permessi service role
-    const allUsers = await base44.asServiceRole.entities.User.filter({});
+    // Legge parametri di paginazione
+    let body = {};
+    try { body = await req.json(); } catch {}
+    const limit = body.limit || 200;
+    const skip = body.skip || 0;
+
+    // Recupera utenti con paginazione per evitare timeout
+    const allUsers = await base44.asServiceRole.entities.User.list('-created_date', limit, skip);
     
-    return Response.json({ users: allUsers });
+    return Response.json({ users: allUsers, total: allUsers.length, skip, limit });
   } catch (error) {
     console.error('Error fetching users:', error);
     return Response.json({ error: error.message }, { status: 500 });
