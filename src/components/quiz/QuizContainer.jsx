@@ -374,6 +374,15 @@ export default function QuizContainer({ translations, language = 'it' }) {
       
       trackQuizCompleted();
       setIsCalculating(true);
+
+      setTimeout(() => {
+        setIsCalculating(false);
+        if (isRecalibrateFlow) {
+          handleRevealBodyFat();
+        } else {
+          setShowBodyFatReveal(true);
+        }
+      }, 5500);
     }
   };
 
