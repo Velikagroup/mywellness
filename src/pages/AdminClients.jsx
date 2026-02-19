@@ -131,9 +131,18 @@ export default function AdminClients() {
 
   const loadClients = async () => {
     try {
-      const response = await base44.functions.invoke('adminListAllUsers', {});
-      console.log('🔍 Raw response:', response);
-      const allClients = response.data?.users || response?.users || [];
+      // Carica in batch da 200 per evitare timeout
+      let allClients = [];
+      let skip = 0;
+      const limit = 200;
+      while (true) {
+        const response = await base44.functions.invoke('adminListAllUsers', { limit, skip });
+        const batch = response.data?.users || response?.users || [];
+        allClients = [...allClients, ...batch];
+        if (batch.length < limit) break;
+        skip += limit;
+      }
+      console.log('🔍 Total clients loaded:', allClients.length);
       
       // Carica i dati affiliazione completi per ogni cliente
       const affiliateCredits = await base44.entities.AffiliateCredit.list();
