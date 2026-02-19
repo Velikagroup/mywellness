@@ -837,9 +837,13 @@ export default function QuizContainer({ translations, language = 'it' }) {
     );
   }
 
-  if (isCalculating) {
+  const CurrentStepComponent = dynamicSteps[currentStep]?.component || null;
+
+  if (!CurrentStepComponent) {
     return (
-      <CalculatingStep translations={translations} />
+      <div className="min-h-screen flex items-center justify-center">
+        <Sparkles className="w-12 h-12 text-[var(--brand-primary)] animate-bounce" />
+      </div>
     );
   }
 
