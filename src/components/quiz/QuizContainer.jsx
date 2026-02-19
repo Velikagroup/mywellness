@@ -374,15 +374,6 @@ export default function QuizContainer({ translations, language = 'it' }) {
       
       trackQuizCompleted();
       setIsCalculating(true);
-      
-      setTimeout(async () => {
-        if (isRecalibrateFlow) {
-          await handleRevealBodyFat();
-        } else {
-          setIsCalculating(false);
-          setShowBodyFatReveal(true);
-        }
-      }, 5000);
     }
   };
 
@@ -874,9 +865,18 @@ export default function QuizContainer({ translations, language = 'it' }) {
     );
   }
 
+  const handleCalculatingComplete = () => {
+    setIsCalculating(false);
+    if (isRecalibrateFlow) {
+      handleRevealBodyFat();
+    } else {
+      setShowBodyFatReveal(true);
+    }
+  };
+
   if (isCalculating) {
     return (
-      <CalculatingStep translations={translations} />
+      <CalculatingStep translations={translations} onComplete={handleCalculatingComplete} />
     );
   }
 
