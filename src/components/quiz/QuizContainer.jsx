@@ -358,11 +358,16 @@ export default function QuizContainer({ translations, language = 'it' }) {
       setIsCalculating(true);
 
       setTimeout(() => {
-        setIsCalculating(false);
         if (isRecalibrateFlow) {
-          handleRevealBodyFat();
+          // In recalibrate flow: prima nascondi il calculating, poi chiama handleRevealBodyFat
+          setIsCalculating(false);
+          // Usiamo un piccolo delay per permettere il re-render prima di navigare
+          setTimeout(() => handleRevealBodyFat(), 50);
         } else {
+          // Prima imposta showBodyFatReveal, POI nascondi isCalculating
+          // così il componente non passa mai per uno stato con currentStep out-of-bounds
           setShowBodyFatReveal(true);
+          setIsCalculating(false);
         }
       }, 5500);
     }
