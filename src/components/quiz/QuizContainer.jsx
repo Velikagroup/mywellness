@@ -120,7 +120,6 @@ export default function QuizContainer({ translations, language = 'it' }) {
     return saved ? JSON.parse(saved) : {};
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dynamicSteps, setDynamicSteps] = useState(() => buildDynamicSteps(translations, {}));
   const [isCalculating, setIsCalculating] = useState(false);
   const [showBodyFatReveal, setShowBodyFatReveal] = useState(false);
   const [user, setUser] = useState(null);
