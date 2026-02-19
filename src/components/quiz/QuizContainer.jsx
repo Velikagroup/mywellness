@@ -904,7 +904,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
         showNextButton={true}
         translations={translations}
       >
-        <CurrentStepComponent
+        {CurrentStepComponent && <CurrentStepComponent
           data={quizData}
           onDataChange={handleStepData}
           onNext={nextStep}
