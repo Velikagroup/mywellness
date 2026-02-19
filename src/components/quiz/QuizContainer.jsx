@@ -344,29 +344,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
             event_data: { total_steps: dynamicSteps.length }
           });
 
-          // 📊 TikTok Event: CompleteRegistration
-          try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const ttclid = urlParams.get('ttclid');
-            const ttp = urlParams.get('ttp');
 
-            await base44.functions.invoke('sendTikTokEvent', {
-              event: 'CompleteRegistration',
-              email: user?.email,
-              phone: user?.phone_number,
-              external_id: user?.id,
-              user_agent: navigator.userAgent,
-              content_id: 'quiz',
-              content_type: 'registration',
-              content_name: 'Quiz Completed',
-              url: window.location.href,
-              ttclid: ttclid,
-              ttp: ttp
-            });
-            console.log('✅ TikTok CompleteRegistration tracked');
-          } catch (e) {
-            console.warn('⚠️ TikTok tracking error:', e);
-          }
         } catch (error) {
           console.error('Error tracking quiz completion:', error);
         }
