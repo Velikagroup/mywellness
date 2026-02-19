@@ -675,22 +675,16 @@ export default function QuizContainer({ translations, language = 'it' }) {
     }
   };
 
+  // ✅ Check stati speciali PRIMA di qualsiasi accesso a dynamicSteps[currentStep]
+  if (isCalculating) {
+    return <CalculatingStep translations={translations} />;
+  }
+
   if (isLoadingUser) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Sparkles className="w-12 h-12 text-[var(--brand-primary)] animate-bounce" />
         <p className="ml-4 text-lg text-gray-700">{t?.loading || 'Loading...'}</p>
-      </div>
-    );
-  }
-
-  const CurrentStepComponent = dynamicSteps[currentStep]?.component || null;
-
-  // Guard: se nessuno stato attivo e nessun componente, mostra spinner invece di crashare
-  if (!CurrentStepComponent && !isCalculating && !showBodyFatReveal) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Sparkles className="w-12 h-12 text-[var(--brand-primary)] animate-bounce" />
       </div>
     );
   }
