@@ -75,10 +75,10 @@ export default function CalculatingStep({ translations }) {
             {t.quizDailyRecommendation || 'Recomendación diaria'}
           </h3>
           <div className="space-y-3">
-            {items.map((item) => (
+            {items.map((item, idx) => (
               <div key={item.id} className="flex items-center justify-between text-left">
                 <span className="text-base text-gray-700">• {item.label}</span>
-                {completedItems.includes(item.id) && (
+                {idx < completedCount && (
                   <CheckCircle2 className="w-6 h-6 text-gray-900" />
                 )}
               </div>
