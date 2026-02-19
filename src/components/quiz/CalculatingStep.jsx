@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 
+const ITEM_IDS = ['calories', 'carbs', 'protein', 'fats'];
+
 export default function CalculatingStep({ translations }) {
   const t = translations?.quiz || {};
   const [progress, setProgress] = useState(0);
-  const [completedItems, setCompletedItems] = useState([]);
+  const [completedCount, setCompletedCount] = useState(0);
 
   const items = [
     { id: 'calories', label: t.quizCalories || 'Calorías' },
@@ -25,9 +27,9 @@ export default function CalculatingStep({ translations }) {
 
     let itemIndex = 0;
     const itemInterval = setInterval(() => {
-      if (itemIndex < items.length) {
-        setCompletedItems(prev => [...prev, items[itemIndex].id]);
+      if (itemIndex < ITEM_IDS.length) {
         itemIndex += 1;
+        setCompletedCount(itemIndex);
       } else {
         clearInterval(itemInterval);
       }
