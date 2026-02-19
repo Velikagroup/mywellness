@@ -121,8 +121,11 @@ export default function QuizContainer({ translations, language = 'it' }) {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dynamicSteps, setDynamicSteps] = useState(() => buildDynamicSteps(translations, {}));
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [showBodyFatReveal, setShowBodyFatReveal] = useState(false);
+  // Single phase state to avoid intermediate bad renders
+  const [quizPhase, setQuizPhase] = useState('quiz'); // 'quiz' | 'calculating' | 'reveal'
+  // Keep these for backward compat with existing code
+  const isCalculating = quizPhase === 'calculating';
+  const showBodyFatReveal = quizPhase === 'reveal';
   const [user, setUser] = useState(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
