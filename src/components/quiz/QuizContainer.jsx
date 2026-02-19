@@ -708,29 +708,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
     );
   }
 
-  const CurrentStepComponent = dynamicSteps[currentStep]?.component;
-
-  console.log('🔍 Quiz Render:', { 
-    currentStep, 
-    hasComponent: !!CurrentStepComponent, 
-    isCalculating, 
-    showBodyFatReveal,
-    totalSteps: dynamicSteps.length 
-  });
-
-  useEffect(() => {
-    if (!dynamicSteps[currentStep]?.component && !isCalculating && !showBodyFatReveal) {
-      setCurrentStep(0);
-    }
-  }, [currentStep, dynamicSteps, isCalculating, showBodyFatReveal]);
-
-  if (!CurrentStepComponent && !isCalculating && !showBodyFatReveal) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Sparkles className="w-12 h-12 text-[var(--brand-primary)] animate-bounce" />
-      </div>
-    );
-  }
+  const CurrentStepComponent = dynamicSteps[currentStep]?.component || null;
 
   if (showBodyFatReveal) {
     const isLosingWeight = (quizData.target_weight || 0) < (quizData.current_weight || 0);
