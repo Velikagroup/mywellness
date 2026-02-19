@@ -376,11 +376,13 @@ export default function QuizContainer({ translations, language = 'it' }) {
       setIsCalculating(true);
 
       setTimeout(() => {
-        setIsCalculating(false);
         if (isRecalibrateFlow) {
+          setIsCalculating(false);
           handleRevealBodyFat();
         } else {
+          // Update entrambi nello stesso tick per evitare render intermedi senza componente
           setShowBodyFatReveal(true);
+          setIsCalculating(false);
         }
       }, 5500);
     }
@@ -716,9 +718,13 @@ export default function QuizContainer({ translations, language = 'it' }) {
     totalSteps: dynamicSteps.length 
   });
 
+  useEffect(() => {
+    if (!dynamicSteps[currentStep]?.component && !isCalculating && !showBodyFatReveal) {
+      setCurrentStep(0);
+    }
+  }, [currentStep, dynamicSteps, isCalculating, showBodyFatReveal]);
+
   if (!CurrentStepComponent && !isCalculating && !showBodyFatReveal) {
-    console.warn('⚠️ No component to render - returning to step 0');
-    setCurrentStep(0);
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Sparkles className="w-12 h-12 text-[var(--brand-primary)] animate-bounce" />
