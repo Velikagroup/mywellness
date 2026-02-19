@@ -913,7 +913,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
           totalSteps={dynamicSteps.length}
           translations={translations}
           t={t}
-        />
+        />}
       </QuizStepWrapper>
     </div>
   );
