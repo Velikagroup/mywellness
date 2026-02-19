@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle2 } from 'lucide-react';
 
-export default function CalculatingStep({ translations }) {
+export default function CalculatingStep({ translations, onComplete }) {
   const t = translations?.quiz || {};
   const [progress, setProgress] = useState(0);
   const [completedItems, setCompletedItems] = useState([]);
@@ -17,11 +17,12 @@ export default function CalculatingStep({ translations }) {
     let progressValue = 0;
     const progressInterval = setInterval(() => {
       progressValue += 1;
-      if (progressValue >= 99) {
+      setProgress(progressValue);
+      if (progressValue >= 100) {
         clearInterval(progressInterval);
-        setProgress(99);
-      } else {
-        setProgress(progressValue);
+        setTimeout(() => {
+          if (onComplete) onComplete();
+        }, 300);
       }
     }, 50);
 
