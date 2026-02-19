@@ -904,16 +904,18 @@ export default function QuizContainer({ translations, language = 'it' }) {
         showNextButton={true}
         translations={translations}
       >
-        {CurrentStepComponent && <CurrentStepComponent
-          data={quizData}
-          onDataChange={handleStepData}
-          onNext={nextStep}
-          onPrev={prevStep}
-          currentStep={currentStep}
-          totalSteps={dynamicSteps.length}
-          translations={translations}
-          t={t}
-        />}
+        {CurrentStepComponent && (
+          <CurrentStepComponent
+            data={quizData}
+            onDataChange={handleStepData}
+            onNext={nextStep}
+            onPrev={prevStep}
+            currentStep={currentStep}
+            totalSteps={dynamicSteps.length}
+            translations={translations}
+            t={t}
+          />
+        )}
       </QuizStepWrapper>
     </div>
   );
