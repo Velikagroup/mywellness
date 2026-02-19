@@ -376,13 +376,11 @@ export default function QuizContainer({ translations, language = 'it' }) {
       setIsCalculating(true);
 
       setTimeout(() => {
+        setIsCalculating(false);
         if (isRecalibrateFlow) {
-          setIsCalculating(false);
           handleRevealBodyFat();
         } else {
-          // Update entrambi nello stesso tick per evitare render intermedi senza componente
           setShowBodyFatReveal(true);
-          setIsCalculating(false);
         }
       }, 5500);
     }
