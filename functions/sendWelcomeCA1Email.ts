@@ -8,16 +8,16 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
  * Seleziona il template Resend in base alla lingua dell'utente.
  */
 
-// Mappa lingua → nome del template Resend
+// Mappa lingua → slug del template Resend (visibile nello screenshot)
 const TEMPLATE_MAP = {
-    it: 'CA 1 - IT',
-    es: 'CA 1 - ES',
-    en: 'CA 1 - EN',
-    pt: 'CA 1 - PT',
-    de: 'CA 1 - DE',
-    fr: 'CA 1 - FR',
+    it: 'ca-1-it',
+    es: 'ca-1-es',
+    en: 'ca-1-en',
+    pt: 'ca-1-pt',
+    de: 'ca-1-de',
+    fr: 'ca-1-fr',
 };
-const FALLBACK_TEMPLATE = 'CA 1 - EN';
+const FALLBACK_TEMPLATE = 'ca-1-en';
 
 Deno.serve(async (req) => {
     console.log('📧 sendWelcomeCA1Email - Start');
