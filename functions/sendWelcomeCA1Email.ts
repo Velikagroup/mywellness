@@ -141,7 +141,7 @@ async function sendForSingleUser(base44, { email, language, full_name, user_id }
             from: `MyWellness <${fromEmail}>`,
             to: [email],
             template_id: templateId,
-            variables: { user_name: full_name || email.split('@')[0] }
+            data: { user_name: full_name || email.split('@')[0] }
         };
     } else {
         // Fallback: invia email semplice se il template non viene trovato tramite API
