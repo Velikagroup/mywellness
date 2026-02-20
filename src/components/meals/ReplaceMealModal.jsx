@@ -42,7 +42,7 @@ export default function ReplaceMealModal({ isOpen, onClose, meal, user, nutritio
       let pantryIngredients = [];
       try {
         const pantryItems = await base44.entities.UserIngredient.filter({ user_id: user?.id });
-        pantryIngredients = pantryItems.filter(item => item.quantity > 0).map(item => item.name || item.ingredient_name).filter(Boolean);
+        pantryIngredients = pantryItems.map(item => item.name).filter(Boolean);
         console.log('🛒 Dispensa disponibile:', pantryIngredients);
       } catch (pantryErr) {
         console.warn('⚠️ Impossibile leggere dispensa:', pantryErr);
