@@ -26,7 +26,7 @@ Deno.serve(async (req) => {
         }
 
         const accessToken = Deno.env.get('TIKTOK_ACCESS_TOKEN');
-        const pixelId = 'D66VEQJC77U5P7UM15F0';
+        const pixelId = 'D6C2I83C77UA95KIJQQ0';
 
         if (!accessToken) {
             console.error('❌ TIKTOK_ACCESS_TOKEN not configured');
