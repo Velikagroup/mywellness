@@ -117,50 +117,59 @@ async function sendForSingleUser(base44, { email, language, full_name, user_id }
 
     const fromEmail = 'info@notifications.projectmywellness.com';
 
-    // Recupera l'ID del template Resend tramite API
-    const templatesRes = await fetch('https://api.resend.com/emails/templates', {
-        headers: { 'Authorization': `Bearer ${resendApiKey}` }
-    });
-
+    // Cerca il template nel database EmailTemplate tramite il nome
     let templateId = null;
+    try {
+        const dbTemplates = await base44.asServiceRole.entities.EmailTemplate.filter({
+            template_id: templateName,
+            is_active: true
+        });
+        if (dbTemplates.length > 0 && dbTemplates[0].resend_template_id) {
+            templateId = dbTemplates[0].resend_template_id;
+            console.log(`✅ Found template in DB: ${templateName} → ${templateId}`);
+        }
+    } catch (e) {
+        console.warn('⚠️ Could not fetch template from DB:', e.message);
+    }
 
-    if (templatesRes.ok) {
-        const templatesData = await templatesRes.json();
-        const templates = templatesData.data || templatesData.templates || [];
-        const found = templates.find(t => t.name === templateName);
-        if (found) {
-            templateId = found.id;
-            console.log(`✅ Found Resend template: ${templateName} → ${templateId}`);
+    // Se non trovato nel DB, prova a listare i template da Resend
+    if (!templateId) {
+        const templatesRes = await fetch('https://api.resend.com/broadcasts', {
+            headers: { 'Authorization': `Bearer ${resendApiKey}` }
+        });
+        if (templatesRes.ok) {
+            const templatesData = await templatesRes.json();
+            console.log('📋 Resend broadcasts response:', JSON.stringify(templatesData).substring(0, 300));
+        }
+
+        // Prova endpoint corretto per i template
+        const tplRes = await fetch('https://api.resend.com/emails/templates', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${resendApiKey}` }
+        });
+        console.log(`📋 Resend templates endpoint status: ${tplRes.status}`);
+        if (tplRes.ok) {
+            const tplData = await tplRes.json();
+            console.log('📋 Resend templates:', JSON.stringify(tplData).substring(0, 500));
+            const templates = tplData.data || tplData.templates || tplData.results || [];
+            const found = templates.find(t => t.name === templateName);
+            if (found) {
+                templateId = found.id;
+                console.log(`✅ Found Resend template via API: ${templateName} → ${templateId}`);
+            }
         }
     }
 
-    let emailPayload;
-
-    if (templateId) {
-        emailPayload = {
-            from: `MyWellness <${fromEmail}>`,
-            to: [email],
-            template_id: templateId,
-            data: { user_name: full_name || email.split('@')[0] }
-        };
-    } else {
-        // Fallback: invia email semplice se il template non viene trovato tramite API
-        console.warn(`⚠️ Template "${templateName}" not found via API, using plain subject`);
-        const subjectMap = {
-            it: 'Benvenuto su MyWellness! 🌿',
-            es: '¡Bienvenido a MyWellness! 🌿',
-            en: 'Welcome to MyWellness! 🌿',
-            pt: 'Bem-vindo ao MyWellness! 🌿',
-            de: 'Willkommen bei MyWellness! 🌿',
-            fr: 'Bienvenue sur MyWellness! 🌿',
-        };
-        emailPayload = {
-            from: `MyWellness <${fromEmail}>`,
-            to: [email],
-            subject: subjectMap[language?.toLowerCase()] || subjectMap['en'],
-            html: `<p>Ciao ${full_name || ''},<br><br>Benvenuto su MyWellness!</p>`
-        };
+    if (!templateId) {
+        throw new Error(`Template "${templateName}" non trovato. Assicurarsi che esista su Resend e che il nome corrisponda esattamente.`);
     }
+
+    const emailPayload = {
+        from: `MyWellness <${fromEmail}>`,
+        to: [email],
+        template_id: templateId,
+        data: { user_name: full_name || email.split('@')[0] }
+    };
 
     const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',
