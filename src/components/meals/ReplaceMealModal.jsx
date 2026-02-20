@@ -81,7 +81,7 @@ MAIN GOAL: Create EXACTLY the requested dish "${mealName}" with the specified ca
 - If you need more/less calories, increase/reduce quantities proportionally
 
 Diet: ${nutritionData?.diet_type || 'mediterranean'}
-${dietRules[nutritionData?.diet_type] || ''}
+${dietRules[nutritionData?.diet_type] || ''}${pantrySection}
 
 RULES:
 1. Create EXACTLY "${mealName}" - not a similar or alternative dish
@@ -90,6 +90,7 @@ RULES:
 4. Calculate precisely: sum of ingredient calories must equal ${targetCalories} kcal
 5. If the dish naturally has fewer calories, increase portions or add sides
 6. If it has more calories, reduce portions while keeping the dish recognizable
+7. Mark any ingredient used from the pantry with a note in its name like "(from pantry)"
 
 Return the dish "${mealName}" in the required JSON format with all content in ${langName.toUpperCase()}.`;
 
