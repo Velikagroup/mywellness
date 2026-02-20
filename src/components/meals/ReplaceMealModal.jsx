@@ -37,6 +37,20 @@ export default function ReplaceMealModal({ isOpen, onClose, meal, user, nutritio
       // CRITICO: usa ESATTAMENTE le calorie del pasto originale
       const targetCalories = meal.total_calories;
       console.log('🎯 Target calories from original meal:', targetCalories);
+
+      // 🛒 Leggi la dispensa dell'utente
+      let pantryIngredients = [];
+      try {
+        const pantryItems = await base44.entities.UserIngredient.filter({ user_id: user?.id });
+        pantryIngredients = pantryItems.filter(item => item.quantity > 0).map(item => item.name || item.ingredient_name).filter(Boolean);
+        console.log('🛒 Dispensa disponibile:', pantryIngredients);
+      } catch (pantryErr) {
+        console.warn('⚠️ Impossibile leggere dispensa:', pantryErr);
+      }
+
+      const pantrySection = pantryIngredients.length > 0
+        ? `\n\n🛒 PANTRY CHECK (MANDATORY): Before finalizing ingredients, check if any of these items the user has in their pantry can be used in this dish: [${pantryIngredients.join(', ')}]. If yes, PRIORITIZE using those ingredients in the recipe, adjusting quantities accordingly.`
+        : '';
       
       const dietRules = {
         mediterranean: "Grassi sani, cereali integrali, pesce, verdure",
