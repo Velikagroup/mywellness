@@ -109,65 +109,19 @@ Deno.serve(async (req) => {
 });
 
 async function sendForSingleUser(base44, { email, language, full_name, user_id }) {
-    const templateName = TEMPLATE_MAP[language?.toLowerCase()] || FALLBACK_TEMPLATE;
-    console.log(`📨 Sending "${templateName}" to ${email} (lang: ${language})`);
+    const templateAlias = TEMPLATE_MAP[language?.toLowerCase()] || FALLBACK_TEMPLATE;
+    console.log(`📨 Sending template "${templateAlias}" to ${email} (lang: ${language})`);
 
     const resendApiKey = Deno.env.get('RESEND_API_KEY');
     if (!resendApiKey) throw new Error('RESEND_API_KEY not configured');
 
     const fromEmail = 'info@notifications.projectmywellness.com';
 
-    // Cerca il template nel database EmailTemplate tramite il nome
-    let templateId = null;
-    try {
-        const dbTemplates = await base44.asServiceRole.entities.EmailTemplate.filter({
-            template_id: templateName,
-            is_active: true
-        });
-        if (dbTemplates.length > 0 && dbTemplates[0].resend_template_id) {
-            templateId = dbTemplates[0].resend_template_id;
-            console.log(`✅ Found template in DB: ${templateName} → ${templateId}`);
-        }
-    } catch (e) {
-        console.warn('⚠️ Could not fetch template from DB:', e.message);
-    }
-
-    // Se non trovato nel DB, prova a listare i template da Resend
-    if (!templateId) {
-        const templatesRes = await fetch('https://api.resend.com/broadcasts', {
-            headers: { 'Authorization': `Bearer ${resendApiKey}` }
-        });
-        if (templatesRes.ok) {
-            const templatesData = await templatesRes.json();
-            console.log('📋 Resend broadcasts response:', JSON.stringify(templatesData).substring(0, 300));
-        }
-
-        // Prova endpoint corretto per i template
-        const tplRes = await fetch('https://api.resend.com/emails/templates', {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${resendApiKey}` }
-        });
-        console.log(`📋 Resend templates endpoint status: ${tplRes.status}`);
-        if (tplRes.ok) {
-            const tplData = await tplRes.json();
-            console.log('📋 Resend templates:', JSON.stringify(tplData).substring(0, 500));
-            const templates = tplData.data || tplData.templates || tplData.results || [];
-            const found = templates.find(t => t.name === templateName);
-            if (found) {
-                templateId = found.id;
-                console.log(`✅ Found Resend template via API: ${templateName} → ${templateId}`);
-            }
-        }
-    }
-
-    if (!templateId) {
-        throw new Error(`Template "${templateName}" non trovato. Assicurarsi che esista su Resend e che il nome corrisponda esattamente.`);
-    }
-
+    // Usa direttamente lo slug/alias del template Resend
     const emailPayload = {
         from: `MyWellness <${fromEmail}>`,
         to: [email],
-        template_id: templateId,
+        template_alias: templateAlias,
         data: { user_name: full_name || email.split('@')[0] }
     };
 
