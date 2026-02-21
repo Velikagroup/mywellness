@@ -117,11 +117,10 @@ async function sendForSingleUser(base44, { email, language, full_name, user_id }
 
     const fromEmail = 'info@notifications.projectmywellness.com';
 
-    // Usa direttamente lo slug/alias del template Resend
     const emailPayload = {
         from: `MyWellness <${fromEmail}>`,
         to: [email],
-        template_alias: templateAlias,
+        template_id: templateAlias,
         data: { user_name: full_name || email.split('@')[0] }
     };
 
