@@ -120,8 +120,10 @@ async function sendForSingleUser(base44, { email, language, full_name, user_id }
     const emailPayload = {
         from: `MyWellness <${fromEmail}>`,
         to: [email],
-        template_id: templateAlias,
-        data: { user_name: full_name || email.split('@')[0] }
+        template: {
+            id: templateAlias,
+            variables: { user_name: full_name || email.split('@')[0] }
+        }
     };
 
     const response = await fetch('https://api.resend.com/emails', {
