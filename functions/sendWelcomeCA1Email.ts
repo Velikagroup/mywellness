@@ -148,7 +148,7 @@ async function sendForSingleUser(base44, { email, language, full_name, user_id }
         await base44.asServiceRole.entities.EmailLog.create({
             user_id: user_id || '',
             user_email: email,
-            template_id: templateName,
+            template_id: templateAlias,
             subject: emailPayload.subject || templateName,
             status: 'sent',
             provider: 'sendgrid',
