@@ -157,7 +157,7 @@ async function sendForSingleUser(base44, { email, language, full_name, user_id }
             sent_at: new Date().toISOString(),
             trigger_source: 'sendWelcomeCA1Email',
             sendgrid_message_id: result.id,
-            metadata: { template_name: templateName, resend_template_id: templateId }
+            metadata: { template_alias: templateAlias }
         });
     } catch (logError) {
         console.warn('⚠️ Failed to save email log:', logError);
