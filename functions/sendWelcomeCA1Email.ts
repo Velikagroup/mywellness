@@ -47,6 +47,8 @@ Deno.serve(async (req) => {
         // In questo caso processiamo un singolo utente passato nel body
         const body = await req.json().catch(() => ({}));
 
+        console.log('📦 Body received:', JSON.stringify(body));
+
         if (body.user_email && body.user_language !== undefined) {
             // Modalità: invio singolo utente (chiamato da automazione entity)
             return await sendForSingleUser(base44, {
