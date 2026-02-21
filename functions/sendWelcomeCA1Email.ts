@@ -163,5 +163,5 @@ async function sendForSingleUser(base44, { email, language, full_name, user_id }
         console.warn('⚠️ Failed to save email log:', logError);
     }
 
-    return { success: true, templateName, messageId: result.id };
+    return { success: true, templateAlias, messageId: result.id };
 }
