@@ -150,7 +150,7 @@ async function sendForSingleUser(base44, { email, language, full_name, user_id }
             user_id: user_id || '',
             user_email: email,
             template_id: templateAlias,
-            subject: emailPayload.subject || templateName,
+            subject: 'CA 1 Welcome',
             status: 'sent',
             provider: 'sendgrid',
             from_email: fromEmail,
