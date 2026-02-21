@@ -113,6 +113,7 @@ Deno.serve(async (req) => {
 });
 
 async function sendForSingleUser(base44, { email, language, full_name, user_id }) {
+    console.log(`🚀 sendForSingleUser called: email=${email}, lang=${language}`);
     const templateAlias = TEMPLATE_MAP[language?.toLowerCase()] || FALLBACK_TEMPLATE;
     console.log(`📨 Sending template "${templateAlias}" to ${email} (lang: ${language})`);
 
