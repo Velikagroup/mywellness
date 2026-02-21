@@ -23,7 +23,9 @@ Deno.serve(async (req) => {
     console.log('📧 sendWelcomeCA1Email - Start');
 
     try {
+        console.log('🔑 Creating base44 client...');
         const base44 = createClientFromRequest(req);
+        console.log('✅ base44 client created');
 
         // Auth: solo admin o cron interno
         let isAuthorized = false;
