@@ -174,11 +174,17 @@ export default function AdminAnalytics() {
 
   const totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
 
-  const trialUsers = users.filter(u => 
-    u.subscription_status === 'trial' || 
-    u.subscription_status === 'pending_trial' ||
-    u.subscription_status === 'trialing'
-  ).length;
+  const now = new Date();
+  const trialUsers = users.filter(u => {
+    const isTrialStatus = u.subscription_status === 'trial' || 
+      u.subscription_status === 'pending_trial' ||
+      u.subscription_status === 'trialing';
+    if (!isTrialStatus) return false;
+    // Conta solo i trial realmente attivi (non scaduti)
+    const trialEnd = u.trial_ends_at;
+    if (!trialEnd) return true; // se non c'è data, contiamo comunque
+    return new Date(trialEnd) > now;
+  }).length;
 
   // Section 2: Funnel
   const totalRegistrations = users.length;
