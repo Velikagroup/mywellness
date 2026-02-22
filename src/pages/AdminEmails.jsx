@@ -1730,7 +1730,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
             )}
           </TabsContent>
 
-          <TabsContent value="test" className="space-y-6">
+          <TabsContent value="__removed2__" className="space-y-6">
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
