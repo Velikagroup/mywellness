@@ -1469,7 +1469,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
               <Settings className="w-4 h-4" />
               Email di Sistema
             </TabsTrigger>
-            <TabsTrigger value="logs" className="flex items-center gap-2">
+            <TabsTrigger value="logs" data-value="logs" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
               Log Invii
             </TabsTrigger>
