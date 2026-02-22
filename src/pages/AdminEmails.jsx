@@ -1431,37 +1431,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
           <p className="text-gray-600">Gestisci email di sistema automatizzate e campagne broadcast</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="water-glass-effect border-gray-200/30">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Email Sistema</p>
-                  <p className="text-2xl font-bold text-gray-900">{totalEmails}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card className="water-glass-effect border-gray-200/30 cursor-pointer hover:shadow-md transition-shadow" onClick={() => document.querySelector('[data-value="logs"]')?.click()}>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Email Inviate (Log)</p>
-                  <p className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                    Vedi Log <Activity className="w-4 h-4 text-gray-400" />
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         <Tabs defaultValue="system" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
