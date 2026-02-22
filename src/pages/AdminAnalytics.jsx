@@ -332,6 +332,21 @@ export default function AdminAnalytics() {
           <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-8">
               <div className="space-y-4">
+
+                {/* STEP 1: Quiz */}
+                <div className="flex items-center gap-4">
+                  <div className="flex-1 bg-indigo-50 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-indigo-300">
+                    <span className="font-bold text-indigo-900 text-lg">Quiz Completati</span>
+                    <span className="font-black text-indigo-900 text-3xl">{quizCompleted}</span>
+                  </div>
+                </div>
+
+                {/* Arrow down */}
+                <div className="flex justify-center">
+                  <div className="w-1 h-8 bg-gray-300"></div>
+                </div>
+
+                {/* STEP 2: Registrazione */}
                 <div className="flex items-center gap-4">
                   <div className="flex-1 bg-gray-100 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-gray-300">
                     <span className="font-bold text-gray-900 text-lg">Registrazioni Totali</span>
@@ -339,52 +354,66 @@ export default function AdminAnalytics() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 pl-8">
-                  <div className="w-1 h-12 bg-gray-300"></div>
-                  <div className="flex-1 bg-indigo-50 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-indigo-300">
-                    <span className="font-bold text-indigo-900 text-lg">Quiz Completati</span>
-                    <span className="font-black text-indigo-900 text-3xl">{quizCompleted}</span>
-                  </div>
+                {/* Arrow down */}
+                <div className="flex justify-center">
+                  <div className="w-1 h-8 bg-gray-300"></div>
                 </div>
 
-                <div className="flex items-center gap-4 pl-16">
-                  <div className="w-1 h-12 bg-gray-300"></div>
-                  <div className="flex-1 bg-purple-50 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-purple-300">
-                    <span className="font-bold text-purple-900 text-lg">Trial Iniziati (Annuale)</span>
+                {/* STEP 3: Scelta piano — mensile e annuale sulla stessa riga */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-blue-50 rounded-xl h-24 flex flex-col items-center justify-center border-2 border-blue-300">
+                    <span className="font-bold text-blue-900 text-sm mb-1">Piano Mensile</span>
+                    <span className="text-xs text-blue-600 mb-2">€9.99/mese — pagamento diretto</span>
+                    <span className="font-black text-blue-900 text-3xl">{activeMonthlyUsers}</span>
+                  </div>
+                  <div className="bg-purple-50 rounded-xl h-24 flex flex-col items-center justify-center border-2 border-purple-300">
+                    <span className="font-bold text-purple-900 text-sm mb-1">Piano Annuale (Trial 3gg)</span>
+                    <span className="text-xs text-purple-600 mb-2">€49.99/anno — dopo trial gratuito</span>
                     <span className="font-black text-purple-900 text-3xl">{trialsStarted}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 pl-24">
-                  <div className="w-1 h-12 bg-gray-300"></div>
-                  <div className="flex-1 bg-teal-50 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-teal-300">
-                    <span className="font-bold text-teal-900 text-lg">Trial Convertiti</span>
+                {/* Arrow down — solo lato annuale */}
+                <div className="flex justify-end pr-[calc(25%-0.5rem)]">
+                  <div className="w-1 h-8 bg-purple-300"></div>
+                </div>
+
+                {/* STEP 4 (solo piano annuale): Trial Convertiti */}
+                <div className="flex justify-end">
+                  <div className="w-1/2 bg-teal-50 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-teal-300">
+                    <span className="font-bold text-teal-900 text-base">Trial Convertiti (Annuale)</span>
                     <span className="font-black text-teal-900 text-3xl">{trialsConverted}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 pl-32">
-                  <div className="w-1 h-12 bg-gray-300"></div>
-                  <div className="flex-1 bg-green-50 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-green-300">
-                    <span className="font-bold text-green-900 text-lg">Subscription Attive</span>
-                    <span className="font-black text-green-900 text-3xl">{subscriptionsActive}</span>
-                  </div>
+                {/* Arrow down — centro */}
+                <div className="flex justify-center">
+                  <div className="w-1 h-8 bg-gray-300"></div>
                 </div>
 
-                {/* KPI Principale */}
-                <div className="mt-8 p-8 bg-gradient-to-r from-green-50 to-emerald-100 rounded-2xl border-4 border-green-400">
-                  <div className="flex items-center justify-between">
+                {/* STEP 5: KPI finale — % conversione + sub totali */}
+                <div className="p-8 bg-gradient-to-r from-green-50 to-emerald-100 rounded-2xl border-4 border-green-400">
+                  <div className="flex items-center justify-between gap-8">
                     <div>
                       <div className="flex items-center gap-3 mb-2">
                         <Target className="w-8 h-8 text-green-700" />
                         <p className="text-lg font-bold text-green-900">KPI PRINCIPALE</p>
                       </div>
-                      <p className="text-sm text-green-700">Trial Conversion Rate</p>
-                      <p className="text-xs text-gray-600">Trial Iniziati → Pagamenti Convertiti</p>
+                      <p className="text-sm text-green-700">Trial Conversion Rate (Annuale)</p>
+                      <p className="text-xs text-gray-600 mt-1">Trial Iniziati → Abbonati Annuali Attivi</p>
                     </div>
-                    <div className="text-7xl font-black text-green-900">{trialConversionRate}%</div>
+                    <div className="text-center">
+                      <div className="text-6xl font-black text-green-900">{trialConversionRate}%</div>
+                      <p className="text-xs text-green-700 mt-1">conversione trial</p>
+                    </div>
+                    <div className="text-center border-l-2 border-green-300 pl-8">
+                      <div className="text-6xl font-black text-green-900">{totalActiveUsers}</div>
+                      <p className="text-xs text-green-700 mt-1">sub attive totali</p>
+                      <p className="text-xs text-gray-500">{activeMonthlyUsers} mensili + {activeYearlyUsers} annuali</p>
+                    </div>
                   </div>
                 </div>
+
               </div>
             </CardContent>
           </Card>
