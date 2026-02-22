@@ -182,8 +182,8 @@ export default function AdminAnalytics() {
     if (!isTrialStatus) return false;
     // Conta solo i trial realmente attivi (non scaduti)
     const trialEnd = u.trial_ends_at;
-    if (!trialEnd) return true; // se non c'è data, contiamo comunque
-    return new Date(trialEnd) > now;
+    if (!trialEnd) return false; // se non c'è data di scadenza, non contare
+    return new Date(trialEnd).getTime() > now.getTime();
   }).length;
 
   // Section 2: Funnel
