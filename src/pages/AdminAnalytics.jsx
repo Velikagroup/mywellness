@@ -183,15 +183,16 @@ export default function AdminAnalytics() {
   // Section 2: Funnel
   const totalRegistrations = users.length;
   const quizCompleted = users.filter(u => u.quiz_completed === true).length;
-  const trialsStarted = users.filter(u => 
-    u.subscription_status === 'trial' || 
-    u.subscription_status === 'active' && (u.billing_period === 'yearly' || u.subscription_plan === 'yearly')
-  ).length;
+  // trialsStarted = chi è ATTUALMENTE nel trial (non ancora convertito)
+  const trialsStarted = trialUsers;
+  // trialsConverted = chi ha completato il trial ed è ora active annuale
   const trialsConverted = activeYearlyUsers;
   const subscriptionsActive = totalActiveUsers;
 
-  const trialConversionRate = trialsStarted > 0 
-    ? ((trialsConverted / trialsStarted) * 100).toFixed(1) 
+  // Il totale di chi ha mai avuto un trial (in corso + convertiti) per calcolare il rate
+  const totalEverTrialed = trialsStarted + trialsConverted;
+  const trialConversionRate = totalEverTrialed > 0 
+    ? ((trialsConverted / totalEverTrialed) * 100).toFixed(1) 
     : 0;
 
   // Section 3: Revenue
