@@ -1589,7 +1589,8 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
             </Card>
           </TabsContent>
 
-          <TabsContent value="broadcast" className="space-y-6">
+          {/* Broadcast and Test tabs removed */}
+          <TabsContent value="__removed1__" className="space-y-6">
             <div className="flex justify-end">
               <Button
                 onClick={handleNewBroadcast}
