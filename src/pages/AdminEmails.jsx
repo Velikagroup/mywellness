@@ -117,7 +117,7 @@ export default function AdminEmails() {
     if (baseId.includes('goal_weight')) return 'engagement';
     if (baseId.includes('password_reset')) return 'technical';
     if (baseId.includes('weekly_report')) return 'reporting';
-    if (baseId.includes('cart_abandoned') || baseId.includes('checkout_abandoned')) return 'abandonment';
+    // abandonment removed
     if (baseId.includes('renewal')) return 'engagement';
     return null;
   };
@@ -128,7 +128,7 @@ export default function AdminEmails() {
       engagement: { name: 'Engagement', icon: TrendingUp, color: 'green' },
       technical: { name: 'Technical', icon: Shield, color: 'blue' },
       reporting: { name: 'Reporting', icon: BarChart3, color: 'indigo' },
-      abandonment: { name: 'Abbandono', icon: ShoppingCart, color: 'amber' }
+      // abandonment category removed
     };
 
     const categories = {};
@@ -152,7 +152,7 @@ export default function AdminEmails() {
       if (baseId.includes('welcome')) category = 'critical';
       else if (baseId.includes('goal_weight')) category = 'engagement';
       else if (baseId.includes('password_reset')) category = 'technical';
-      else if (baseId.includes('cart_abandoned') || baseId.includes('checkout_abandoned')) category = 'abandonment';
+      // abandonment category removed
       else if (baseId.includes('renewal')) category = 'engagement';
       
       if (!category) return;
