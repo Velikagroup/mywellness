@@ -1490,18 +1490,10 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
         </div>
 
         <Tabs defaultValue="system" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="system" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
               Email di Sistema
-            </TabsTrigger>
-            <TabsTrigger value="broadcast" className="flex items-center gap-2">
-              <Send className="w-4 h-4" />
-              Broadcast Campagne
-            </TabsTrigger>
-            <TabsTrigger value="test" className="flex items-center gap-2">
-              <Zap className="w-4 h-4" />
-              Test Email
             </TabsTrigger>
             <TabsTrigger value="logs" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
