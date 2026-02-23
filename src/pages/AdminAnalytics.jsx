@@ -339,7 +339,16 @@ export default function AdminAnalytics() {
                 <div className="bg-orange-50 rounded-xl border-2 border-orange-300 p-6">
                   <div className="flex items-center justify-between mb-3">
                     <span className="font-bold text-orange-900 text-lg">Visite Pagina Quiz</span>
-                    <span className="font-black text-orange-900 text-3xl">{totalQuizVisits}</span>
+                    <div className="flex gap-6 items-end">
+                      <div className="text-right">
+                        <div className="text-3xl font-black text-orange-900">{totalQuizVisits}</div>
+                        <div className="text-xs text-orange-600">visite totali</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-black text-orange-700">{uniqueQuizVisitors}</div>
+                        <div className="text-xs text-orange-600">utenti unici</div>
+                      </div>
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-2 mb-2">
                     {Object.entries(quizVisitsByLang).sort((a, b) => b[1] - a[1]).map(([lang, count]) => (
