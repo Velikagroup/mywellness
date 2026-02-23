@@ -706,17 +706,37 @@ export default function AdminCoupons() {
                   ) : coupons.length > 0 ? (
                     coupons.map((coupon) => {
                        const stats = couponStats.couponUsage.find(u => u.code === coupon.code) || { uses: 0, revenue: 0, discounts: 0 };
+
+                       // Debug: Mostra utenti con questo coupon
                        const usersWithCoupon = users.filter(u => 
                          u.influencer_referral_code?.toUpperCase() === coupon.code.toUpperCase() || 
                          u.coupon_applied?.toUpperCase() === coupon.code.toUpperCase()
                        );
-                       // Conta gli utenti che hanno il coupon E hanno attivato trial (subscription_payment o trial_setup)
+
+                       // AGGIUNTIVO: Cerca anche transazioni di subscription_payment che potrebbero essere trial
+                       const usersWithTrialTransaction = users.filter(user => 
+                         transactions.some(t => 
+                           t.user_id === user.id && 
+                           t.type === 'subscription_payment' && 
+                           t.status === 'succeeded'
+                         )
+                       );
+
+                       // Debug log per DALILA
+                       if (coupon.code === 'DALILA') {
+                         console.log('🔍 DALILA Debug:', {
+                           usersWithCouponViaField: usersWithCoupon.map(u => ({ email: u.email, influencer_referral_code: u.influencer_referral_code, coupon_applied: u.coupon_applied })),
+                           allTrialTransactions: transactions.filter(t => t.type === 'subscription_payment' && t.status === 'succeeded').map(t => ({ user_id: t.user_id, type: t.type, plan: t.plan }))
+                         });
+                       }
+
+                       // Conta gli utenti che hanno il coupon E hanno attivato trial
                        const trialSetups = usersWithCoupon.filter(user => 
                          user.subscription_status === 'trial' || 
                          transactions.some(t => 
                            t.user_id === user.id && 
                            (t.type === 'trial_setup' || 
-                            (t.type === 'subscription_payment' && t.plan && t.status === 'succeeded'))
+                            (t.type === 'subscription_payment' && t.status === 'succeeded'))
                          )
                        ).length;
 
