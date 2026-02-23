@@ -336,7 +336,8 @@ export default function AdminAnalytics() {
   const retentionRate = (100 - parseFloat(churnRate)).toFixed(1);
 
   // Section 6: User Behaviour
-  const registeredNoQuiz = users.filter(u => !u.quiz_completed).length;
+  const behaviourUsers = dateRange ? filteredUsers : users;
+  const registeredNoQuiz = behaviourUsers.filter(u => !u.quiz_completed).length;
   const quizCompletedUsers = quizCompleted;
   const usersWithTrial = trialUsersCount;
   const payingUsers = totalActiveUsers;
