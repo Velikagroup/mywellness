@@ -47,6 +47,47 @@ export default function AdminCoupons() {
     setCoupons(fetchedCoupons);
     setTransactions(fetchedTransactions);
     setUsers(fetchedUsers);
+    
+    // Debug globale per DALILA
+    console.log('=== DALILA GLOBAL DEBUG ===');
+    console.log('Total users loaded:', fetchedUsers.length);
+    console.log('Total transactions loaded:', fetchedTransactions.length);
+    
+    const dalilaUsers = fetchedUsers.filter(u => 
+      u.influencer_referral_code?.toUpperCase() === 'DALILA' || 
+      u.coupon_applied?.toUpperCase() === 'DALILA'
+    );
+    console.log('✅ Users with DALILA field:', dalilaUsers.length);
+    if (dalilaUsers.length === 0) {
+      console.log('⚠️ No users found with DALILA in influencer_referral_code or coupon_applied');
+      // Show all influencer_referral_code and coupon_applied values
+      console.log('All user codes:', fetchedUsers.map(u => ({ 
+        email: u.email, 
+        influencer_referral_code: u.influencer_referral_code, 
+        coupon_applied: u.coupon_applied 
+      })));
+    }
+    dalilaUsers.forEach(u => {
+      console.log('  User:', u.email, '| influencer_referral_code:', u.influencer_referral_code, '| coupon_applied:', u.coupon_applied, '| subscription_status:', u.subscription_status);
+    });
+    
+    const dalilaTransactions = fetchedTransactions.filter(t => 
+      dalilaUsers.some(u => u.id === t.user_id)
+    );
+    console.log('✅ Transactions for DALILA users:', dalilaTransactions.length);
+    dalilaTransactions.forEach(t => {
+      console.log('  TX:', t.user_id, '| type:', t.type, '| status:', t.status, '| plan:', t.plan);
+    });
+    
+    const dalilaTrials = dalilaUsers.filter(u => 
+      u.subscription_status === 'trial' || 
+      dalilaTransactions.some(t => 
+        t.user_id === u.id && 
+        (t.type === 'trial_setup' || (t.type === 'subscription_payment' && t.status === 'succeeded'))
+      )
+    );
+    console.log('✅ DALILA users with trial status:', dalilaTrials.length);
+    
     setIsLoading(false);
   };
 
