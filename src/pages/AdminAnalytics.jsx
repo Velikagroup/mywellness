@@ -97,8 +97,9 @@ export default function AdminAnalytics() {
         })(),
         (async () => {
           try {
-            const visits = await base44.entities.UserActivity.filter({ event_type: 'pricing_visited' }, '-created_date', 10000);
-            setSiteVisitActivities(visits);
+            // Carica TUTTI gli UserActivity - ogni record = qualcuno ha interagito col sito
+            const allVisits = await base44.entities.UserActivity.list('-created_date', 10000);
+            setSiteVisitActivities(allVisits);
           } catch (e) { console.error('Error loading site visits:', e); }
         })()
       ]);
