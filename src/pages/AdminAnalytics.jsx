@@ -302,7 +302,7 @@ export default function AdminAnalytics() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">
                   <Clock className="w-8 h-8 text-purple-600" />
-                  <div className="text-3xl font-black text-purple-600">{trialUsers}</div>
+                  <div className="text-3xl font-black text-purple-600">{trialUsersCount}</div>
                 </div>
                 <p className="text-sm font-semibold text-gray-700">Trial Active</p>
                 <p className="text-xs text-gray-500 mt-1">3 giorni trial annuale</p>
