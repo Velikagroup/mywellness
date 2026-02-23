@@ -62,6 +62,8 @@ export default function AdminAnalytics() {
     }
   };
 
+  const [stripeTrialUsers, setStripeTrialUsers] = useState([]);
+
   const loadData = async () => {
     try {
       const [usersData] = await Promise.all([
@@ -78,6 +80,17 @@ export default function AdminAnalytics() {
       } catch (txError) {
         console.error('Error loading transactions:', txError);
         setTransactions([]);
+      }
+
+      // Trial reali da Stripe
+      try {
+        const trialResponse = await base44.functions.invoke('getTrialStatsFromStripe');
+        const trialData = trialResponse.data || trialResponse;
+        if (trialData.success) {
+          setStripeTrialUsers(trialData.trial_users || []);
+        }
+      } catch (trialError) {
+        console.error('Error loading Stripe trial data:', trialError);
       }
     } catch (error) {
       console.error('Error loading data:', error);
