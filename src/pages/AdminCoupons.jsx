@@ -46,6 +46,7 @@ export default function AdminCoupons() {
     ]);
     setCoupons(fetchedCoupons);
     setTransactions(fetchedTransactions);
+    setUsers(fetchedUsers);
     setIsLoading(false);
   };
 
