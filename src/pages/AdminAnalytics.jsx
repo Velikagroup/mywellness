@@ -418,33 +418,7 @@ export default function AdminAnalytics() {
                   </div>
                 </div>
 
-                {/* Arrow down — centro */}
-                <div className="flex justify-center">
-                  <div className="w-1 h-8 bg-gray-300"></div>
-                </div>
 
-                {/* STEP 5: KPI finale — % conversione + sub totali */}
-                <div className="p-8 bg-gradient-to-r from-green-50 to-emerald-100 rounded-2xl border-4 border-green-400">
-                  <div className="flex items-center justify-between gap-8">
-                    <div>
-                      <div className="flex items-center gap-3 mb-2">
-                        <Target className="w-8 h-8 text-green-700" />
-                        <p className="text-lg font-bold text-green-900">KPI PRINCIPALE</p>
-                      </div>
-                      <p className="text-sm text-green-700">Trial Conversion Rate (Annuale)</p>
-                      <p className="text-xs text-gray-600 mt-1">Trial Iniziati → Abbonati Annuali Attivi</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-6xl font-black text-green-900">{trialConversionRate}%</div>
-                      <p className="text-xs text-green-700 mt-1">conversione trial</p>
-                    </div>
-                    <div className="text-center border-l-2 border-green-300 pl-8">
-                      <div className="text-6xl font-black text-green-900">{totalActiveUsers}</div>
-                      <p className="text-xs text-green-700 mt-1">sub attive totali</p>
-                      <p className="text-xs text-gray-500">{activeMonthlyUsers} mensili + {activeYearlyUsers} annuali</p>
-                    </div>
-                  </div>
-                </div>
 
               </div>
             </CardContent>
