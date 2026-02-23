@@ -185,7 +185,7 @@ export default function AdminAnalytics() {
   const totalSiteVisits = siteVisitActivities.length;
   const uniqueSiteVisitors = new Set(siteVisitActivities.map(v => v.user_id)).size;
   const siteVisitsByLang = siteVisitActivities.reduce((acc, v) => {
-    const lang = v.event_data?.language || 'unknown';
+    const lang = v.event_data?.language || 'it'; // default 'it' for old records (pricing_visited)
     acc[lang] = (acc[lang] || 0) + 1;
     return acc;
   }, {});
