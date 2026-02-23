@@ -64,6 +64,7 @@ export default function AdminAnalytics() {
 
   const [stripeStats, setStripeStats] = useState({ monthly: { count: 0 }, yearly: { count: 0 }, trialing: { count: 0 } });
   const [quizActivities, setQuizActivities] = useState([]);
+  const [siteVisitActivities, setSiteVisitActivities] = useState([]);
 
   const loadData = async () => {
     try {
