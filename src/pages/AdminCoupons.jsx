@@ -706,8 +706,10 @@ export default function AdminCoupons() {
                   ) : coupons.length > 0 ? (
                     coupons.map((coupon) => {
                        const stats = couponStats.couponUsage.find(u => u.code === coupon.code) || { uses: 0, revenue: 0, discounts: 0 };
-                       const usedByUser = coupon.used_by ? users.find(u => u.id === coupon.used_by) : null;
-                       const trialSetups = usedByUser ? transactions.filter(t => t.user_id === usedByUser.id && t.type === 'trial_setup').length : 0;
+                       const usersWithCoupon = users.filter(u => u.coupon_applied === coupon.code);
+                       const trialSetups = usersWithCoupon.reduce((count, user) => {
+                         return count + transactions.filter(t => t.user_id === user.id && t.type === 'trial_setup').length;
+                       }, 0);
 
                        return (
                          <TableRow key={coupon.id} className={coupon.discount_type === 'lifetime_free' ? 'bg-purple-50/30' : ''}>
