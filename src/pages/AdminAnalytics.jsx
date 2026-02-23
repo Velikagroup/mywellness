@@ -171,6 +171,15 @@ export default function AdminAnalytics() {
   const totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
   const trialUsersCount = stripeStats.trialing.count;
 
+  // Visite pagina quiz per lingua (da event_data.language)
+  const LANG_LABELS = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR' };
+  const quizVisitsByLang = quizActivities.reduce((acc, a) => {
+    const lang = a.event_data?.language || 'it';
+    acc[lang] = (acc[lang] || 0) + 1;
+    return acc;
+  }, {});
+  const totalQuizVisits = quizActivities.length;
+
   // Section 2: Funnel
   const totalRegistrations = users.length;
   const quizCompleted = users.filter(u => u.quiz_completed === true).length;
