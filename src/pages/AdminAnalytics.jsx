@@ -195,10 +195,18 @@ export default function AdminAnalytics() {
     });
   };
 
+  const extractLanguageFromPath = (url) => {
+    if (!url) return 'unknown';
+    // Estrae lingua dal path: /it, /en, /es, /pt, /de, /fr
+    const match = url.match(/^\/([a-z]{2})(?:\/|$)/);
+    return match ? match[1] : 'unknown';
+  };
+
   const filterByLanguage = (items) => {
     if (selectedLanguage === 'all') return items;
     return items.filter(item => {
-      const lang = item.event_data?.language || 'unknown';
+      const url = item.utm_params?.ref || item.event_data?.page || '';
+      const lang = extractLanguageFromPath(url);
       return lang === selectedLanguage;
     });
   };
