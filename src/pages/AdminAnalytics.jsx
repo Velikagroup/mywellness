@@ -688,7 +688,7 @@ export default function AdminAnalytics() {
 
           <Card className="water-glass-effect border-gray-200/30">
             <CardHeader>
-              <CardTitle>Crescita Revenue (ultimi 6 mesi)</CardTitle>
+              <CardTitle>Crescita Revenue — {revenueTrendLabel}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-80">
