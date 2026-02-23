@@ -182,6 +182,7 @@ export default function AdminCouponStats() {
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Usato da</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Data Uso</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Stato Utente</th>
+                    <th className="text-left py-3 px-4 font-semibold text-gray-700">Trial Avviati</th>
                     <th className="text-left py-3 px-4 font-semibold text-gray-700">Convertito?</th>
                   </tr>
                 </thead>
