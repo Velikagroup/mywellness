@@ -720,9 +720,11 @@ export default function AdminAnalytics() {
                 </div>
 
                 {/* STEP FINALE: Totale Abbonamenti Attivi */}
-                <div className="bg-green-50 rounded-xl border-2 border-green-400 p-6">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-green-900 text-lg">✅ Totale Abbonamenti Attivi</span>
+                <div className="bg-green-50 rounded-xl border-2 border-green-400 p-6 space-y-6">
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <span className="font-bold text-green-900 text-lg">✅ Totale Abbonamenti Attivi</span>
+                    </div>
                     <div className="flex gap-8 items-end">
                       <div className="text-right">
                         <div className="text-sm font-semibold text-blue-700 mb-1">Mensili</div>
@@ -740,6 +742,32 @@ export default function AdminAnalytics() {
                         <div className="text-sm font-semibold text-green-600 mt-2">€{totalSubscriptionRevenue.toFixed(2)}</div>
                       </div>
                     </div>
+                  </div>
+                  <div className="h-48">
+                    {totalActiveUsers > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={distributionData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={80}
+                            dataKey="value"
+                          >
+                            {distributionData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-gray-500">
+                        Nessun dato disponibile
+                      </div>
+                    )}
                   </div>
                 </div>
 
