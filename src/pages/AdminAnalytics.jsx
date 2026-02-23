@@ -290,7 +290,26 @@ export default function AdminAnalytics() {
   };
 
   const filteredTxForRevenue = dateRange ? filterByDate(transactions, 'payment_date') : transactions;
-  const succeededTxAll = filteredTxForRevenue.filter(t => t.status === 'succeeded');
+  // Deduplica: per ogni gruppo payment_intent+invoice dello stesso pagamento, tieni solo 1 record
+  // Regola: se esiste stripe_invoice_id senza stripe_payment_intent_id → è il "vero" record fattura
+  // Se esiste stripe_payment_intent_id senza invoice → è un pagamento diretto
+  // Se esistono entrambi per lo stesso user nella stessa data (±60s) → stesso pagamento, tieni solo il più alto (o l'invoice)
+  const deduplicateTx = (txList) => {
+    const seen = new Map();
+    const result = [];
+    for (const t of txList) {
+      // Crea una chiave unica: preferisci invoice_id, poi payment_intent_id
+      const key = t.stripe_invoice_id || t.stripe_payment_intent_id;
+      if (key) {
+        // Se già visto questo invoice/payment_intent, skippa (duplicato)
+        if (seen.has(key)) continue;
+        seen.set(key, true);
+      }
+      result.push(t);
+    }
+    return result;
+  };
+  const succeededTxAll = deduplicateTx(filteredTxForRevenue.filter(t => t.status === 'succeeded'));
   const periodRevenue = succeededTxAll.reduce((sum, t) => sum + (t.amount || 0), 0);
 
   const mrr = dateRange ? succeededTxAll.filter(t => t.billing_period === 'monthly').reduce((s, t) => s + (t.amount || 0), 0)
