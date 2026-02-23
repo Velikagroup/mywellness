@@ -41,6 +41,7 @@ export default function AdminAnalytics() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [activePreset, setActivePreset] = useState('all');
+  const [selectedLanguage, setSelectedLanguage] = useState('all');
 
   const DATE_PRESETS = [
     { label: 'Tutto', value: 'all' },
