@@ -325,7 +325,7 @@ export default function AdminAnalytics() {
 
   // Revenue trend — adattato al range selezionato
   const getRevenueTrend = () => {
-    const txSource = transactions.filter(t => t.payment_date && t.status === 'succeeded');
+    const txSource = deduplicateTx(transactions.filter(t => t.payment_date && t.status === 'succeeded'));
 
     // Se filtro ≤ 2 giorni → raggruppa per ora
     if (dateRange && (activePreset === '1d' || activePreset === 'yesterday')) {
