@@ -167,6 +167,32 @@ export default function AdminAnalytics() {
   }
 
   // ============================================
+  // DATE RANGE FILTER
+  // ============================================
+
+  const getDateRange = () => {
+    const now = new Date();
+    if (activePreset === '1d') return { from: startOfDay(now), to: endOfDay(now) };
+    if (activePreset === '7d') return { from: subDays(now, 7), to: now };
+    if (activePreset === '30d') return { from: subDays(now, 30), to: now };
+    if (activePreset === '3m') return { from: subMonths(now, 3), to: now };
+    if (activePreset === '6m') return { from: subMonths(now, 6), to: now };
+    if (activePreset === 'custom' && dateFrom && dateTo) return { from: new Date(dateFrom), to: endOfDay(new Date(dateTo)) };
+    return null; // all time
+  };
+
+  const dateRange = getDateRange();
+
+  const filterByDate = (items, dateField = 'created_date') => {
+    if (!dateRange) return items;
+    return items.filter(item => {
+      const d = item[dateField] ? new Date(item[dateField]) : null;
+      if (!d) return false;
+      return d >= dateRange.from && d <= dateRange.to;
+    });
+  };
+
+  // ============================================
   // CALCULATIONS
   // ============================================
 
