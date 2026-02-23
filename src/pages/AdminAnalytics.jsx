@@ -820,34 +820,7 @@ export default function AdminAnalytics() {
           <h2 className="text-xl font-bold text-gray-900 mb-4">Distribuzione Piani</h2>
           <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="h-64">
-                  {totalActiveUsers > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={distributionData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={100}
-                          dataKey="value"
-                        >
-                          {distributionData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <div className="h-full flex items-center justify-center text-gray-500">
-                      Nessun dato disponibile
-                    </div>
-                  )}
-                </div>
-
+              <div>
                 <div className="space-y-4">
                   <div className="p-6 bg-blue-50 rounded-xl border-2 border-blue-200">
                     <div className="flex items-center justify-between">
