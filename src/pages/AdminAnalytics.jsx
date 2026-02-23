@@ -328,20 +328,86 @@ export default function AdminAnalytics() {
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header */}
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between flex-wrap gap-4">
           <div>
             <h1 className="text-4xl font-black text-gray-900 mb-2">Analytics</h1>
             <p className="text-gray-600">Dashboard strategica per decisioni business</p>
           </div>
-          <Button
-            onClick={handleRefreshData}
-            disabled={isRefreshing}
-            className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
-          >
-            <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? 'Aggiornamento...' : 'Aggiorna Dati'}
-          </Button>
+          <div className="flex items-center gap-3 flex-wrap">
+            {/* Date presets */}
+            <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
+              {DATE_PRESETS.map(preset => (
+                <button
+                  key={preset.value}
+                  onClick={() => { setActivePreset(preset.value); setShowDatePicker(false); }}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+                    activePreset === preset.value
+                      ? 'bg-[#26847F] text-white'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              ))}
+              {/* Custom range toggle */}
+              <button
+                onClick={() => { setShowDatePicker(v => !v); setActivePreset('custom'); }}
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold flex items-center gap-1 transition-all ${
+                  activePreset === 'custom'
+                    ? 'bg-[#26847F] text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                <Calendar className="w-3.5 h-3.5" />
+                Personalizzato
+              </button>
+            </div>
+
+            <Button
+              onClick={handleRefreshData}
+              disabled={isRefreshing}
+              className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+              {isRefreshing ? 'Aggiornamento...' : 'Aggiorna Dati'}
+            </Button>
+          </div>
         </div>
+
+        {/* Custom date range picker */}
+        {showDatePicker && activePreset === 'custom' && (
+          <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
+            <span className="text-sm font-semibold text-gray-700">Dal</span>
+            <input
+              type="date"
+              value={dateFrom}
+              onChange={e => setDateFrom(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#26847F]"
+            />
+            <span className="text-sm font-semibold text-gray-700">Al</span>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={e => setDateTo(e.target.value)}
+              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#26847F]"
+            />
+            {dateFrom && dateTo && (
+              <span className="text-xs text-gray-500">
+                {format(new Date(dateFrom), 'd MMM yyyy', { locale: it })} → {format(new Date(dateTo), 'd MMM yyyy', { locale: it })}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Active filter badge */}
+        {(activePreset !== 'all') && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-[#26847F] bg-[#26847F]/10 px-3 py-1 rounded-full">
+              📅 Filtro attivo: {activePreset === 'custom' ? `${dateFrom || '?'} → ${dateTo || '?'}` : DATE_PRESETS.find(p => p.value === activePreset)?.label}
+            </span>
+            <button onClick={() => { setActivePreset('all'); setDateFrom(''); setDateTo(''); }} className="text-xs text-gray-400 hover:text-gray-600 underline">Rimuovi</button>
+          </div>
+        )}
 
         {/* SECTION 2: Funnel */}
         <div>
