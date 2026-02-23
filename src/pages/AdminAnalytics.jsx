@@ -318,16 +318,12 @@ export default function AdminAnalytics() {
   const uniqueSiteVisitors = anonymousCount + loggedInUserIds.size;
 
   const siteVisitsByLang = filterByDate(siteVisitActivities).reduce((acc, v) => {
-    const url = v.utm_params?.ref || v.event_data?.page || '';
-    const lang = extractLanguageFromPath(url);
-    acc[lang] = (acc[lang] || 0) + 1;
+    acc['all'] = (acc['all'] || 0) + 1;
     return acc;
   }, {});
 
   const quizVisitsByLang = filterByDate(quizActivities).reduce((acc, a) => {
-    const url = a.utm_params?.ref || a.event_data?.page || '';
-    const lang = extractLanguageFromPath(url);
-    acc[lang] = (acc[lang] || 0) + 1;
+    acc['all'] = (acc['all'] || 0) + 1;
     return acc;
   }, {});
   const totalQuizVisits = filteredQuizActivities.length;
