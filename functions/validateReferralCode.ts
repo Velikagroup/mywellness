@@ -28,20 +28,38 @@ Deno.serve(async (req) => {
             return Response.json({ valid: false, error: 'Codice scaduto' });
         }
 
-        // Get current user for marking coupon as used
-        const currentUser = await base44.auth.me();
-        let userId = currentUser?.id || null;
+        // Try to get current user, but mark coupon as used regardless
+        let currentUser = null;
+        try {
+            currentUser = await base44.auth.me();
+        } catch (e) {
+            // User not logged in yet - that's OK
+            console.log('⚠️ User not authenticated in quiz, but marking coupon as used anyway');
+        }
 
-        // Mark coupon as used NOW (when entered in quiz)
-        if (userId && !coupon.used_by) {
+        let userId = currentUser?.id || null;
+        const usedAtTimestamp = new Date().toISOString();
+
+        // Mark coupon as used NOW (when entered in quiz) - even if not logged in
+        if (!coupon.used_by) {
             try {
-                await base44.asServiceRole.entities.Coupon.update(coupon.id, {
-                    used_by: userId,
-                    used_at: new Date().toISOString()
-                });
-                console.log(`✅ Coupon ${upperCode} marked as used by ${userId} in quiz`);
+                const updatePayload = {
+                    used_at: usedAtTimestamp
+                };
+                
+                // If user is logged in, save their ID; otherwise use a placeholder
+                if (userId) {
+                    updatePayload.used_by = userId;
+                } else {
+                    // Mark with email or anonymous + timestamp
+                    updatePayload.used_by = `quiz_${usedAtTimestamp}`;
+                }
+
+                await base44.asServiceRole.entities.Coupon.update(coupon.id, updatePayload);
+                console.log(`✅ Coupon ${upperCode} marked as used on ${usedAtTimestamp}`);
             } catch (updateError) {
-                console.warn('⚠️ Could not mark coupon as used:', updateError.message);
+                console.error('❌ Could not mark coupon as used:', updateError.message);
+                return Response.json({ valid: false, error: 'Errore nell\'utilizzo del codice' });
             }
         }
 
@@ -60,7 +78,8 @@ Deno.serve(async (req) => {
             discount_type: coupon.discount_type,
             discount_value: coupon.discount_value || 0,
             influencer_id,
-            user_id: userId
+            user_id: userId,
+            used_at: usedAtTimestamp
         });
 
     } catch (error) {
