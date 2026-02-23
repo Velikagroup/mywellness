@@ -340,6 +340,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
       }
       window.history.pushState({}, '', `?${searchParams.toString()}`);
     } else {
+      // ✅ Track quiz completed (non-blocking - fire and forget)
       const trackQuizCompleted = async () => {
         try {
           const userIdentifier = user?.email || quizData.email || 'anonymous';
@@ -348,13 +349,12 @@ export default function QuizContainer({ translations, language = 'it' }) {
             event_type: 'quiz_completed',
             event_data: { total_steps: dynamicSteps.length }
           });
-
-
         } catch (error) {
-          console.error('Error tracking quiz completion:', error);
+          console.warn('⚠️ Quiz completion tracking failed (non-blocking):', error);
         }
       };
       
+      // Fire tracking in background, don't wait for it
       trackQuizCompleted();
       setIsCalculating(true);
 
