@@ -184,8 +184,13 @@ export default function AdminAnalytics() {
   // Site visits stats
   const LANG_LABELS_SITE = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR', unknown: '❓' };
   const totalSiteVisits = siteVisitActivities.length;
-  const uniqueSiteVisitors = new Set(siteVisitActivities.map(v => v.user_id)).size;
-  // Per il breakdown per lingua, usa i dati disponibili (quiz_started ha language in event_data)
+  // I visitatori anonimi hanno tutti user_id='anonymous' — usiamo l'ID record come proxy per contarli
+  // Gli utenti loggati hanno un user_id univoco
+  const anonymousCount = siteVisitActivities.filter(v => v.user_id === 'anonymous').length;
+  const loggedInUserIds = new Set(siteVisitActivities.filter(v => v.user_id !== 'anonymous').map(v => v.user_id));
+  const uniqueSiteVisitors = anonymousCount + loggedInUserIds.size; // ogni anonimo = 1 visita unica (no cookie tracking)
+
+  // Per il breakdown per lingua, usa i dati disponibili
   const siteVisitsByLang = siteVisitActivities.reduce((acc, v) => {
     const lang = v.event_data?.language || 'unknown';
     acc[lang] = (acc[lang] || 0) + 1;
@@ -198,7 +203,10 @@ export default function AdminAnalytics() {
     return acc;
   }, {});
   const totalQuizVisits = quizActivities.length;
-  const uniqueQuizVisitors = new Set(quizActivities.map(a => a.user_id)).size;
+  // Stessa logica per quiz: anonimi = 1 per record, loggati = per user_id
+  const quizAnonCount = quizActivities.filter(a => a.user_id === 'anonymous').length;
+  const quizLoggedIds = new Set(quizActivities.filter(a => a.user_id !== 'anonymous').map(a => a.user_id));
+  const uniqueQuizVisitors = quizAnonCount + quizLoggedIds.size;
 
   // Section 2: Funnel
   const totalRegistrations = users.length;
