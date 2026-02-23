@@ -465,7 +465,8 @@ export default function AdminCoupons() {
               )}
             </DialogContent>
           </Dialog>
-        </div>
+          </div>
+          </div>
 
         {/* Analytics Section */}
         <div className="space-y-6">
