@@ -353,6 +353,36 @@ export default function AdminAnalytics() {
             <CardContent className="p-8">
               <div className="space-y-4">
 
+                {/* STEP -1: Visite Sito Totali */}
+                <div className="bg-slate-50 rounded-xl border-2 border-slate-300 p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-bold text-slate-900 text-lg">Visite Sito Totali</span>
+                    <div className="flex gap-6 items-end">
+                      <div className="text-right">
+                        <div className="text-3xl font-black text-slate-900">{totalSiteVisits}</div>
+                        <div className="text-xs text-slate-500">visite totali</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-black text-slate-700">{uniqueSiteVisitors}</div>
+                        <div className="text-xs text-slate-500">visitatori unici</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(siteVisitsByLang).sort((a, b) => b[1] - a[1]).map(([lang, count]) => (
+                      <span key={lang} className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-semibold">
+                        {LANG_LABELS_SITE[lang] || lang}: {count}
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-xs text-slate-400 italic mt-2">⚠️ Tracking attivo dal 23/02/2026 — dati solo da questa data</p>
+                </div>
+
+                {/* Arrow down */}
+                <div className="flex justify-center">
+                  <div className="w-1 h-8 bg-gray-300"></div>
+                </div>
+
                 {/* STEP 0: Visite Quiz */}
                 <div className="bg-orange-50 rounded-xl border-2 border-orange-300 p-6">
                   <div className="flex items-center justify-between mb-3">
