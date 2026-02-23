@@ -710,9 +710,11 @@ export default function AdminCoupons() {
                          u.influencer_referral_code?.toUpperCase() === coupon.code.toUpperCase() || 
                          u.coupon_applied?.toUpperCase() === coupon.code.toUpperCase()
                        );
-                       const trialSetups = usersWithCoupon.reduce((count, user) => {
-                         return count + transactions.filter(t => t.user_id === user.id && (t.type === 'trial_setup' || t.status === 'succeeded')).length;
-                       }, 0);
+                       // Conta gli utenti che hanno il coupon E sono in trial (o hanno completato il quiz con trial attivo)
+                       const trialSetups = usersWithCoupon.filter(user => 
+                         user.subscription_status === 'trial' || 
+                         (user.quiz_completed && transactions.some(t => t.user_id === user.id && t.type === 'trial_setup'))
+                       ).length;
 
                        return (
                          <TableRow key={coupon.id} className={coupon.discount_type === 'lifetime_free' ? 'bg-purple-50/30' : ''}>
