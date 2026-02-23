@@ -555,7 +555,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
         bmr: Math.round(bmr),
         daily_calories: Math.round(dailyCalories),
         quiz_completed: true,
-        preferred_language: language
+        preferred_language: language,
+        coupon_applied: savedInfluencerCode || quizData.coupon_applied
       };
 
       // Add influencer referral data if present
