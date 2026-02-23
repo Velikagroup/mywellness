@@ -705,36 +705,48 @@ export default function AdminCoupons() {
                     <TableRow><TableCell colSpan={10} className="text-center">Caricamento...</TableCell></TableRow>
                   ) : coupons.length > 0 ? (
                     coupons.map((coupon) => {
-                      const stats = couponStats.couponUsage.find(u => u.code === coupon.code) || { uses: 0, revenue: 0, discounts: 0 };
-                      return (
-                        <TableRow key={coupon.id} className={coupon.discount_type === 'lifetime_free' ? 'bg-purple-50/30' : ''}>
-                          <TableCell className="font-medium font-mono text-sm">{coupon.code}</TableCell>
-                          <TableCell>
-                            {coupon.discount_type === 'lifetime_free' ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
-                                <Crown className="w-3 h-3" />
-                                Lifetime
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
-                                <Percent className="w-3 h-3" />
-                                Sconto
-                              </span>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {coupon.discount_type === 'lifetime_free' 
-                              ? <span className="font-semibold text-purple-700 uppercase">{coupon.assigned_plan || 'Premium'}</span>
-                              : `${coupon.discount_value}%`
-                            }
-                          </TableCell>
-                          <TableCell className="text-sm text-gray-600">
-                            {coupon.assigned_to_email || '-'}
-                          </TableCell>
-                          <TableCell className="text-sm">{coupon.expires_at ? format(new Date(coupon.expires_at), 'dd/MM/yyyy') : 'Mai'}</TableCell>
-                          <TableCell className="text-right font-semibold text-blue-600">
-                            {coupon.used_by ? '1' : '-'}
-                          </TableCell>
+                       const stats = couponStats.couponUsage.find(u => u.code === coupon.code) || { uses: 0, revenue: 0, discounts: 0 };
+                       const usedByUser = coupon.used_by ? users.find(u => u.id === coupon.used_by) : null;
+                       const trialSetups = usedByUser ? transactions.filter(t => t.user_id === usedByUser.id && t.type === 'trial_setup').length : 0;
+
+                       return (
+                         <TableRow key={coupon.id} className={coupon.discount_type === 'lifetime_free' ? 'bg-purple-50/30' : ''}>
+                           <TableCell className="font-medium font-mono text-sm">{coupon.code}</TableCell>
+                           <TableCell>
+                             {coupon.discount_type === 'lifetime_free' ? (
+                               <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                                 <Crown className="w-3 h-3" />
+                                 Lifetime
+                               </span>
+                             ) : (
+                               <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                                 <Percent className="w-3 h-3" />
+                                 Sconto
+                               </span>
+                             )}
+                           </TableCell>
+                           <TableCell>
+                             {coupon.discount_type === 'lifetime_free' 
+                               ? <span className="font-semibold text-purple-700 uppercase">{coupon.assigned_plan || 'Premium'}</span>
+                               : `${coupon.discount_value}%`
+                             }
+                           </TableCell>
+                           <TableCell className="text-sm text-gray-600">
+                             {coupon.assigned_to_email || '-'}
+                           </TableCell>
+                           <TableCell className="text-sm">{coupon.expires_at ? format(new Date(coupon.expires_at), 'dd/MM/yyyy') : 'Mai'}</TableCell>
+                           <TableCell className="text-center">
+                             {trialSetups > 0 ? (
+                               <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                                 {trialSetups}
+                               </span>
+                             ) : (
+                               <span className="text-gray-400">—</span>
+                             )}
+                           </TableCell>
+                           <TableCell className="text-right font-semibold text-blue-600">
+                             {coupon.used_by ? '1' : '-'}
+                           </TableCell>
                           <TableCell className="text-right font-semibold text-green-600">
                             {stats.revenue > 0 ? `€${stats.revenue.toFixed(2)}` : '-'}
                           </TableCell>
