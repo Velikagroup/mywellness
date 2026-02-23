@@ -1777,16 +1777,7 @@ export default function AdminMarketing() {
               </div>
             </div>
 
-            <div>
-              <Label htmlFor="influencer-referral-code">Codice Referral (per quiz)</Label>
-              <Input
-                id="influencer-referral-code"
-                value={newInfluencer.referral_code}
-                onChange={(e) => setNewInfluencer({ ...newInfluencer, referral_code: e.target.value.toUpperCase() })}
-                placeholder="MARIO2024"
-              />
-              <p className="text-xs text-gray-500 mt-1">Codice che gli utenti inseriscono nel quiz per essere tracciati</p>
-            </div>
+
 
             <div className="grid grid-cols-2 gap-4">
               <div>
