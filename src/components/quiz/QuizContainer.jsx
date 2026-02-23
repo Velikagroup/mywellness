@@ -277,10 +277,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
       const trackQuizStarted = async () => {
         try {
           const userIdentifier = user?.email || quizData.email || 'anonymous';
-          await base44.entities.UserActivity.create({
-            user_id: userIdentifier,
-            event_type: 'quiz_started',
-            event_data: { step: currentStep, language: language }
+          await base44.functions.invoke('trackQuizVisit', {
+            language: language,
+            user_identifier: userIdentifier
           });
           setQuizActivityTracked(true);
         } catch (error) {
