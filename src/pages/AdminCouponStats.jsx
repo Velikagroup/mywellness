@@ -35,12 +35,14 @@ export default function AdminCouponStats() {
 
   const loadData = async () => {
     try {
-      const [couponsData, usersData] = await Promise.all([
+      const [couponsData, usersData, txData] = await Promise.all([
         base44.entities.Coupon.list('-created_date', 500),
-        base44.entities.User.list('-created_date', 10000)
+        base44.entities.User.list('-created_date', 10000),
+        base44.functions.invoke('adminListTransactions')
       ]);
       setCoupons(couponsData);
       setUsers(usersData);
+      setTransactions(txData.data?.transactions || txData.transactions || []);
     } catch (error) {
       console.error('Error loading data:', error);
     }
