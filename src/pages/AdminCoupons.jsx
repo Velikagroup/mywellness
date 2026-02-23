@@ -36,6 +36,7 @@ export default function AdminCoupons() {
   const [selectedPeriod, setSelectedPeriod] = useState('all');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadCoupons = async () => {
     setIsLoading(true);
