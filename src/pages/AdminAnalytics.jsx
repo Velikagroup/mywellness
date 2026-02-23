@@ -334,7 +334,27 @@ export default function AdminAnalytics() {
             <CardContent className="p-8">
               <div className="space-y-4">
 
-                {/* STEP 1: Quiz */}
+                {/* STEP 0: Visite Quiz */}
+                <div className="bg-orange-50 rounded-xl border-2 border-orange-300 p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-bold text-orange-900 text-lg">Visite Pagina Quiz</span>
+                    <span className="font-black text-orange-900 text-3xl">{totalQuizVisits}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(quizVisitsByLang).sort((a, b) => b[1] - a[1]).map(([lang, count]) => (
+                      <span key={lang} className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-semibold">
+                        {LANG_LABELS[lang] || lang}: {count}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Arrow down */}
+                <div className="flex justify-center">
+                  <div className="w-1 h-8 bg-gray-300"></div>
+                </div>
+
+                {/* STEP 1: Quiz Completati */}
                 <div className="flex items-center gap-4">
                   <div className="flex-1 bg-indigo-50 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-indigo-300">
                     <span className="font-bold text-indigo-900 text-lg">Quiz Completati</span>
