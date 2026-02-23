@@ -19,6 +19,7 @@ import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, L
 export default function AdminCoupons() {
   const [coupons, setCoupons] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newCoupon, setNewCoupon] = useState({
     code: '',
