@@ -22,38 +22,29 @@ export default function ReferralCodeStep({ data, onDataChange, onNext, translati
     setValidationStatus(null);
 
     try {
-      // Check if coupon/referral code exists (coupons and referral codes are unified)
-      const coupons = await base44.entities.Coupon.filter({ 
-        code: code.toUpperCase(),
-        is_active: true
+      // Use backend function to validate coupon/referral code (bypasses RLS)
+      const response = await base44.functions.invoke('validateReferralCode', {
+        code: code.toUpperCase()
       });
+      const result = response.data || response;
 
-      // Also check influencer referral code for backwards compatibility
-      const influencers = await base44.entities.Influencer.filter({
-        referral_code: code.toUpperCase()
-      });
-
-      if (coupons.length > 0) {
+      if (result.valid) {
         setValidationStatus('valid');
-        const coupon = coupons[0];
 
         onDataChange({ 
           referral_code: code.toUpperCase(),
-          referral_source: 'coupon',
-          coupon_id: coupon.id
+          referral_source: 'coupon'
         });
         
         localStorage.setItem('referralCode', code.toUpperCase());
-        localStorage.setItem('couponId', coupon.id);
 
-        // Track influencer if this coupon matches an influencer referral_code
-        if (influencers.length > 0) {
-          const influencer = influencers[0];
+        // Track influencer event if linked
+        if (result.influencer_id) {
           localStorage.setItem('influencerReferralCode', code.toUpperCase());
-          localStorage.setItem('influencerId', influencer.id);
+          localStorage.setItem('influencerId', result.influencer_id);
           try {
             await base44.functions.invoke('trackInfluencerEvent', {
-              influencerId: influencer.id,
+              influencerId: result.influencer_id,
               eventType: 'quiz_confirmed'
             });
           } catch (e) {
@@ -61,35 +52,7 @@ export default function ReferralCodeStep({ data, onDataChange, onNext, translati
           }
         }
 
-        setTimeout(() => {
-          onNext();
-        }, 800);
-      } else if (influencers.length > 0) {
-        // Backwards compat: influencer code not yet a coupon → accept anyway
-        setValidationStatus('valid');
-        const influencer = influencers[0];
-        
-        onDataChange({ 
-          referral_code: code.toUpperCase(),
-          referral_source: 'influencer',
-          influencer_id: influencer.id
-        });
-        
-        localStorage.setItem('influencerReferralCode', code.toUpperCase());
-        localStorage.setItem('influencerId', influencer.id);
-        
-        try {
-          await base44.functions.invoke('trackInfluencerEvent', {
-            influencerId: influencer.id,
-            eventType: 'quiz_confirmed'
-          });
-        } catch (error) {
-          console.error('❌ Error tracking quiz confirmed:', error);
-        }
-        
-        setTimeout(() => {
-          onNext();
-        }, 800);
+        setTimeout(() => onNext(), 800);
       } else {
         setValidationStatus('invalid');
       }
