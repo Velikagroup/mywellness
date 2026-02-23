@@ -755,12 +755,13 @@ export default function AdminCoupons() {
                        );
 
                        // Conta gli utenti che hanno il coupon E hanno attivato trial
+                       // Solo trial_setup transactions o subscription_status === 'trial'
                        const trialSetups = usersWithCoupon.filter(user => 
                          user.subscription_status === 'trial' || 
                          transactions.some(t => 
                            t.user_id === user.id && 
-                           (t.type === 'trial_setup' || 
-                            (t.type === 'subscription_payment' && t.status === 'succeeded'))
+                           t.type === 'trial_setup' && 
+                           t.status === 'succeeded'
                          )
                        ).length;
 
