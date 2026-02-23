@@ -376,7 +376,7 @@ export default function AdminAnalytics() {
                       </span>
                     ))}
                   </div>
-                  <p className="text-xs text-slate-400 italic mt-2">⚠️ Tracking attivo dal 23/02/2026 — dati solo da questa data</p>
+                  <p className="text-xs text-slate-400 italic mt-2">📊 Somma di tutti gli eventi tracciati (quiz avviati, pricing, checkout, ecc.) dal Nov 2025</p>
                 </div>
 
                 {/* Arrow down */}
