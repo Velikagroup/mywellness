@@ -93,8 +93,36 @@ export default function AdminCoupons() {
   };
 
   useEffect(() => {
-    loadCoupons();
+   loadCoupons();
   }, []);
+
+  useEffect(() => {
+   // Debug live per email ricercata
+   if (searchEmail && users.length > 0) {
+     const user = users.find(u => u.email?.toLowerCase() === searchEmail.toLowerCase());
+     if (user) {
+       console.log('👤 UTENTE TROVATO:', user.email);
+       console.log('  - ID:', user.id);
+       console.log('  - influencer_referral_code:', user.influencer_referral_code);
+       console.log('  - coupon_applied:', user.coupon_applied);
+       console.log('  - subscription_status:', user.subscription_status);
+
+       const userTransactions = transactions.filter(t => t.user_id === user.id);
+       console.log('  - Tutte le transazioni:', userTransactions.length);
+       userTransactions.forEach(t => {
+         console.log('    📦 TX:', t.id, '| type:', t.type, '| status:', t.status, '| plan:', t.plan);
+       });
+
+       const trialTx = userTransactions.filter(t => t.type === 'trial_setup');
+       console.log('  - Trial_setup transactions:', trialTx.length);
+       trialTx.forEach(t => {
+         console.log('    🔔 Trial:', t.id, '| status:', t.status, '| payment_date:', t.payment_date);
+       });
+     } else {
+       console.log('❌ Nessun utente trovato con email:', searchEmail);
+     }
+   }
+  }, [searchEmail, users, transactions]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
