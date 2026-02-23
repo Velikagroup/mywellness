@@ -295,31 +295,66 @@ export default function AdminAnalytics() {
     : activeYearlyUsers * PRICE_MAP.yearly;
   const totalActiveRevenue = dateRange ? periodRevenue : (activeMonthlyUsers * PRICE_MAP.monthly + activeYearlyUsers * PRICE_MAP.yearly);
 
-  // Revenue trend (last 6 months)
+  // Revenue trend — adattato al range selezionato
   const getRevenueTrend = () => {
+    const txSource = transactions.filter(t => t.payment_date && t.status === 'succeeded');
+
+    // Se filtro ≤ 2 giorni → raggruppa per ora
+    if (dateRange && (activePreset === '1d' || activePreset === 'yesterday')) {
+      const trends = [];
+      for (let h = 0; h < 24; h++) {
+        const hourStart = new Date(dateRange.from);
+        hourStart.setHours(h, 0, 0, 0);
+        const hourEnd = new Date(dateRange.from);
+        hourEnd.setHours(h, 59, 59, 999);
+        const rev = txSource
+          .filter(t => { const d = new Date(t.payment_date); return d >= hourStart && d <= hourEnd; })
+          .reduce((s, t) => s + t.amount, 0);
+        trends.push({ month: `${h}:00`, revenue: parseFloat(rev.toFixed(2)) });
+      }
+      return trends;
+    }
+
+    // Se filtro ≤ 31 giorni → raggruppa per giorno
+    if (dateRange && (activePreset === '7d' || activePreset === '30d')) {
+      const days = activePreset === '7d' ? 7 : 30;
+      const trends = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const day = subDays(new Date(), i);
+        const dayStart = startOfDay(day);
+        const dayEnd = endOfDay(day);
+        const rev = txSource
+          .filter(t => { const d = new Date(t.payment_date); return d >= dayStart && d <= dayEnd; })
+          .reduce((s, t) => s + t.amount, 0);
+        trends.push({ month: format(day, 'd MMM', { locale: it }), revenue: parseFloat(rev.toFixed(2)) });
+      }
+      return trends;
+    }
+
+    // Default: raggruppa per mese (ultimi N mesi)
+    const months = dateRange && activePreset === '3m' ? 3 : dateRange && activePreset === '6m' ? 6 : 6;
     const trends = [];
-    for (let i = 5; i >= 0; i--) {
+    for (let i = months - 1; i >= 0; i--) {
       const monthDate = subMonths(new Date(), i);
       const monthStart = startOfMonth(monthDate);
       const monthEnd = endOfMonth(monthDate);
-
-      const monthRevenue = transactions
-        .filter(t => {
-          if (!t.payment_date || t.status !== 'succeeded') return false;
-          const tDate = parseISO(t.payment_date);
-          return isWithinInterval(tDate, { start: monthStart, end: monthEnd });
-        })
-        .reduce((sum, t) => sum + t.amount, 0);
-
-      trends.push({
-        month: format(monthDate, 'MMM', { locale: it }),
-        revenue: parseFloat(monthRevenue.toFixed(2))
-      });
+      const rev = txSource
+        .filter(t => { const d = parseISO(t.payment_date); return isWithinInterval(d, { start: monthStart, end: monthEnd }); })
+        .reduce((s, t) => s + t.amount, 0);
+      trends.push({ month: format(monthDate, 'MMM yy', { locale: it }), revenue: parseFloat(rev.toFixed(2)) });
     }
     return trends;
   };
 
   const revenueTrend = getRevenueTrend();
+  const revenueTrendLabel = activePreset === '1d' ? 'Oggi (per ora)'
+    : activePreset === 'yesterday' ? 'Ieri (per ora)'
+    : activePreset === '7d' ? 'Ultimi 7 giorni'
+    : activePreset === '30d' ? 'Ultimi 30 giorni'
+    : activePreset === '3m' ? 'Ultimi 3 mesi'
+    : activePreset === '6m' ? 'Ultimi 6 mesi'
+    : activePreset === 'custom' ? 'Periodo personalizzato'
+    : 'Ultimi 6 mesi';
 
   // Section 4: Distribution
   const distributionData = [
