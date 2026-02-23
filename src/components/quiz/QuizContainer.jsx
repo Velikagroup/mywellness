@@ -273,7 +273,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
   };
 
   useEffect(() => {
-    if (!isLoadingUser && !quizActivityTracked && currentStep === 1) {
+    if (!isLoadingUser && !quizActivityTracked) {
       const trackQuizStarted = async () => {
         try {
           const userIdentifier = user?.email || quizData.email || 'anonymous';
@@ -290,7 +290,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
       
       trackQuizStarted();
     }
-  }, [currentStep, isLoadingUser, quizActivityTracked, user, quizData.email, language]);
+  }, [isLoadingUser, quizActivityTracked, language]);
 
   // dynamicSteps calcolato in modo derivato — nessuno stato separato
   const dynamicSteps = React.useMemo(
