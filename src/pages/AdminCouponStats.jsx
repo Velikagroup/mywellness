@@ -72,10 +72,16 @@ export default function AdminCouponStats() {
       (usedByUser.subscription_status === 'active' || 
        usedByUser.subscription_status === 'trial');
 
+    // Count trial setups initiated by this user
+    const trialSetups = usedByUser ? transactions.filter(t => 
+      t.user_id === usedByUser.id && t.type === 'trial_setup'
+    ).length : 0;
+
     return {
       ...coupon,
       usedByUser,
-      hasConverted: !!hasConverted
+      hasConverted: !!hasConverted,
+      trialSetups
     };
   });
 
