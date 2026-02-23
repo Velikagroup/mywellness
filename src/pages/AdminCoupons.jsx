@@ -724,10 +724,15 @@ export default function AdminCoupons() {
 
                        // Debug log per DALILA
                        if (coupon.code === 'DALILA') {
-                         console.log('🔍 DALILA Debug:', {
-                           usersWithCouponViaField: usersWithCoupon.map(u => ({ email: u.email, influencer_referral_code: u.influencer_referral_code, coupon_applied: u.coupon_applied })),
-                           allTrialTransactions: transactions.filter(t => t.type === 'subscription_payment' && t.status === 'succeeded').map(t => ({ user_id: t.user_id, type: t.type, plan: t.plan }))
+                         console.log('🔍 DALILA - Utenti trovati con coupon:', usersWithCoupon.length);
+                         usersWithCoupon.forEach(u => {
+                           console.log('  - Email:', u.email, '| influencer_referral_code:', u.influencer_referral_code, '| coupon_applied:', u.coupon_applied);
                          });
+                         console.log('🔍 DALILA - Transazioni subscription_payment:', transactions.filter(t => t.type === 'subscription_payment' && t.status === 'succeeded').length);
+                         transactions.filter(t => t.type === 'subscription_payment' && t.status === 'succeeded').forEach(t => {
+                           console.log('  - user_id:', t.user_id, '| plan:', t.plan, '| status:', t.status);
+                         });
+                         console.log('🔍 DALILA - Trial Avviati calcolati:', trialSetups);
                        }
 
                        // Conta gli utenti che hanno il coupon E hanno attivato trial
