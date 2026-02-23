@@ -200,8 +200,7 @@ export default function AdminAnalytics() {
   const filterByLanguage = (items) => {
     if (selectedLanguage === 'all') return items;
     return items.filter(item => {
-      const url = item.utm_params?.ref || item.event_data?.page || '';
-      const lang = extractLanguageFromPath(url);
+      const lang = item.event_data?.language || 'unknown';
       return lang === selectedLanguage;
     });
   };
