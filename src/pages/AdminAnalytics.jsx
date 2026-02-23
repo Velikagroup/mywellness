@@ -754,41 +754,6 @@ export default function AdminAnalytics() {
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-4">Revenue Dashboard</h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <DollarSign className="w-7 h-7 text-blue-600" />
-                </div>
-                <p className="text-sm font-semibold text-gray-700 mb-1">MRR</p>
-                <p className="text-4xl font-black text-blue-900">€{mrr.toFixed(2)}</p>
-                <p className="text-xs text-gray-500 mt-2">{dateRange ? `Fatturato mensile — ${revenueTrendLabel}` : 'Monthly Recurring Revenue'}</p>
-              </CardContent>
-            </Card>
-
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <TrendingUp className="w-7 h-7 text-green-600" />
-                </div>
-                <p className="text-sm font-semibold text-gray-700 mb-1">ARR</p>
-                <p className="text-4xl font-black text-green-900">€{arr.toFixed(2)}</p>
-                <p className="text-xs text-gray-500 mt-2">{dateRange ? `Fatturato annuale — ${revenueTrendLabel}` : 'Annual Recurring Revenue'}</p>
-              </CardContent>
-            </Card>
-
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <Activity className="w-7 h-7 text-purple-600" />
-                </div>
-                <p className="text-sm font-semibold text-gray-700 mb-1">Revenue Totale</p>
-                <p className="text-4xl font-black text-purple-900">€{totalActiveRevenue.toFixed(2)}</p>
-                <p className="text-xs text-gray-500 mt-2">{dateRange ? `Totale incassato — ${revenueTrendLabel}` : 'Mensile + Annuale'}</p>
-              </CardContent>
-            </Card>
-          </div>
-
           <Card className="water-glass-effect border-gray-200/30">
             <CardHeader>
               <CardTitle>Crescita Revenue — {revenueTrendLabel}</CardTitle>
