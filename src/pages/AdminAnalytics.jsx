@@ -251,7 +251,7 @@ export default function AdminAnalytics() {
     // Filtra le transazioni per data e calcola i nuovi abbonamenti nel periodo
     // DEDUPLICATION: conta utenti unici, non transazioni (evita doppi per payment_intent + invoice)
     const filteredTx = filterByDate(transactions, 'payment_date');
-    const succeededTx = filteredTx.filter(t => t.status === 'succeeded' && t.amount > 0);
+    const succeededTx = deduplicateTx(filteredTx.filter(t => t.status === 'succeeded' && t.amount > 0));
     
     const monthlyTx = succeededTx.filter(t => t.billing_period === 'monthly');
     const yearlyTx = succeededTx.filter(t => t.billing_period === 'yearly');
@@ -262,7 +262,7 @@ export default function AdminAnalytics() {
     activeYearlyUsers = uniqueYearlyUsers.size;
     totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
     
-    // Calcola ricavi per piano
+    // Calcola ricavi per piano (su transazioni deduplicate)
     monthlyRevenue = monthlyTx.reduce((sum, t) => sum + (t.amount || 0), 0);
     yearlyRevenue = yearlyTx.reduce((sum, t) => sum + (t.amount || 0), 0);
     totalSubscriptionRevenue = monthlyRevenue + yearlyRevenue;
