@@ -195,6 +195,35 @@ export default function AdminAnalytics() {
   };
 
   // ============================================
+  // HELPER FUNCTIONS
+  // ============================================
+  
+  const deduplicateTx = (txList) => {
+    // Un pagamento Stripe genera SEMPRE 2 record: uno con payment_intent_id e uno con invoice_id.
+    // Strategia: per ogni user_id + giorno (UTC), tieni solo il record con stripe_invoice_id.
+    // Se non c'è invoice, tieni il payment_intent. Importo non usato come chiave perché potrebbe differire di 1 centesimo.
+    const groups = new Map();
+    for (const t of txList) {
+      // Usa solo i primi 10 caratteri della data (YYYY-MM-DD) come giorno
+      const day = t.payment_date ? t.payment_date.substring(0, 10) : 'nodate';
+      // NON includere l'importo nella chiave — stesso user stesso giorno = stesso pagamento
+      const key = `${t.user_id}__${day}`;
+      if (!groups.has(key)) {
+        groups.set(key, t);
+      } else {
+        const existing = groups.get(key);
+        // Preferisci il record con stripe_invoice_id (più affidabile)
+        if (t.stripe_invoice_id && !existing.stripe_invoice_id) {
+          groups.set(key, t);
+        }
+      }
+    }
+    const result = Array.from(groups.values());
+    console.log(`🧹 Deduplicazione: ${txList.length} tx → ${result.length} tx uniche`);
+    return result;
+  };
+
+  // ============================================
   // CALCULATIONS
   // ============================================
 
