@@ -371,10 +371,19 @@ export default function AdminCoupons() {
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestione Coupon</h1>
             <p className="text-gray-600">Crea coupon standard o lifetime gratuiti</p>
+            <div className="mt-4 flex gap-2">
+              <Input 
+                placeholder="Cerca email..." 
+                value={searchEmail} 
+                onChange={(e) => setSearchEmail(e.target.value)}
+                className="w-60 h-10"
+              />
+              <Button onClick={() => setSearchEmail('')} variant="outline">Cancella</Button>
+            </div>
           </div>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
