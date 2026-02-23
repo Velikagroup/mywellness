@@ -1332,28 +1332,13 @@ export default function AdminMarketing() {
                         </div>
                       </div>
 
-                      {/* Referral Code Display */}
+                      {/* Codice Referral/Coupon */}
                       {influencer.referral_code && (
-                      <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
-                        <div className="mb-3">
-                          <p className="text-xs text-indigo-600 font-semibold mb-2">Codice Referral Quiz</p>
-                          <div className="grid grid-cols-3 gap-2 mb-3">
-                            <div className="bg-orange-100 rounded-lg p-2 text-center border border-orange-300">
-                              <p className="text-xs text-orange-700 mb-1">Quiz</p>
-                              <p className="text-xl font-black text-orange-900">{influencer.referral_code_confirmed_count || 0}</p>
-                            </div>
-                            <div className="bg-blue-100 rounded-lg p-2 text-center border border-blue-300">
-                              <p className="text-xs text-blue-700 mb-1">Accessi</p>
-                              <p className="text-xl font-black text-blue-900">{influencer.email_registered_count || 0}</p>
-                            </div>
-                            <div className="bg-green-100 rounded-lg p-2 text-center border border-green-300">
-                              <p className="text-xs text-green-700 mb-1">Acquisti</p>
-                              <p className="text-xl font-black text-green-900">{influencer.subscription_activated_count || 0}</p>
-                            </div>
+                        <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-3 border border-indigo-200 flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-indigo-600 font-semibold mb-1">Codice Referral/Coupon</p>
+                            <code className="text-lg font-bold text-indigo-900">{influencer.referral_code}</code>
                           </div>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <code className="text-lg font-bold text-indigo-900">{influencer.referral_code}</code>
                           <Button
                             onClick={() => {
                               navigator.clipboard.writeText(influencer.referral_code);
@@ -1372,7 +1357,6 @@ export default function AdminMarketing() {
                             Copia
                           </Button>
                         </div>
-                      </div>
                       )}
 
                       {/* Actions */}
