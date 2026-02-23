@@ -295,24 +295,28 @@ export default function AdminAnalytics() {
   // Se esiste stripe_payment_intent_id senza invoice → è un pagamento diretto
   // Se esistono entrambi per lo stesso user nella stessa data (±60s) → stesso pagamento, tieni solo il più alto (o l'invoice)
   const deduplicateTx = (txList) => {
-    // Un pagamento Stripe genera SEMPRE 2 record: uno con payment_intent_id (da charge) e uno con invoice_id.
-    // Strategia: per ogni user_id + giorno + importo, tieni solo il record con invoice_id (più affidabile).
-    // Se non c'è invoice_id, tieni il payment_intent.
+    // Un pagamento Stripe genera SEMPRE 2 record: uno con payment_intent_id e uno con invoice_id.
+    // Strategia: per ogni user_id + giorno (UTC), tieni solo il record con stripe_invoice_id.
+    // Se non c'è invoice, tieni il payment_intent. Importo non usato come chiave perché potrebbe differire di 1 centesimo.
     const groups = new Map();
     for (const t of txList) {
+      // Usa solo i primi 10 caratteri della data (YYYY-MM-DD) come giorno
       const day = t.payment_date ? t.payment_date.substring(0, 10) : 'nodate';
-      const key = `${t.user_id}__${day}__${t.amount}`;
+      // NON includere l'importo nella chiave — stesso user stesso giorno = stesso pagamento
+      const key = `${t.user_id}__${day}`;
       if (!groups.has(key)) {
         groups.set(key, t);
       } else {
         const existing = groups.get(key);
-        // Preferisci il record con stripe_invoice_id (più affidabile, evita duplicati)
+        // Preferisci il record con stripe_invoice_id (più affidabile)
         if (t.stripe_invoice_id && !existing.stripe_invoice_id) {
           groups.set(key, t);
         }
       }
     }
-    return Array.from(groups.values());
+    const result = Array.from(groups.values());
+    console.log(`🧹 Deduplicazione: ${txList.length} tx → ${result.length} tx uniche`);
+    return result;
   };
   const succeededTxAll = deduplicateTx(filteredTxForRevenue.filter(t => t.status === 'succeeded'));
   const periodRevenue = succeededTxAll.reduce((sum, t) => sum + (t.amount || 0), 0);
