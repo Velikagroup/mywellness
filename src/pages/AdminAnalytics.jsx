@@ -185,8 +185,9 @@ export default function AdminAnalytics() {
   const LANG_LABELS_SITE = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR', unknown: '❓' };
   const totalSiteVisits = siteVisitActivities.length;
   const uniqueSiteVisitors = new Set(siteVisitActivities.map(v => v.user_id)).size;
+  // Per il breakdown per lingua, usa i dati disponibili (quiz_started ha language in event_data)
   const siteVisitsByLang = siteVisitActivities.reduce((acc, v) => {
-    const lang = v.event_data?.language || 'it'; // default 'it' for old records (pricing_visited)
+    const lang = v.event_data?.language || 'unknown';
     acc[lang] = (acc[lang] || 0) + 1;
     return acc;
   }, {});
