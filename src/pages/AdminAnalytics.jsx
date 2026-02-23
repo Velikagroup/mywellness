@@ -780,6 +780,20 @@ export default function AdminAnalytics() {
                     <span className="font-bold text-indigo-900 text-base">📊 Totali Mai Attivati (Storico Completo)</span>
                     <span className="text-2xl font-black text-indigo-900">{usersWithAnySubscription}</span>
                   </div>
+                  
+                  {/* Suddivisione Mensili vs Annuali */}
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-blue-100 rounded-lg p-4 text-center border-2 border-blue-300">
+                      <div className="text-sm font-semibold text-blue-700 mb-2">Mensili (€9.99/mese)</div>
+                      <div className="text-3xl font-black text-blue-900">{monthlyEverActivated}</div>
+                    </div>
+                    <div className="bg-purple-100 rounded-lg p-4 text-center border-2 border-purple-300">
+                      <div className="text-sm font-semibold text-purple-700 mb-2">Annuali (€49.99/anno)</div>
+                      <div className="text-3xl font-black text-purple-900">{yearlyEverActivated}</div>
+                    </div>
+                  </div>
+
+                  {/* Suddivisione per Status */}
                   <div className="grid grid-cols-4 gap-4">
                     <div className="bg-white rounded-lg p-4 text-center border-2 border-green-200">
                       <div className="text-sm font-semibold text-green-700 mb-2">Active</div>
