@@ -720,14 +720,17 @@ export default function AdminAnalytics() {
                       <div className="text-right">
                         <div className="text-sm font-semibold text-blue-700 mb-1">Mensili</div>
                         <div className="text-3xl font-black text-blue-900">{activeMonthlyUsers}</div>
+                        <div className="text-sm font-semibold text-blue-600 mt-2">€{monthlyRevenue.toFixed(2)}</div>
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-semibold text-teal-700 mb-1">Annuali</div>
                         <div className="text-3xl font-black text-teal-900">{activeYearlyUsers}</div>
+                        <div className="text-sm font-semibold text-teal-600 mt-2">€{yearlyRevenue.toFixed(2)}</div>
                       </div>
                       <div className="text-right border-l-2 border-green-300 pl-8">
                         <div className="text-sm font-semibold text-green-700 mb-1">Totale</div>
                         <div className="text-4xl font-black text-green-900">{totalActiveUsers}</div>
+                        <div className="text-sm font-semibold text-green-600 mt-2">€{totalSubscriptionRevenue.toFixed(2)}</div>
                       </div>
                     </div>
                   </div>
