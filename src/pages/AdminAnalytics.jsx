@@ -335,11 +335,6 @@ export default function AdminAnalytics() {
     : 0;
 
   // Section 3: Revenue
-  const PRICE_MAP = {
-    monthly: 9.99,
-    yearly: 49.99
-  };
-
   const filteredTxForRevenue = dateRange ? filterByDate(transactions, 'payment_date') : transactions;
   const succeededTxAll = deduplicateTx(filteredTxForRevenue.filter(t => t.status === 'succeeded'));
   const periodRevenue = succeededTxAll.reduce((sum, t) => sum + (t.amount || 0), 0);
