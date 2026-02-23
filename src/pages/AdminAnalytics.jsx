@@ -764,55 +764,76 @@ export default function AdminAnalytics() {
                   <div className="w-1 h-8 bg-gray-300"></div>
                 </div>
 
-                {/* STEP FINALE: Totale Abbonamenti Attivi */}
-                <div className="bg-green-50 rounded-xl border-2 border-green-400 p-8">
-                  <div className="flex items-center justify-between mb-8">
-                    <span className="font-bold text-green-900 text-lg">✅ Totale Abbonamenti Attivi</span>
+                {/* STEP FINALE: Due box — Totali Mai Attivati vs Attualmente Attivi */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* SINISTRA: Totali Mai Attivati (storico completo) */}
+                  <div className="bg-indigo-50 rounded-xl border-2 border-indigo-400 p-8">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="font-bold text-indigo-900 text-base">📊 Totali Mai Attivati</span>
+                      <span className="text-xs text-indigo-600">(storico completo)</span>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-5xl font-black text-indigo-900 mb-3">{usersWithAnySubscription}</div>
+                      <p className="text-sm text-indigo-700">utenti che hanno MAI avuto un abbonamento (inclusi cancellati/scaduti)</p>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="flex gap-8 items-end">
+
+                  {/* DESTRA: Attualmente Attivi (snapshot live) */}
+                  <div className="bg-green-50 rounded-xl border-2 border-green-400 p-8">
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="font-bold text-green-900 text-base">✅ Attualmente Attivi</span>
+                      <span className="text-xs text-green-600">(snapshot live)</span>
+                    </div>
+                    <div className="flex gap-6 items-end">
                       <div className="text-right flex-1">
                         <div className="text-sm font-semibold text-blue-700 mb-2">Mensili</div>
-                        <div className="text-4xl font-black text-blue-900">{activeMonthlyUsers}</div>
-                        <div className="text-sm font-semibold text-blue-600 mt-3">€{monthlyRevenue.toFixed(2)}</div>
+                        <div className="text-3xl font-black text-blue-900">{activeMonthlyUsers}</div>
+                        <div className="text-xs font-semibold text-blue-600 mt-2">€{monthlyRevenue.toFixed(2)}</div>
                       </div>
                       <div className="text-right flex-1">
                         <div className="text-sm font-semibold text-teal-700 mb-2">Annuali</div>
-                        <div className="text-4xl font-black text-teal-900">{activeYearlyUsers}</div>
-                        <div className="text-sm font-semibold text-teal-600 mt-3">€{yearlyRevenue.toFixed(2)}</div>
+                        <div className="text-3xl font-black text-teal-900">{activeYearlyUsers}</div>
+                        <div className="text-xs font-semibold text-teal-600 mt-2">€{yearlyRevenue.toFixed(2)}</div>
                       </div>
-                      <div className="text-right flex-1 border-l-2 border-green-300 pl-8">
+                      <div className="text-right flex-1 border-l-2 border-green-300 pl-4">
                         <div className="text-sm font-semibold text-green-700 mb-2">Totale</div>
-                        <div className="text-4xl font-black text-green-900">{totalActiveUsers}</div>
-                        <div className="text-sm font-semibold text-green-600 mt-3">€{totalSubscriptionRevenue.toFixed(2)}</div>
+                        <div className="text-3xl font-black text-green-900">{totalActiveUsers}</div>
+                        <div className="text-xs font-semibold text-green-600 mt-2">€{totalSubscriptionRevenue.toFixed(2)}</div>
                       </div>
                     </div>
-                    <div className="h-64">
-                      {totalActiveUsers > 0 ? (
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={distributionData}
-                              cx="50%"
-                              cy="50%"
-                              labelLine={false}
-                              label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                              outerRadius={90}
-                              dataKey="value"
-                            >
-                              {distributionData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.color} />
-                              ))}
-                            </Pie>
-                            <Tooltip />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      ) : (
-                        <div className="h-full flex items-center justify-center text-gray-500">
-                          Nessun dato disponibile
-                        </div>
-                      )}
-                    </div>
+                  </div>
+                </div>
+
+                {/* Pie chart sotto — solo per abbonamenti attivi */}
+                <div className="bg-gray-50 rounded-xl border-2 border-gray-200 p-6">
+                  <div className="text-center mb-4">
+                    <span className="font-bold text-gray-900 text-sm">Distribuzione Abbonamenti Attivi</span>
+                  </div>
+                  <div className="h-64">
+                    {totalActiveUsers > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={distributionData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={90}
+                            dataKey="value"
+                          >
+                            {distributionData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="h-full flex items-center justify-center text-gray-500">
+                        Nessun dato disponibile
+                      </div>
+                    )}
                   </div>
                 </div>
 
