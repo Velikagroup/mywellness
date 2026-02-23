@@ -713,14 +713,15 @@ export default function AdminCoupons() {
                          u.coupon_applied?.toUpperCase() === coupon.code.toUpperCase()
                        );
 
-                       // AGGIUNTIVO: Cerca anche transazioni di subscription_payment che potrebbero essere trial
-                       const usersWithTrialTransaction = users.filter(user => 
+                       // Conta gli utenti che hanno il coupon E hanno attivato trial
+                       const trialSetups = usersWithCoupon.filter(user => 
+                         user.subscription_status === 'trial' || 
                          transactions.some(t => 
                            t.user_id === user.id && 
-                           t.type === 'subscription_payment' && 
-                           t.status === 'succeeded'
+                           (t.type === 'trial_setup' || 
+                            (t.type === 'subscription_payment' && t.status === 'succeeded'))
                          )
-                       );
+                       ).length;
 
                        // Debug log per DALILA
                        if (coupon.code === 'DALILA') {
@@ -734,16 +735,6 @@ export default function AdminCoupons() {
                          });
                          console.log('🔍 DALILA - Trial Avviati calcolati:', trialSetups);
                        }
-
-                       // Conta gli utenti che hanno il coupon E hanno attivato trial
-                       const trialSetups = usersWithCoupon.filter(user => 
-                         user.subscription_status === 'trial' || 
-                         transactions.some(t => 
-                           t.user_id === user.id && 
-                           (t.type === 'trial_setup' || 
-                            (t.type === 'subscription_payment' && t.status === 'succeeded'))
-                         )
-                       ).length;
 
                        return (
                          <TableRow key={coupon.id} className={coupon.discount_type === 'lifetime_free' ? 'bg-purple-50/30' : ''}>
