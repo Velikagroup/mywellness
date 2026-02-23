@@ -177,26 +177,6 @@ Deno.serve(async (req) => {
 
                     console.log(`✅ Transaction recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
 
-                    // 🎁 MARK COUPON AS USED
-                    const appliedCouponCode = user.applied_coupon_code || metadata.coupon_code;
-                    if (appliedCouponCode) {
-                        try {
-                            const coupons = await base44.asServiceRole.entities.Coupon.filter({
-                                code: appliedCouponCode.toUpperCase()
-                            });
-                            if (coupons.length > 0) {
-                                const coupon = coupons[0];
-                                await base44.asServiceRole.entities.Coupon.update(coupon.id, {
-                                    used_by: user.id,
-                                    used_at: new Date().toISOString()
-                                });
-                                console.log(`✅ Coupon ${appliedCouponCode} marked as used by ${user.id}`);
-                            }
-                        } catch (couponError) {
-                            console.warn('⚠️ Could not mark coupon as used:', couponError.message);
-                        }
-                    }
-
                     // 📊 Track Meta Conversions API: Purchase
                     try {
                         const userLang = user.preferred_language || 'it';
