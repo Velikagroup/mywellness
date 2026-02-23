@@ -217,8 +217,11 @@ export default function AdminAnalytics() {
     const filteredTx = filterByDate(transactions, 'payment_date');
     const succeededTx = filteredTx.filter(t => t.status === 'succeeded' && t.amount > 0);
     
-    const uniqueMonthlyUsers = new Set(succeededTx.filter(t => t.billing_period === 'monthly').map(t => t.user_id));
-    const uniqueYearlyUsers = new Set(succeededTx.filter(t => t.billing_period === 'yearly' || t.type === 'trial_setup').map(t => t.user_id));
+    const monthlyTx = succeededTx.filter(t => t.billing_period === 'monthly');
+    const yearlyTx = succeededTx.filter(t => t.billing_period === 'yearly');
+    
+    const uniqueMonthlyUsers = new Set(monthlyTx.map(t => t.user_id));
+    const uniqueYearlyUsers = new Set(yearlyTx.map(t => t.user_id));
     activeMonthlyUsers = uniqueMonthlyUsers.size;
     activeYearlyUsers = uniqueYearlyUsers.size;
     totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
