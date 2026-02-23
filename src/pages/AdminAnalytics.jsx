@@ -158,33 +158,11 @@ export default function AdminAnalytics() {
     plan: u.subscription_plan
   })));
 
-  const activeMonthlyUsers = users.filter(u => {
-    const isActive = u.subscription_status === 'active';
-    const isMonthly = u.billing_period === 'monthly' || 
-                      u.subscription_plan === 'monthly' ||
-                      u.billing_period === 'month' ||
-                      u.subscription_plan === 'month';
-    return isActive && isMonthly;
-  }).length;
-
-  const activeYearlyUsers = users.filter(u => {
-    const isActive = u.subscription_status === 'active';
-    const isYearly = u.billing_period === 'yearly' || 
-                     u.subscription_plan === 'yearly' ||
-                     u.billing_period === 'annual' ||
-                     u.subscription_plan === 'annual' ||
-                     u.billing_period === 'year' ||
-                     u.subscription_plan === 'year';
-    return isActive && isYearly;
-  }).length;
-
-  console.log('📊 Active monthly:', activeMonthlyUsers);
-  console.log('📊 Active yearly:', activeYearlyUsers);
-
+  // Dati reali da Stripe (source of truth)
+  const activeMonthlyUsers = stripeStats.monthly.count;
+  const activeYearlyUsers = stripeStats.yearly.count;
   const totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
-
-  // Trial REALI da Stripe (source of truth)
-  const trialUsersCount = stripeTrialUsers.length;
+  const trialUsersCount = stripeStats.trialing.count;
 
   // Section 2: Funnel
   const totalRegistrations = users.length;
