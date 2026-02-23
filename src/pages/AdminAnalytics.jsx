@@ -241,6 +241,13 @@ export default function AdminAnalytics() {
     activeYearlyUsers = stripeStats.yearly.count;
     totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
     trialUsersCount = stripeStats.trialing.count;
+    
+    // Ricavi da tutte le transazioni (senza filtro data)
+    const allMonthlyTx = deduplicateTx(transactions.filter(t => t.status === 'succeeded' && t.amount > 0 && t.billing_period === 'monthly'));
+    const allYearlyTx = deduplicateTx(transactions.filter(t => t.status === 'succeeded' && t.amount > 0 && t.billing_period === 'yearly'));
+    monthlyRevenue = allMonthlyTx.reduce((sum, t) => sum + (t.amount || 0), 0);
+    yearlyRevenue = allYearlyTx.reduce((sum, t) => sum + (t.amount || 0), 0);
+    totalSubscriptionRevenue = monthlyRevenue + yearlyRevenue;
   }
 
   // Visite pagina quiz per lingua (da event_data.language)
