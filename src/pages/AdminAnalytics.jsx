@@ -685,7 +685,7 @@ export default function AdminAnalytics() {
                 </div>
                 <p className="text-sm font-semibold text-gray-700 mb-1">Revenue Totale</p>
                 <p className="text-4xl font-black text-purple-900">€{totalActiveRevenue.toFixed(2)}</p>
-                <p className="text-xs text-gray-500 mt-2">Mensile + Annuale</p>
+                <p className="text-xs text-gray-500 mt-2">{dateRange ? `Totale incassato — ${revenueTrendLabel}` : 'Mensile + Annuale'}</p>
               </CardContent>
             </Card>
           </div>
