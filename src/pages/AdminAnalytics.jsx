@@ -216,6 +216,15 @@ export default function AdminAnalytics() {
     // DEDUPLICATION: conta utenti unici, non transazioni (evita doppi per payment_intent + invoice)
     const filteredTx = filterByDate(transactions, 'payment_date');
     const succeededTx = filteredTx.filter(t => t.status === 'succeeded');
+    
+    // DEBUG
+    if (activePreset === '1d') {
+      console.log('🔍 DEBUG Oggi - filteredTx:', filteredTx.length);
+      console.log('🔍 DEBUG Oggi - succeededTx:', succeededTx.length);
+      console.log('🔍 DEBUG Oggi - monthly:', succeededTx.filter(t => t.billing_period === 'monthly'));
+      console.log('🔍 DEBUG Oggi - yearly:', succeededTx.filter(t => t.billing_period === 'yearly' || t.type === 'trial_setup'));
+    }
+    
     const uniqueMonthlyUsers = new Set(succeededTx.filter(t => t.billing_period === 'monthly').map(t => t.user_id));
     const uniqueYearlyUsers = new Set(succeededTx.filter(t => t.billing_period === 'yearly' || t.type === 'trial_setup').map(t => t.user_id));
     activeMonthlyUsers = uniqueMonthlyUsers.size;
