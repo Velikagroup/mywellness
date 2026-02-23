@@ -174,6 +174,7 @@ export default function AdminAnalytics() {
   const getDateRange = () => {
     const now = new Date();
     if (activePreset === '1d') return { from: startOfDay(now), to: endOfDay(now) };
+    if (activePreset === 'yesterday') { const y = subDays(now, 1); return { from: startOfDay(y), to: endOfDay(y) }; }
     if (activePreset === '7d') return { from: subDays(now, 7), to: now };
     if (activePreset === '30d') return { from: subDays(now, 30), to: now };
     if (activePreset === '3m') return { from: subMonths(now, 3), to: now };
