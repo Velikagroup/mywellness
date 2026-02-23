@@ -87,6 +87,12 @@ export default function AdminAnalytics() {
             const stripeData = stripeResponse.data || stripeResponse;
             if (stripeData.success) setStripeStats(stripeData);
           } catch (e) { console.error('Error loading Stripe stats:', e); }
+        })(),
+        (async () => {
+          try {
+            const activities = await base44.entities.UserActivity.filter({ event_type: 'quiz_started' }, '-created_date', 5000);
+            setQuizActivities(activities);
+          } catch (e) { console.error('Error loading quiz activities:', e); }
         })()
       ]);
     } catch (error) {
