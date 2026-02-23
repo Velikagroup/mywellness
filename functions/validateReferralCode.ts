@@ -28,6 +28,23 @@ Deno.serve(async (req) => {
             return Response.json({ valid: false, error: 'Codice scaduto' });
         }
 
+        // Get current user for marking coupon as used
+        const currentUser = await base44.auth.me();
+        let userId = currentUser?.id || null;
+
+        // Mark coupon as used NOW (when entered in quiz)
+        if (userId && !coupon.used_by) {
+            try {
+                await base44.asServiceRole.entities.Coupon.update(coupon.id, {
+                    used_by: userId,
+                    used_at: new Date().toISOString()
+                });
+                console.log(`✅ Coupon ${upperCode} marked as used by ${userId} in quiz`);
+            } catch (updateError) {
+                console.warn('⚠️ Could not mark coupon as used:', updateError.message);
+            }
+        }
+
         // Check if linked to an influencer
         let influencer_id = null;
         const influencers = await base44.asServiceRole.entities.Influencer.filter({
@@ -42,7 +59,8 @@ Deno.serve(async (req) => {
             coupon_id: coupon.id,
             discount_type: coupon.discount_type,
             discount_value: coupon.discount_value || 0,
-            influencer_id
+            influencer_id,
+            user_id: userId
         });
 
     } catch (error) {
