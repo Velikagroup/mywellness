@@ -300,8 +300,8 @@ export default function AdminAnalytics() {
   const LANG_LABELS = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR' };
   const LANG_LABELS_SITE = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR', unknown: '❓' };
 
-  const filteredSiteVisits = filterByDate(siteVisitActivities);
-  const filteredQuizActivities = filterByDate(quizActivities);
+  const filteredSiteVisits = filterByDateAndLanguage(siteVisitActivities);
+  const filteredQuizActivities = filterByDateAndLanguage(quizActivities);
   const filteredUsers = filterByDate(users);
 
   const totalSiteVisits = filteredSiteVisits.length;
@@ -309,13 +309,13 @@ export default function AdminAnalytics() {
   const loggedInUserIds = new Set(filteredSiteVisits.filter(v => v.user_id !== 'anonymous').map(v => v.user_id));
   const uniqueSiteVisitors = anonymousCount + loggedInUserIds.size;
 
-  const siteVisitsByLang = filteredSiteVisits.reduce((acc, v) => {
+  const siteVisitsByLang = filterByDate(siteVisitActivities).reduce((acc, v) => {
     const lang = v.event_data?.language || 'unknown';
     acc[lang] = (acc[lang] || 0) + 1;
     return acc;
   }, {});
 
-  const quizVisitsByLang = filteredQuizActivities.reduce((acc, a) => {
+  const quizVisitsByLang = filterByDate(quizActivities).reduce((acc, a) => {
     const lang = a.event_data?.language || 'unknown';
     acc[lang] = (acc[lang] || 0) + 1;
     return acc;
