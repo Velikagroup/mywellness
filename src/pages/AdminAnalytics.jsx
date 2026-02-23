@@ -174,12 +174,12 @@ export default function AdminAnalytics() {
   // Visite pagina quiz per lingua (da event_data.language)
   const LANG_LABELS = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR' };
   const quizVisitsByLang = quizActivities.reduce((acc, a) => {
-    // Prima prova event_data.language, poi user_id (che a volte è l'email con hints), poi 'unknown'
     const lang = a.event_data?.language || 'unknown';
     acc[lang] = (acc[lang] || 0) + 1;
     return acc;
   }, {});
   const totalQuizVisits = quizActivities.length;
+  const uniqueQuizVisitors = new Set(quizActivities.map(a => a.user_id)).size;
 
   // Section 2: Funnel
   const totalRegistrations = users.length;
