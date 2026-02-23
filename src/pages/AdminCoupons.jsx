@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Trash2, PlusCircle, Calendar as CalendarIcon, Tag, Percent, Crown, Sparkles, TrendingUp, DollarSign, ShoppingCart, BarChart3, RefreshCw } from 'lucide-react';
+import { Trash2, PlusCircle, Calendar as CalendarIcon, Tag, Percent, Crown, Sparkles, TrendingUp, DollarSign, ShoppingCart, BarChart3 } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
@@ -36,11 +36,9 @@ export default function AdminCoupons() {
   const [selectedPeriod, setSelectedPeriod] = useState('all');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const loadCoupons = async (isRefresh = false) => {
-    if (isRefresh) setIsRefreshing(true);
-    else setIsLoading(true);
+  const loadCoupons = async () => {
+    setIsLoading(true);
     const [fetchedCoupons, fetchedTransactions, fetchedUsers] = await Promise.all([
       base44.entities.Coupon.list('-created_date'),
       base44.entities.Transaction.list('-payment_date', 1000),
@@ -49,8 +47,7 @@ export default function AdminCoupons() {
     setCoupons(fetchedCoupons);
     setTransactions(fetchedTransactions);
     setUsers(fetchedUsers);
-    if (isRefresh) setIsRefreshing(false);
-    else setIsLoading(false);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -304,22 +301,12 @@ export default function AdminCoupons() {
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header */}
-         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-           <div>
-             <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestione Coupon</h1>
-             <p className="text-gray-600">Crea coupon standard o lifetime gratuiti</p>
-           </div>
-           <div className="flex gap-3">
-             <Button 
-               onClick={() => loadCoupons(true)}
-               disabled={isRefreshing}
-               variant="outline"
-               className="gap-2"
-             >
-               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
-               {isRefreshing ? 'Aggiornamento...' : 'Aggiorna'}
-             </Button>
-             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestione Coupon</h1>
+            <p className="text-gray-600">Crea coupon standard o lifetime gratuiti</p>
+          </div>
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
               <Button className="bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-lg">
                 <PlusCircle className="mr-2 h-4 w-4" />
@@ -465,8 +452,7 @@ export default function AdminCoupons() {
               )}
             </DialogContent>
           </Dialog>
-          </div>
-          </div>
+        </div>
 
         {/* Analytics Section */}
         <div className="space-y-6">
