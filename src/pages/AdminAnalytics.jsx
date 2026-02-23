@@ -214,36 +214,36 @@ export default function AdminAnalytics() {
 
   // Visite pagina quiz per lingua (da event_data.language)
   const LANG_LABELS = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR' };
-  // Site visits stats
   const LANG_LABELS_SITE = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR', unknown: '❓' };
-  const totalSiteVisits = siteVisitActivities.length;
-  // I visitatori anonimi hanno tutti user_id='anonymous' — usiamo l'ID record come proxy per contarli
-  // Gli utenti loggati hanno un user_id univoco
-  const anonymousCount = siteVisitActivities.filter(v => v.user_id === 'anonymous').length;
-  const loggedInUserIds = new Set(siteVisitActivities.filter(v => v.user_id !== 'anonymous').map(v => v.user_id));
-  const uniqueSiteVisitors = anonymousCount + loggedInUserIds.size; // ogni anonimo = 1 visita unica (no cookie tracking)
 
-  // Per il breakdown per lingua, usa i dati disponibili
-  const siteVisitsByLang = siteVisitActivities.reduce((acc, v) => {
+  const filteredSiteVisits = filterByDate(siteVisitActivities);
+  const filteredQuizActivities = filterByDate(quizActivities);
+  const filteredUsers = filterByDate(users);
+
+  const totalSiteVisits = filteredSiteVisits.length;
+  const anonymousCount = filteredSiteVisits.filter(v => v.user_id === 'anonymous').length;
+  const loggedInUserIds = new Set(filteredSiteVisits.filter(v => v.user_id !== 'anonymous').map(v => v.user_id));
+  const uniqueSiteVisitors = anonymousCount + loggedInUserIds.size;
+
+  const siteVisitsByLang = filteredSiteVisits.reduce((acc, v) => {
     const lang = v.event_data?.language || 'unknown';
     acc[lang] = (acc[lang] || 0) + 1;
     return acc;
   }, {});
 
-  const quizVisitsByLang = quizActivities.reduce((acc, a) => {
+  const quizVisitsByLang = filteredQuizActivities.reduce((acc, a) => {
     const lang = a.event_data?.language || 'unknown';
     acc[lang] = (acc[lang] || 0) + 1;
     return acc;
   }, {});
-  const totalQuizVisits = quizActivities.length;
-  // Stessa logica per quiz: anonimi = 1 per record, loggati = per user_id
-  const quizAnonCount = quizActivities.filter(a => a.user_id === 'anonymous').length;
-  const quizLoggedIds = new Set(quizActivities.filter(a => a.user_id !== 'anonymous').map(a => a.user_id));
+  const totalQuizVisits = filteredQuizActivities.length;
+  const quizAnonCount = filteredQuizActivities.filter(a => a.user_id === 'anonymous').length;
+  const quizLoggedIds = new Set(filteredQuizActivities.filter(a => a.user_id !== 'anonymous').map(a => a.user_id));
   const uniqueQuizVisitors = quizAnonCount + quizLoggedIds.size;
 
   // Section 2: Funnel
-  const totalRegistrations = users.length;
-  const quizCompleted = users.filter(u => u.quiz_completed === true).length;
+  const totalRegistrations = dateRange ? filteredUsers.length : users.length;
+  const quizCompleted = (dateRange ? filteredUsers : users).filter(u => u.quiz_completed === true).length;
   // trialsStarted = chi è ATTUALMENTE nel trial (non ancora convertito) — da Stripe
   const trialsStarted = trialUsersCount;
   // trialsConverted = chi ha completato il trial ed è ora active annuale
