@@ -705,6 +705,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
     // Calculate target date if losing weight
     let targetDate = null;
+    let formattedTargetDate = '';
+    
     if (isLosingWeight && quizData.weight_loss_speed) {
       const weeksToGoal = weightDifference / (quizData.weight_loss_speed === 'very_fast' ? 1 : 
                                                quizData.weight_loss_speed === 'moderate' ? 0.75 : 0.5);
@@ -712,6 +714,18 @@ export default function QuizContainer({ translations, language = 'it' }) {
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + daysToGoal);
       targetDate = futureDate;
+      
+      // Format date based on language
+      const localeMap = {
+        it: itLocale,
+        en: enLocale,
+        es: esLocale,
+        pt: ptLocale,
+        de: deLocale,
+        fr: frLocale
+      };
+      const currentLocale = localeMap[language] || itLocale;
+      formattedTargetDate = format(targetDate, 'd MMMM', { locale: currentLocale });
     }
 
     return (
