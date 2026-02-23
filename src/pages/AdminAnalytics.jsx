@@ -217,6 +217,13 @@ export default function AdminAnalytics() {
   const trialsConverted = activeYearlyUsers;
   const subscriptionsActive = totalActiveUsers;
 
+  // Conversion rates → paganti
+  const pct = (num, denom) => denom > 0 ? ((num / denom) * 100).toFixed(1) + '%' : '—';
+  const convSite = pct(subscriptionsActive, uniqueSiteVisitors);
+  const convQuiz = pct(subscriptionsActive, uniqueQuizVisitors);
+  const convQuizCompleted = pct(subscriptionsActive, quizCompleted);
+  const convRegistrations = pct(subscriptionsActive, totalRegistrations);
+
   // Il totale di chi ha mai avuto un trial (in corso + convertiti) per calcolare il rate
   const totalEverTrialed = trialUsersCount + trialsConverted;
   const trialConversionRate = totalEverTrialed > 0 
