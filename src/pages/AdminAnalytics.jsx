@@ -195,12 +195,7 @@ export default function AdminAnalytics() {
     });
   };
 
-  const extractLanguageFromPath = (url) => {
-    if (!url) return 'unknown';
-    // Estrae lingua dal path: /it, /en, /es, /pt, /de, /fr
-    const match = url.match(/^\/([a-z]{2})(?:\/|$)/);
-    return match ? match[1] : 'unknown';
-  };
+
 
   const filterByLanguage = (items) => {
     if (selectedLanguage === 'all') return items;
