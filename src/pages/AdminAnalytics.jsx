@@ -336,10 +336,12 @@ export default function AdminAnalytics() {
   const trialsConverted = activeYearlyUsers;
   const subscriptionsActive = totalActiveUsers;
   
-  // Abbonamenti Totali Mai Attivati = tutti gli utenti che hanno ALMENO UN abbonamento (active, trial, cancelled, expired)
-  const usersWithAnySubscription = (dateRange ? filteredUsers : users).filter(u => {
-    return u.subscription_status && ['active', 'trial', 'cancelled', 'expired'].includes(u.subscription_status);
-  }).length;
+  // Abbonamenti Totali Mai Attivati = suddivisi per status
+  const usersActive = (dateRange ? filteredUsers : users).filter(u => u.subscription_status === 'active').length;
+  const usersTrial = (dateRange ? filteredUsers : users).filter(u => u.subscription_status === 'trial').length;
+  const usersCancelled = (dateRange ? filteredUsers : users).filter(u => u.subscription_status === 'cancelled').length;
+  const usersExpired = (dateRange ? filteredUsers : users).filter(u => u.subscription_status === 'expired').length;
+  const usersWithAnySubscription = usersActive + usersTrial + usersCancelled + usersExpired;
 
   // Conversion rates → paganti
   const pct = (num, denom) => denom > 0 ? ((num / denom) * 100).toFixed(1) + '%' : '—';
