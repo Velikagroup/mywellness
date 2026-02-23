@@ -200,7 +200,7 @@ export default function AdminAnalytics() {
   const subscriptionsActive = totalActiveUsers;
 
   // Il totale di chi ha mai avuto un trial (in corso + convertiti) per calcolare il rate
-  const totalEverTrialed = trialsStarted + trialsConverted;
+  const totalEverTrialed = trialUsersCount + trialsConverted;
   const trialConversionRate = totalEverTrialed > 0 
     ? ((trialsConverted / totalEverTrialed) * 100).toFixed(1) 
     : 0;
