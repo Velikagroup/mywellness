@@ -692,6 +692,7 @@ export default function AdminCoupons() {
                     <TableHead>Sconto/Piano</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Scadenza</TableHead>
+                    <TableHead className="text-right">Trial Avviati</TableHead>
                     <TableHead className="text-right">Utilizzi</TableHead>
                     <TableHead className="text-right">Fatturato</TableHead>
                     <TableHead className="text-right">Sconti Dati</TableHead>
