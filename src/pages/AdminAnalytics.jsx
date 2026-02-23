@@ -195,6 +195,18 @@ export default function AdminAnalytics() {
     });
   };
 
+  const filterByLanguage = (items) => {
+    if (selectedLanguage === 'all') return items;
+    return items.filter(item => {
+      const lang = item.event_data?.language || 'unknown';
+      return lang === selectedLanguage;
+    });
+  };
+
+  const filterByDateAndLanguage = (items, dateField = 'created_date') => {
+    return filterByLanguage(filterByDate(items, dateField));
+  };
+
   // ============================================
   // HELPER FUNCTIONS
   // ============================================
