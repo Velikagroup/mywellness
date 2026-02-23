@@ -461,9 +461,18 @@ export default function AdminAnalytics() {
 
                 {/* STEP 2: Registrazione */}
                 <div className="flex items-center gap-4">
-                  <div className="flex-1 bg-gray-100 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-gray-300">
+                  <div className="flex-1 bg-gray-100 rounded-xl p-5 flex items-center justify-between border-2 border-gray-300">
                     <span className="font-bold text-gray-900 text-lg">Registrazioni Totali</span>
-                    <span className="font-black text-gray-900 text-3xl">{totalRegistrations}</span>
+                    <div className="flex gap-6 items-end">
+                      <div className="text-right">
+                        <div className="text-3xl font-black text-gray-900">{totalRegistrations}</div>
+                        <div className="text-xs text-gray-500">utenti registrati</div>
+                      </div>
+                      <div className="text-right border-l border-gray-300 pl-6">
+                        <div className="text-3xl font-black text-green-700">{convRegistrations}</div>
+                        <div className="text-xs text-green-600">conv. → paganti</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
