@@ -573,15 +573,38 @@ export default function AdminAnalytics() {
           </div>
         )}
 
+        {/* Language Filter */}
+        <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-xl p-1 shadow-sm w-fit">
+          <span className="text-xs font-semibold text-gray-600 px-3">🌐 Lingua:</span>
+          {['all', 'it', 'en', 'es', 'pt', 'de', 'fr', 'unknown'].map(lang => (
+            <button
+              key={lang}
+              onClick={() => setSelectedLanguage(lang)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
+                selectedLanguage === lang
+                  ? 'bg-purple-600 text-white'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              {lang === 'all' ? 'Tutte' : lang === 'unknown' ? '❓ Sconosciuta' : LANG_LABELS_SITE[lang]}
+            </button>
+          ))}
+        </div>
+
         {/* Active filter badge */}
-        {(activePreset !== 'all') && (
+        {(activePreset !== 'all' || selectedLanguage !== 'all') && (
           <div className="flex items-center gap-2 flex-wrap">
             {activePreset !== 'all' && (
               <span className="text-xs font-semibold text-[#26847F] bg-[#26847F]/10 px-3 py-1 rounded-full">
                 📅 Filtro attivo: {activePreset === 'custom' ? `${dateFrom || '?'} → ${dateTo || '?'}` : DATE_PRESETS.find(p => p.value === activePreset)?.label}
               </span>
             )}
-            <button onClick={() => { setActivePreset('all'); setDateFrom(''); setDateTo(''); }} className="text-xs text-gray-400 hover:text-gray-600 underline">Rimuovi</button>
+            {selectedLanguage !== 'all' && (
+              <span className="text-xs font-semibold text-purple-700 bg-purple-100 px-3 py-1 rounded-full">
+                🌐 {selectedLanguage === 'unknown' ? 'Sconosciuta' : LANG_LABELS_SITE[selectedLanguage]}
+              </span>
+            )}
+            <button onClick={() => { setActivePreset('all'); setDateFrom(''); setDateTo(''); setSelectedLanguage('all'); }} className="text-xs text-gray-400 hover:text-gray-600 underline">Rimuovi filtri</button>
           </div>
         )}
 
