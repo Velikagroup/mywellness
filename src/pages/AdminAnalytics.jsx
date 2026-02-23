@@ -909,6 +909,39 @@ export default function AdminAnalytics() {
           </div>
         </div>
 
+        {/* SECTION 5.5: Transazioni Recenti */}
+        {activePreset === '1d' && (
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">💳 Transazioni Oggi</h2>
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardContent className="p-6">
+                {succeededTxAll.length > 0 ? (
+                  <div className="space-y-3">
+                    {succeededTxAll.map((tx, idx) => {
+                      const user = users.find(u => u.id === tx.user_id);
+                      return (
+                        <div key={idx} className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <div>
+                            <p className="font-semibold text-gray-900">{user?.full_name || 'Utente sconosciuto'}</p>
+                            <p className="text-sm text-gray-500">{user?.email || tx.user_id}</p>
+                            <p className="text-xs text-gray-400 mt-1">{tx.billing_period === 'monthly' ? '📅 Piano Mensile' : '📆 Piano Annuale'}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-2xl font-black text-green-700">€{tx.amount.toFixed(2)}</p>
+                            <p className="text-xs text-green-600">{format(new Date(tx.payment_date), 'HH:mm', { locale: it })}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-center text-gray-500 py-8">Nessuna transazione oggi</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* SECTION 6: User Behaviour */}
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-4">User Behaviour (Quiz)</h2>
