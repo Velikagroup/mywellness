@@ -37,12 +37,19 @@ export default function AdminAnalytics() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [users, setUsers] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [activePreset, setActivePreset] = useState('all');
 
-  // Date range: last 3 months
-  const [dateRange] = useState({
-    from: subMonths(new Date(), 3),
-    to: new Date()
-  });
+  const DATE_PRESETS = [
+    { label: 'Tutto', value: 'all' },
+    { label: 'Oggi', value: '1d' },
+    { label: '7 giorni', value: '7d' },
+    { label: '30 giorni', value: '30d' },
+    { label: '3 mesi', value: '3m' },
+    { label: '6 mesi', value: '6m' },
+  ];
 
   useEffect(() => {
     checkAccess();
