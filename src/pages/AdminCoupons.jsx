@@ -769,13 +769,13 @@ export default function AdminCoupons() {
                        if (coupon.code === 'DALILA') {
                          console.log('🔍 DALILA - Utenti trovati con coupon:', usersWithCoupon.length);
                          usersWithCoupon.forEach(u => {
-                           console.log('  - Email:', u.email, '| influencer_referral_code:', u.influencer_referral_code, '| coupon_applied:', u.coupon_applied);
+                           console.log('  - Email:', u.email, '| influencer_referral_code:', u.influencer_referral_code, '| coupon_applied:', u.coupon_applied, '| subscription_status:', u.subscription_status);
+                           const userTrials = transactions.filter(t => t.user_id === u.id && t.type === 'trial_setup');
+                           console.log('    Transazioni trial_setup:', userTrials.length);
+                           userTrials.forEach(t => console.log('      - type:', t.type, '| status:', t.status));
                          });
-                         console.log('🔍 DALILA - Transazioni subscription_payment:', transactions.filter(t => t.type === 'subscription_payment' && t.status === 'succeeded').length);
-                         transactions.filter(t => t.type === 'subscription_payment' && t.status === 'succeeded').forEach(t => {
-                           console.log('  - user_id:', t.user_id, '| plan:', t.plan, '| status:', t.status);
-                         });
-                         console.log('🔍 DALILA - Trial Avviati calcolati:', trialSetups);
+                         console.log('🔍 DALILA - Trial_setup con status succeeded:', transactions.filter(t => t.type === 'trial_setup' && t.status === 'succeeded').length);
+                         console.log('🔍 DALILA - Trial Avviati CALCOLATI:', trialSetups);
                        }
 
                        return (
