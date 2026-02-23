@@ -340,13 +340,14 @@ export default function AdminAnalytics() {
                     <span className="font-bold text-orange-900 text-lg">Visite Pagina Quiz</span>
                     <span className="font-black text-orange-900 text-3xl">{totalQuizVisits}</span>
                   </div>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-2">
                     {Object.entries(quizVisitsByLang).sort((a, b) => b[1] - a[1]).map(([lang, count]) => (
                       <span key={lang} className="px-3 py-1 bg-orange-100 text-orange-800 rounded-full text-sm font-semibold">
                         {LANG_LABELS[lang] || lang}: {count}
                       </span>
                     ))}
                   </div>
+                  <p className="text-xs text-orange-600 italic">⚠️ Il tracking per lingua è attivo dal 23/02/2026 — i dati precedenti non hanno lingua e appaiono tutti come 🇮🇹 IT</p>
                 </div>
 
                 {/* Arrow down */}
