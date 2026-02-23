@@ -181,6 +181,16 @@ export default function AdminAnalytics() {
 
   // Visite pagina quiz per lingua (da event_data.language)
   const LANG_LABELS = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR' };
+  // Site visits stats
+  const LANG_LABELS_SITE = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR', unknown: '❓' };
+  const totalSiteVisits = siteVisitActivities.length;
+  const uniqueSiteVisitors = new Set(siteVisitActivities.map(v => v.user_id)).size;
+  const siteVisitsByLang = siteVisitActivities.reduce((acc, v) => {
+    const lang = v.event_data?.language || 'unknown';
+    acc[lang] = (acc[lang] || 0) + 1;
+    return acc;
+  }, {});
+
   const quizVisitsByLang = quizActivities.reduce((acc, a) => {
     const lang = a.event_data?.language || 'unknown';
     acc[lang] = (acc[lang] || 0) + 1;
