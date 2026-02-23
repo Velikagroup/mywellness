@@ -38,8 +38,11 @@ export default function AdminCoupons() {
 
   const loadCoupons = async () => {
     setIsLoading(true);
-    const fetchedCoupons = await base44.entities.Coupon.list('-created_date');
-    const fetchedTransactions = await base44.entities.Transaction.list('-payment_date', 1000);
+    const [fetchedCoupons, fetchedTransactions, fetchedUsers] = await Promise.all([
+      base44.entities.Coupon.list('-created_date'),
+      base44.entities.Transaction.list('-payment_date', 1000),
+      base44.entities.User.list('-created_date', 10000)
+    ]);
     setCoupons(fetchedCoupons);
     setTransactions(fetchedTransactions);
     setIsLoading(false);
