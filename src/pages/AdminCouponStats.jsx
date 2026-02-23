@@ -230,6 +230,15 @@ export default function AdminCouponStats() {
                           </span>
                         ) : '—'}
                       </td>
+                      <td className="py-3 px-4 text-center">
+                        {coupon.trialSetups > 0 ? (
+                          <span className="px-2 py-1 rounded text-xs font-semibold bg-purple-100 text-purple-800">
+                            {coupon.trialSetups}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">—</span>
+                        )}
+                      </td>
                       <td className="py-3 px-4">
                         {coupon.hasConverted ? (
                           <span className="text-green-600 font-semibold flex items-center gap-1">
