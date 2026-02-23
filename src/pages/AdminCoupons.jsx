@@ -706,7 +706,7 @@ export default function AdminCoupons() {
                   ) : coupons.length > 0 ? (
                     coupons.map((coupon) => {
                        const stats = couponStats.couponUsage.find(u => u.code === coupon.code) || { uses: 0, revenue: 0, discounts: 0 };
-                       const usersWithCoupon = users.filter(u => u.coupon_applied === coupon.code);
+                       const usersWithCoupon = users.filter(u => u.influencer_referral_code === coupon.code || u.coupon_applied === coupon.code);
                        const trialSetups = usersWithCoupon.reduce((count, user) => {
                          return count + transactions.filter(t => t.user_id === user.id && t.type === 'trial_setup').length;
                        }, 0);
