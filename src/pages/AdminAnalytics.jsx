@@ -774,7 +774,7 @@ export default function AdminAnalytics() {
                   <div className="w-1 h-8 bg-gray-300"></div>
                 </div>
 
-                {/* STEP FINALE: Totali Mai Attivati suddivisi per status */}
+                {/* STEP FINALE: Totali Mai Attivati suddivisi Mensili vs Annuali */}
                 <div className="bg-indigo-50 rounded-xl border-2 border-indigo-400 p-8 mb-6">
                   <div className="flex items-center justify-between mb-6">
                     <span className="font-bold text-indigo-900 text-base">📊 Totali Mai Attivati (Storico Completo)</span>
@@ -782,34 +782,14 @@ export default function AdminAnalytics() {
                   </div>
                   
                   {/* Suddivisione Mensili vs Annuali */}
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="bg-blue-100 rounded-lg p-4 text-center border-2 border-blue-300">
-                      <div className="text-sm font-semibold text-blue-700 mb-2">Mensili (€9.99/mese)</div>
-                      <div className="text-3xl font-black text-blue-900">{monthlyEverActivated}</div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-blue-100 rounded-lg p-6 text-center border-2 border-blue-300">
+                      <div className="text-sm font-semibold text-blue-700 mb-3">Mensili (€9.99/mese)</div>
+                      <div className="text-4xl font-black text-blue-900">{monthlyEverActivated}</div>
                     </div>
-                    <div className="bg-purple-100 rounded-lg p-4 text-center border-2 border-purple-300">
-                      <div className="text-sm font-semibold text-purple-700 mb-2">Annuali (€49.99/anno)</div>
-                      <div className="text-3xl font-black text-purple-900">{yearlyEverActivated}</div>
-                    </div>
-                  </div>
-
-                  {/* Suddivisione per Status */}
-                  <div className="grid grid-cols-4 gap-4">
-                    <div className="bg-white rounded-lg p-4 text-center border-2 border-green-200">
-                      <div className="text-sm font-semibold text-green-700 mb-2">Active</div>
-                      <div className="text-3xl font-black text-green-900">{usersActive}</div>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 text-center border-2 border-purple-200">
-                      <div className="text-sm font-semibold text-purple-700 mb-2">Trial</div>
-                      <div className="text-3xl font-black text-purple-900">{usersTrial}</div>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 text-center border-2 border-orange-200">
-                      <div className="text-sm font-semibold text-orange-700 mb-2">Cancellati</div>
-                      <div className="text-3xl font-black text-orange-900">{usersCancelled}</div>
-                    </div>
-                    <div className="bg-white rounded-lg p-4 text-center border-2 border-red-200">
-                      <div className="text-sm font-semibold text-red-700 mb-2">Scaduti</div>
-                      <div className="text-3xl font-black text-red-900">{usersExpired}</div>
+                    <div className="bg-purple-100 rounded-lg p-6 text-center border-2 border-purple-300">
+                      <div className="text-sm font-semibold text-purple-700 mb-3">Annuali (€49.99/anno)</div>
+                      <div className="text-4xl font-black text-purple-900">{yearlyEverActivated}</div>
                     </div>
                   </div>
                 </div>
