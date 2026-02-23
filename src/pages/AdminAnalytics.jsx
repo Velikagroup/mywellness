@@ -226,6 +226,12 @@ export default function AdminAnalytics() {
     activeMonthlyUsers = uniqueMonthlyUsers.size;
     activeYearlyUsers = uniqueYearlyUsers.size;
     totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
+    
+    // Calcola ricavi per piano
+    monthlyRevenue = monthlyTx.reduce((sum, t) => sum + (t.amount || 0), 0);
+    yearlyRevenue = yearlyTx.reduce((sum, t) => sum + (t.amount || 0), 0);
+    totalSubscriptionRevenue = monthlyRevenue + yearlyRevenue;
+    
     // Trial nel periodo: utenti unici con transazione trial_setup
     const uniqueTrialUsers = new Set(filteredTx.filter(t => t.type === 'trial_setup').map(t => t.user_id));
     trialUsersCount = uniqueTrialUsers.size;
