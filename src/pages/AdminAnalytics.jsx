@@ -213,13 +213,17 @@ export default function AdminAnalytics() {
 
   if (dateRange) {
     // Filtra le transazioni per data e calcola i nuovi abbonamenti nel periodo
+    // DEDUPLICATION: conta utenti unici, non transazioni (evita doppi per payment_intent + invoice)
     const filteredTx = filterByDate(transactions, 'payment_date');
     const succeededTx = filteredTx.filter(t => t.status === 'succeeded');
-    activeMonthlyUsers = succeededTx.filter(t => t.billing_period === 'monthly').length;
-    activeYearlyUsers = succeededTx.filter(t => t.billing_period === 'yearly' || t.type === 'trial_setup').length;
+    const uniqueMonthlyUsers = new Set(succeededTx.filter(t => t.billing_period === 'monthly').map(t => t.user_id));
+    const uniqueYearlyUsers = new Set(succeededTx.filter(t => t.billing_period === 'yearly' || t.type === 'trial_setup').map(t => t.user_id));
+    activeMonthlyUsers = uniqueMonthlyUsers.size;
+    activeYearlyUsers = uniqueYearlyUsers.size;
     totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
-    // Trial nel periodo: transazioni di tipo trial_setup
-    trialUsersCount = filteredTx.filter(t => t.type === 'trial_setup').length;
+    // Trial nel periodo: utenti unici con transazione trial_setup
+    const uniqueTrialUsers = new Set(filteredTx.filter(t => t.type === 'trial_setup').map(t => t.user_id));
+    trialUsersCount = uniqueTrialUsers.size;
   } else {
     // Totale da Stripe (source of truth per snapshot attuale)
     activeMonthlyUsers = stripeStats.monthly.count;
