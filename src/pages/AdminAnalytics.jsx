@@ -219,10 +219,24 @@ export default function AdminAnalytics() {
     
     // DEBUG
     if (activePreset === '1d') {
-      console.log('🔍 DEBUG Oggi - filteredTx:', filteredTx.length);
-      console.log('🔍 DEBUG Oggi - succeededTx:', succeededTx.length);
-      console.log('🔍 DEBUG Oggi - monthly:', succeededTx.filter(t => t.billing_period === 'monthly'));
-      console.log('🔍 DEBUG Oggi - yearly:', succeededTx.filter(t => t.billing_period === 'yearly' || t.type === 'trial_setup'));
+      const monthlyTx = succeededTx.filter(t => t.billing_period === 'monthly');
+      console.log('🔍 DEBUG Oggi - filteredTx:', filteredTx);
+      console.log('🔍 DEBUG Oggi - succeededTx:', succeededTx);
+      console.log('🔍 DEBUG Oggi - monthly transactions:', monthlyTx);
+      if (monthlyTx.length > 0) {
+        monthlyTx.forEach((tx, idx) => {
+          console.log(`  → Monthly TX ${idx}:`, {
+            id: tx.id,
+            user_id: tx.user_id,
+            type: tx.type,
+            billing_period: tx.billing_period,
+            status: tx.status,
+            amount: tx.amount,
+            payment_date: tx.payment_date,
+            created_date: tx.created_date
+          });
+        });
+      }
     }
     
     const uniqueMonthlyUsers = new Set(succeededTx.filter(t => t.billing_period === 'monthly').map(t => t.user_id));
