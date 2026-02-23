@@ -335,8 +335,58 @@ export default function AdminAnalytics() {
       return trends;
     }
 
+    // Caso custom: calcola la durata in giorni e scegli granularità
+    if (dateRange && activePreset === 'custom') {
+      const diffMs = dateRange.to - dateRange.from;
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      if (diffDays <= 2) {
+        // Per-ora
+        const trends = [];
+        for (let h = 0; h < 24; h++) {
+          const hourStart = new Date(dateRange.from);
+          hourStart.setHours(h, 0, 0, 0);
+          const hourEnd = new Date(dateRange.from);
+          hourEnd.setHours(h, 59, 59, 999);
+          const rev = txSource
+            .filter(t => { const d = new Date(t.payment_date); return d >= hourStart && d <= hourEnd; })
+            .reduce((s, t) => s + t.amount, 0);
+          trends.push({ month: `${h}:00`, revenue: parseFloat(rev.toFixed(2)) });
+        }
+        return trends;
+      } else if (diffDays <= 90) {
+        // Per-giorno
+        const trends = [];
+        for (let i = 0; i < diffDays; i++) {
+          const day = new Date(dateRange.from);
+          day.setDate(day.getDate() + i);
+          const dayStart = startOfDay(day);
+          const dayEnd = endOfDay(day);
+          const rev = txSource
+            .filter(t => { const d = new Date(t.payment_date); return d >= dayStart && d <= dayEnd; })
+            .reduce((s, t) => s + t.amount, 0);
+          trends.push({ month: format(day, 'd MMM', { locale: it }), revenue: parseFloat(rev.toFixed(2)) });
+        }
+        return trends;
+      } else {
+        // Per-mese
+        const totalMonths = Math.ceil(diffDays / 30);
+        const trends = [];
+        for (let i = 0; i < totalMonths; i++) {
+          const monthDate = new Date(dateRange.from);
+          monthDate.setMonth(monthDate.getMonth() + i);
+          const monthStart = startOfMonth(monthDate);
+          const monthEnd = endOfMonth(monthDate);
+          const rev = txSource
+            .filter(t => { const d = new Date(t.payment_date); return d >= monthStart && d <= monthEnd && d >= dateRange.from && d <= dateRange.to; })
+            .reduce((s, t) => s + t.amount, 0);
+          trends.push({ month: format(monthDate, 'MMM yy', { locale: it }), revenue: parseFloat(rev.toFixed(2)) });
+        }
+        return trends;
+      }
+    }
+
     // Default: raggruppa per mese (ultimi N mesi)
-    const months = dateRange && activePreset === '3m' ? 3 : dateRange && activePreset === '6m' ? 6 : 6;
+    const months = activePreset === '3m' ? 3 : activePreset === '6m' ? 6 : 6;
     const trends = [];
     for (let i = months - 1; i >= 0; i--) {
       const monthDate = subMonths(new Date(), i);
