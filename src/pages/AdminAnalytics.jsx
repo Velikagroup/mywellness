@@ -913,39 +913,7 @@ export default function AdminAnalytics() {
         {/* SECTION 5.5: Transazioni Recenti */}
 
 
-        {/* SECTION 6: User Behaviour */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">User Behaviour (Quiz)</h2>
-          <Card className="water-glass-effect border-gray-200/30">
-            <CardContent className="p-8">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="p-6 bg-gray-50 rounded-xl border border-gray-200 text-center">
-                  <p className="text-sm font-semibold text-gray-700 mb-3">Registrati senza Quiz</p>
-                  <p className="text-5xl font-black text-gray-900">{registeredNoQuiz}</p>
-                  <p className="text-xs text-gray-500 mt-2">Drop-off punto 1</p>
-                </div>
 
-                <div className="p-6 bg-indigo-50 rounded-xl border border-indigo-200 text-center">
-                  <p className="text-sm font-semibold text-indigo-900 mb-3">Quiz Completato</p>
-                  <p className="text-5xl font-black text-indigo-900">{quizCompletedUsers}</p>
-                  <p className="text-xs text-indigo-600 mt-2">Passati al quiz</p>
-                </div>
-
-                <div className="p-6 bg-purple-50 rounded-xl border border-purple-200 text-center">
-                  <p className="text-sm font-semibold text-purple-900 mb-3">Con Trial</p>
-                  <p className="text-5xl font-black text-purple-900">{usersWithTrial}</p>
-                  <p className="text-xs text-purple-600 mt-2">Attivato trial</p>
-                </div>
-
-                <div className="p-6 bg-green-50 rounded-xl border border-green-200 text-center">
-                  <p className="text-sm font-semibold text-green-900 mb-3">Paganti</p>
-                  <p className="text-5xl font-black text-green-900">{payingUsers}</p>
-                  <p className="text-xs text-green-600 mt-2">Conversione finale</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
       </div>
     </div>
