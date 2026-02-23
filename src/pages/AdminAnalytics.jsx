@@ -766,19 +766,34 @@ export default function AdminAnalytics() {
                   <div className="w-1 h-8 bg-gray-300"></div>
                 </div>
 
-                {/* STEP FINALE: Due box — Totali Mai Attivati vs Attualmente Attivi */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* SINISTRA: Totali Mai Attivati (storico completo) */}
-                  <div className="bg-indigo-50 rounded-xl border-2 border-indigo-400 p-8">
-                    <div className="flex items-center justify-between mb-4">
-                      <span className="font-bold text-indigo-900 text-base">📊 Totali Mai Attivati</span>
-                      <span className="text-xs text-indigo-600">(storico completo)</span>
+                {/* STEP FINALE: Totali Mai Attivati suddivisi per status */}
+                <div className="bg-indigo-50 rounded-xl border-2 border-indigo-400 p-8 mb-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <span className="font-bold text-indigo-900 text-base">📊 Totali Mai Attivati (Storico Completo)</span>
+                    <span className="text-2xl font-black text-indigo-900">{usersWithAnySubscription}</span>
+                  </div>
+                  <div className="grid grid-cols-4 gap-4">
+                    <div className="bg-white rounded-lg p-4 text-center border-2 border-green-200">
+                      <div className="text-sm font-semibold text-green-700 mb-2">Active</div>
+                      <div className="text-3xl font-black text-green-900">{usersActive}</div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-5xl font-black text-indigo-900 mb-3">{usersWithAnySubscription}</div>
-                      <p className="text-sm text-indigo-700">utenti che hanno MAI avuto un abbonamento (inclusi cancellati/scaduti)</p>
+                    <div className="bg-white rounded-lg p-4 text-center border-2 border-purple-200">
+                      <div className="text-sm font-semibold text-purple-700 mb-2">Trial</div>
+                      <div className="text-3xl font-black text-purple-900">{usersTrial}</div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 text-center border-2 border-orange-200">
+                      <div className="text-sm font-semibold text-orange-700 mb-2">Cancellati</div>
+                      <div className="text-3xl font-black text-orange-900">{usersCancelled}</div>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 text-center border-2 border-red-200">
+                      <div className="text-sm font-semibold text-red-700 mb-2">Scaduti</div>
+                      <div className="text-3xl font-black text-red-900">{usersExpired}</div>
                     </div>
                   </div>
+                </div>
+
+                {/* Due box — Totali Mai Attivati vs Attualmente Attivi */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                   {/* DESTRA: Attualmente Attivi (snapshot live) */}
                   <div className="bg-green-50 rounded-xl border-2 border-green-400 p-8">
