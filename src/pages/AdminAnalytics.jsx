@@ -206,11 +206,25 @@ export default function AdminAnalytics() {
     plan: u.subscription_plan
   })));
 
-  // Dati reali da Stripe (source of truth)
-  const activeMonthlyUsers = stripeStats.monthly.count;
-  const activeYearlyUsers = stripeStats.yearly.count;
-  const totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
-  const trialUsersCount = stripeStats.trialing.count;
+  // Dati abbonamenti: se c'è filtro data → usa transazioni filtrate, altrimenti usa Stripe (snapshot live)
+  let activeMonthlyUsers, activeYearlyUsers, totalActiveUsers, trialUsersCount;
+
+  if (dateRange) {
+    // Filtra le transazioni per data e calcola i nuovi abbonamenti nel periodo
+    const filteredTx = filterByDate(transactions, 'payment_date');
+    const succeededTx = filteredTx.filter(t => t.status === 'succeeded');
+    activeMonthlyUsers = succeededTx.filter(t => t.billing_period === 'monthly').length;
+    activeYearlyUsers = succeededTx.filter(t => t.billing_period === 'yearly' || t.type === 'trial_setup').length;
+    totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
+    // Trial nel periodo: transazioni di tipo trial_setup
+    trialUsersCount = filteredTx.filter(t => t.type === 'trial_setup').length;
+  } else {
+    // Totale da Stripe (source of truth per snapshot attuale)
+    activeMonthlyUsers = stripeStats.monthly.count;
+    activeYearlyUsers = stripeStats.yearly.count;
+    totalActiveUsers = activeMonthlyUsers + activeYearlyUsers;
+    trialUsersCount = stripeStats.trialing.count;
+  }
 
   // Visite pagina quiz per lingua (da event_data.language)
   const LANG_LABELS = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR' };
