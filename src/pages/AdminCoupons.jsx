@@ -710,10 +710,14 @@ export default function AdminCoupons() {
                          u.influencer_referral_code?.toUpperCase() === coupon.code.toUpperCase() || 
                          u.coupon_applied?.toUpperCase() === coupon.code.toUpperCase()
                        );
-                       // Conta gli utenti che hanno il coupon E sono in trial (o hanno completato il quiz con trial attivo)
+                       // Conta gli utenti che hanno il coupon E hanno attivato trial (subscription_payment o trial_setup)
                        const trialSetups = usersWithCoupon.filter(user => 
                          user.subscription_status === 'trial' || 
-                         (user.quiz_completed && transactions.some(t => t.user_id === user.id && t.type === 'trial_setup'))
+                         transactions.some(t => 
+                           t.user_id === user.id && 
+                           (t.type === 'trial_setup' || 
+                            (t.type === 'subscription_payment' && t.plan && t.status === 'succeeded'))
+                         )
                        ).length;
 
                        return (
