@@ -193,8 +193,8 @@ export default function AdminAnalytics() {
   // Section 2: Funnel
   const totalRegistrations = users.length;
   const quizCompleted = users.filter(u => u.quiz_completed === true).length;
-  // trialsStarted = chi è ATTUALMENTE nel trial (non ancora convertito)
-  const trialsStarted = trialUsers;
+  // trialsStarted = chi è ATTUALMENTE nel trial (non ancora convertito) — da Stripe
+  const trialsStarted = trialUsersCount;
   // trialsConverted = chi ha completato il trial ed è ora active annuale
   const trialsConverted = activeYearlyUsers;
   const subscriptionsActive = totalActiveUsers;
