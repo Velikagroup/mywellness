@@ -98,8 +98,7 @@ export default function AdminAnalytics() {
         (async () => {
           try {
             const visits = await base44.entities.UserActivity.filter({ event_type: 'pricing_visited' }, '-created_date', 10000);
-            // filter only those with event_category: site_visit
-            setSiteVisitActivities(visits.filter(v => v.event_data?.event_category === 'site_visit'));
+            setSiteVisitActivities(visits);
           } catch (e) { console.error('Error loading site visits:', e); }
         })()
       ]);
