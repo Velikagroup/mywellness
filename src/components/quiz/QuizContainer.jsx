@@ -280,7 +280,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
           await base44.entities.UserActivity.create({
             user_id: userIdentifier,
             event_type: 'quiz_started',
-            event_data: { step: currentStep }
+            event_data: { step: currentStep, language: language }
           });
           setQuizActivityTracked(true);
         } catch (error) {
@@ -290,7 +290,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
       
       trackQuizStarted();
     }
-  }, [currentStep, isLoadingUser, quizActivityTracked, user, quizData.email]);
+  }, [currentStep, isLoadingUser, quizActivityTracked, user, quizData.email, language]);
 
   // dynamicSteps calcolato in modo derivato — nessuno stato separato
   const dynamicSteps = React.useMemo(
