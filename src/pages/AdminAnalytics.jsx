@@ -527,42 +527,46 @@ export default function AdminAnalytics() {
                   <div className="w-1 h-8 bg-gray-300"></div>
                 </div>
 
-                {/* STEP 3: Scelta piano — mensile e annuale sulla stessa riga */}
+                {/* STEP 3: Nuovi acquisti nel periodo */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-blue-50 rounded-xl h-24 flex flex-col items-center justify-center border-2 border-blue-300">
-                    <span className="font-bold text-blue-900 text-sm mb-1">Piano Mensile</span>
-                    <span className="text-xs text-blue-600 mb-2">€9.99/mese — pagamento diretto</span>
-                    <span className="font-black text-blue-900 text-3xl">{activeMonthlyUsers}</span>
+                  <div className="bg-blue-50 rounded-xl p-5 flex flex-col items-center justify-center border-2 border-blue-300">
+                    <span className="font-bold text-blue-900 text-sm mb-1">Nuovi Mensili</span>
+                    <span className="text-xs text-blue-600 mb-2">€9.99/mese — nel periodo</span>
+                    <span className="font-black text-blue-900 text-3xl">{newMonthlyInPeriod}</span>
                   </div>
-                  <div className="bg-purple-50 rounded-xl h-24 flex flex-col items-center justify-center border-2 border-purple-300">
-                    <span className="font-bold text-purple-900 text-sm mb-1">Piano Annuale (Trial 3gg)</span>
-                    <span className="text-xs text-purple-600 mb-2">€49.99/anno — dopo trial gratuito</span>
-                    <span className="font-black text-purple-900 text-3xl">{trialsStarted}</span>
-                  </div>
-                </div>
-
-                {/* Arrow down — solo lato annuale */}
-                <div className="flex justify-end pr-[calc(25%-0.5rem)]">
-                  <div className="w-1 h-8 bg-purple-300"></div>
-                </div>
-
-                {/* STEP 4 (solo piano annuale): Trial Convertiti */}
-                <div className="flex justify-end">
-                  <div className="w-1/2 bg-teal-50 rounded-xl h-20 flex items-center justify-between px-8 border-2 border-teal-300">
-                    <span className="font-bold text-teal-900 text-base">Trial Convertiti (Annuale)</span>
-                    <span className="font-black text-teal-900 text-3xl">{trialsConverted}</span>
+                  <div className="bg-purple-50 rounded-xl p-5 flex flex-col items-center justify-center border-2 border-purple-300">
+                    <span className="font-bold text-purple-900 text-sm mb-1">Nuovi Trial Annuali</span>
+                    <span className="text-xs text-purple-600 mb-2">€49.99/anno — nel periodo</span>
+                    <span className="font-black text-purple-900 text-3xl">{newYearlyInPeriod}</span>
                   </div>
                 </div>
 
-                {/* Arrow down — full width */}
+                {/* Arrow down */}
                 <div className="flex justify-center">
                   <div className="w-1 h-8 bg-gray-300"></div>
                 </div>
 
-                {/* STEP FINALE: Totale Abbonamenti Attivi */}
+                {/* Nuovi totali nel periodo */}
+                <div className="bg-emerald-50 rounded-xl border-2 border-emerald-300 p-5 flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-emerald-900 text-base">Nuovi Acquisti nel Periodo</span>
+                    <p className="text-xs text-emerald-600 mt-1">Mensili + Trial Annuali avviati nel periodo selezionato</p>
+                  </div>
+                  <span className="font-black text-emerald-900 text-4xl">{newSubscriptionsInPeriod}</span>
+                </div>
+
+                {/* Separatore visivo */}
+                <div className="border-t-2 border-dashed border-gray-300 my-2 relative">
+                  <span className="absolute left-1/2 -translate-x-1/2 -top-3 bg-white px-3 text-xs text-gray-400 font-semibold">STATO ATTUALE (indipendente dal filtro)</span>
+                </div>
+
+                {/* STEP FINALE: Totale Abbonamenti Attivi — sempre live da Stripe */}
                 <div className="bg-green-50 rounded-xl border-2 border-green-400 p-6">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-green-900 text-lg">✅ Totale Abbonamenti Attivi</span>
+                  <div className="flex items-center justify-between flex-wrap gap-4">
+                    <div>
+                      <span className="font-bold text-green-900 text-lg">✅ Abbonamenti Attivi Ora</span>
+                      <p className="text-xs text-green-600 mt-1">Dato live da Stripe — non filtrato per data</p>
+                    </div>
                     <div className="flex gap-8 items-end">
                       <div className="text-right">
                         <div className="text-sm font-semibold text-blue-700 mb-1">Mensili</div>
