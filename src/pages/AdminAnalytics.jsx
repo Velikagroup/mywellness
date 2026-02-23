@@ -416,6 +416,10 @@ export default function AdminAnalytics() {
                         <div className="text-3xl font-black text-orange-700">{uniqueQuizVisitors}</div>
                         <div className="text-xs text-orange-600">utenti unici</div>
                       </div>
+                      <div className="text-right border-l border-orange-300 pl-6">
+                        <div className="text-3xl font-black text-green-700">{convQuiz}</div>
+                        <div className="text-xs text-green-600">conv. → paganti</div>
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 mb-2">
