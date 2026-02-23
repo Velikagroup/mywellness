@@ -663,7 +663,7 @@ export default function AdminAnalytics() {
                 </div>
                 <p className="text-sm font-semibold text-gray-700 mb-1">MRR</p>
                 <p className="text-4xl font-black text-blue-900">€{mrr.toFixed(2)}</p>
-                <p className="text-xs text-gray-500 mt-2">Monthly Recurring Revenue</p>
+                <p className="text-xs text-gray-500 mt-2">{dateRange ? `Fatturato mensile — ${revenueTrendLabel}` : 'Monthly Recurring Revenue'}</p>
               </CardContent>
             </Card>
 
