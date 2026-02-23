@@ -326,8 +326,9 @@ export default function AdminAnalytics() {
   ];
 
   // Section 5: Retention & Churn
-  const cancelledUsers = users.filter(u => u.subscription_status === 'cancelled').length;
-  const expiredUsers = users.filter(u => u.subscription_status === 'expired').length;
+  const usersForChurn = dateRange ? filteredUsers : users;
+  const cancelledUsers = usersForChurn.filter(u => u.subscription_status === 'cancelled').length;
+  const expiredUsers = usersForChurn.filter(u => u.subscription_status === 'expired').length;
   const totalChurned = cancelledUsers + expiredUsers;
   const churnRate = totalActiveUsers > 0 
     ? ((totalChurned / (totalActiveUsers + totalChurned)) * 100).toFixed(1) 
