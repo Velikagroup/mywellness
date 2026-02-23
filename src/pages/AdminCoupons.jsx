@@ -304,12 +304,22 @@ export default function AdminCoupons() {
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header */}
-        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestione Coupon</h1>
-            <p className="text-gray-600">Crea coupon standard o lifetime gratuiti</p>
-          </div>
-          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+         <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+           <div>
+             <h1 className="text-3xl font-bold text-gray-900 mb-2">Gestione Coupon</h1>
+             <p className="text-gray-600">Crea coupon standard o lifetime gratuiti</p>
+           </div>
+           <div className="flex gap-3">
+             <Button 
+               onClick={() => loadCoupons(true)}
+               disabled={isRefreshing}
+               variant="outline"
+               className="gap-2"
+             >
+               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+               {isRefreshing ? 'Aggiornamento...' : 'Aggiorna'}
+             </Button>
+             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
               <Button className="bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-lg">
                 <PlusCircle className="mr-2 h-4 w-4" />
