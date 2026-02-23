@@ -215,29 +215,7 @@ export default function AdminAnalytics() {
     // Filtra le transazioni per data e calcola i nuovi abbonamenti nel periodo
     // DEDUPLICATION: conta utenti unici, non transazioni (evita doppi per payment_intent + invoice)
     const filteredTx = filterByDate(transactions, 'payment_date');
-    const succeededTx = filteredTx.filter(t => t.status === 'succeeded');
-    
-    // DEBUG
-    if (activePreset === '1d') {
-      const monthlyTx = succeededTx.filter(t => t.billing_period === 'monthly');
-      console.log('🔍 DEBUG Oggi - filteredTx:', filteredTx);
-      console.log('🔍 DEBUG Oggi - succeededTx:', succeededTx);
-      console.log('🔍 DEBUG Oggi - monthly transactions:', monthlyTx);
-      if (monthlyTx.length > 0) {
-        monthlyTx.forEach((tx, idx) => {
-          console.log(`  → Monthly TX ${idx}:`, {
-            id: tx.id,
-            user_id: tx.user_id,
-            type: tx.type,
-            billing_period: tx.billing_period,
-            status: tx.status,
-            amount: tx.amount,
-            payment_date: tx.payment_date,
-            created_date: tx.created_date
-          });
-        });
-      }
-    }
+    const succeededTx = filteredTx.filter(t => t.status === 'succeeded' && t.amount > 0);
     
     const uniqueMonthlyUsers = new Set(succeededTx.filter(t => t.billing_period === 'monthly').map(t => t.user_id));
     const uniqueYearlyUsers = new Set(succeededTx.filter(t => t.billing_period === 'yearly' || t.type === 'trial_setup').map(t => t.user_id));
