@@ -815,47 +815,7 @@ export default function AdminAnalytics() {
           </Card>
         </div>
 
-        {/* SECTION 4: Distribuzione Piani */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Distribuzione Piani</h2>
-          <Card className="water-glass-effect border-gray-200/30">
-            <CardContent className="p-8">
-              <div>
-                <div className="space-y-4">
-                  <div className="p-6 bg-blue-50 rounded-xl border-2 border-blue-200">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-blue-900 mb-1">Piano Mensile</p>
-                        <p className="text-xs text-blue-700">€9.99/mese</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-4xl font-black text-blue-900">{activeMonthlyUsers}</p>
-                        <p className="text-xs text-blue-700 mt-1">
-                          {totalActiveUsers > 0 ? ((activeMonthlyUsers / totalActiveUsers) * 100).toFixed(0) : 0}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
 
-                  <div className="p-6 bg-teal-50 rounded-xl border-2 border-teal-200">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-semibold text-teal-900 mb-1">Piano Annuale</p>
-                        <p className="text-xs text-teal-700">€49.99/anno (€4.17/mese)</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-4xl font-black text-teal-900">{activeYearlyUsers}</p>
-                        <p className="text-xs text-teal-700 mt-1">
-                          {totalActiveUsers > 0 ? ((activeYearlyUsers / totalActiveUsers) * 100).toFixed(0) : 0}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* SECTION 5: Retention & Churn */}
         <div>
