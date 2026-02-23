@@ -11,6 +11,7 @@ export default function AdminCouponStats() {
   const [user, setUser] = useState(null);
   const [coupons, setCoupons] = useState([]);
   const [users, setUsers] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchCode, setSearchCode] = useState('');
 
