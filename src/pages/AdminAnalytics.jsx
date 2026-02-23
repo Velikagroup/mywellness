@@ -45,6 +45,7 @@ export default function AdminAnalytics() {
   const DATE_PRESETS = [
     { label: 'Tutto', value: 'all' },
     { label: 'Oggi', value: '1d' },
+    { label: 'Ieri', value: 'yesterday' },
     { label: '7 giorni', value: '7d' },
     { label: '30 giorni', value: '30d' },
     { label: '3 mesi', value: '3m' },

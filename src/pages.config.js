@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import _404 from './pages/404';
+import AdminAnalytics from './pages/AdminAnalytics';
 import AdminBlog from './pages/AdminBlog';
 import AdminClients from './pages/AdminClients';
 import AdminCoupons from './pages/AdminCoupons';
@@ -119,12 +120,12 @@ import ptcheckout from './pages/ptcheckout';
 import ptpostquizsubscription from './pages/ptpostquizsubscription';
 import ptpricing from './pages/ptpricing';
 import ptquiz from './pages/ptquiz';
-import AdminAnalytics from './pages/AdminAnalytics';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "404": _404,
+    "AdminAnalytics": AdminAnalytics,
     "AdminBlog": AdminBlog,
     "AdminClients": AdminClients,
     "AdminCoupons": AdminCoupons,
@@ -196,7 +197,6 @@ export const PAGES = {
     "ptpostquizsubscription": ptpostquizsubscription,
     "ptpricing": ptpricing,
     "ptquiz": ptquiz,
-    "AdminAnalytics": AdminAnalytics,
 }
 
 export const pagesConfig = {
