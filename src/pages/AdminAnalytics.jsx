@@ -244,24 +244,23 @@ export default function AdminAnalytics() {
   // Section 2: Funnel
   const totalRegistrations = dateRange ? filteredUsers.length : users.length;
   const quizCompleted = (dateRange ? filteredUsers : users).filter(u => u.quiz_completed === true).length;
-  // trialsStarted = chi è ATTUALMENTE nel trial (non ancora convertito) — da Stripe
-  const trialsStarted = trialUsersCount;
-  // trialsConverted = chi ha completato il trial ed è ora active annuale
-  const trialsConverted = activeYearlyUsers;
-  const subscriptionsActive = totalActiveUsers;
 
-  // Conversion rates → paganti
+  // Nuovi acquisti nel periodo selezionato (da transazioni con payment_date)
+  const filteredTransactions = filterByDate(transactions, 'payment_date');
+  const newMonthlyInPeriod = filteredTransactions.filter(t => t.status === 'succeeded' && t.billing_period === 'monthly').length;
+  const newYearlyInPeriod = filteredTransactions.filter(t => t.status === 'succeeded' && (t.billing_period === 'yearly' || t.type === 'trial_setup')).length;
+  const newSubscriptionsInPeriod = newMonthlyInPeriod + newYearlyInPeriod;
+
+  // Per le conversion rate: usiamo i nuovi acquisti nel periodo vs il traffico nel periodo
   const pct = (num, denom) => denom > 0 ? ((num / denom) * 100).toFixed(1) + '%' : '—';
-  const convSite = pct(subscriptionsActive, uniqueSiteVisitors);
-  const convQuiz = pct(subscriptionsActive, uniqueQuizVisitors);
-  const convQuizCompleted = pct(subscriptionsActive, quizCompleted);
-  const convRegistrations = pct(subscriptionsActive, totalRegistrations);
+  const convSite = pct(newSubscriptionsInPeriod, uniqueSiteVisitors);
+  const convQuiz = pct(newSubscriptionsInPeriod, uniqueQuizVisitors);
+  const convQuizCompleted = pct(newSubscriptionsInPeriod, quizCompleted);
+  const convRegistrations = pct(newSubscriptionsInPeriod, totalRegistrations);
 
-  // Il totale di chi ha mai avuto un trial (in corso + convertiti) per calcolare il rate
-  const totalEverTrialed = trialUsersCount + trialsConverted;
-  const trialConversionRate = totalEverTrialed > 0 
-    ? ((trialsConverted / totalEverTrialed) * 100).toFixed(1) 
-    : 0;
+  // Abbonamenti attivi TOTALI (sempre da Stripe, indipendente dal filtro — stato attuale)
+  const trialsStarted = trialUsersCount;
+  const trialsConverted = activeYearlyUsers;
 
   // Section 3: Revenue
   const PRICE_MAP = {
