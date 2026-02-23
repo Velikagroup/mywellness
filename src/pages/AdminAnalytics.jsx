@@ -233,7 +233,7 @@ export default function AdminAnalytics() {
   // Section 6: User Behaviour
   const registeredNoQuiz = users.filter(u => !u.quiz_completed).length;
   const quizCompletedUsers = quizCompleted;
-  const usersWithTrial = trialUsers;
+  const usersWithTrial = trialUsersCount;
   const payingUsers = totalActiveUsers;
 
   // ============================================
