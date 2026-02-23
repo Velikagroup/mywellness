@@ -747,7 +747,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
             </p>
             <p className="text-base font-medium text-gray-700">
               {isLosingWeight && targetDate
-                ? `${t?.quiz?.quizLose || 'Pierde'} ${weightDifference.toFixed(0)} kg ${t?.quiz?.quizFor || 'para'} ${targetDate.toLocaleDateString('es-ES', { month: 'long', day: 'numeric' })}`
+                ? `${t?.quiz?.quizLose || 'Pierde'} ${weightDifference.toFixed(0)} kg ${t?.quiz?.quizFor || 'para'} ${formattedTargetDate}`
                 : `${weightDifference.toFixed(0)} kg`}
             </p>
           </div>
