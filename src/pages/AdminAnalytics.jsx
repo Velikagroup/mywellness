@@ -94,6 +94,13 @@ export default function AdminAnalytics() {
             const activities = await base44.entities.UserActivity.filter({ event_type: 'quiz_started' }, '-created_date', 5000);
             setQuizActivities(activities);
           } catch (e) { console.error('Error loading quiz activities:', e); }
+        })(),
+        (async () => {
+          try {
+            const visits = await base44.entities.UserActivity.filter({ event_type: 'pricing_visited' }, '-created_date', 10000);
+            // filter only those with event_category: site_visit
+            setSiteVisitActivities(visits.filter(v => v.event_data?.event_category === 'site_visit'));
+          } catch (e) { console.error('Error loading site visits:', e); }
         })()
       ]);
     } catch (error) {
