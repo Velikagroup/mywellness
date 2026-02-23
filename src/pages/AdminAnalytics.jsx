@@ -313,12 +313,14 @@ export default function AdminAnalytics() {
   const uniqueSiteVisitors = anonymousCount + loggedInUserIds.size;
 
   const siteVisitsByLang = filterByDate(siteVisitActivities).reduce((acc, v) => {
-    acc['all'] = (acc['all'] || 0) + 1;
+    const lang = v.event_data?.language || 'unknown';
+    acc[lang] = (acc[lang] || 0) + 1;
     return acc;
   }, {});
 
   const quizVisitsByLang = filterByDate(quizActivities).reduce((acc, a) => {
-    acc['all'] = (acc['all'] || 0) + 1;
+    const lang = a.event_data?.language || 'unknown';
+    acc[lang] = (acc[lang] || 0) + 1;
     return acc;
   }, {});
   const totalQuizVisits = filteredQuizActivities.length;
