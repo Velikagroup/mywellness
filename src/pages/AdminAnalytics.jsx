@@ -308,13 +308,8 @@ export default function AdminAnalytics() {
   const LANG_LABELS = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR' };
   const LANG_LABELS_SITE = { it: '🇮🇹 IT', en: '🇬🇧 EN', es: '🇪🇸 ES', pt: '🇵🇹 PT', de: '🇩🇪 DE', fr: '🇫🇷 FR', unknown: '❓' };
 
-  // DEBUG: Log per capire la struttura dei dati
-  console.log('🔍 Sample siteVisitActivity:', siteVisitActivities[0]);
-  console.log('🔍 Sample quizActivity:', quizActivities[0]);
-  console.log('📊 Tutte le lingue trovate (site):', filterByDate(siteVisitActivities).map(v => extractLanguageFromPath(v.utm_params?.ref || v.event_data?.page || '')));
-  
-  const filteredSiteVisits = filterByDateAndLanguage(siteVisitActivities);
-  const filteredQuizActivities = filterByDateAndLanguage(quizActivities);
+  const filteredSiteVisits = filterByDate(siteVisitActivities);
+  const filteredQuizActivities = filterByDate(quizActivities);
   const filteredUsers = filterByDate(users);
 
   const totalSiteVisits = filteredSiteVisits.length;
