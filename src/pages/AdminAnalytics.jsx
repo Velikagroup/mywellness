@@ -62,7 +62,7 @@ export default function AdminAnalytics() {
     }
   };
 
-  const [stripeTrialUsers, setStripeTrialUsers] = useState([]);
+  const [stripeStats, setStripeStats] = useState({ monthly: { count: 0 }, yearly: { count: 0 }, trialing: { count: 0 } });
 
   const loadData = async () => {
     try {
@@ -71,27 +71,23 @@ export default function AdminAnalytics() {
       ]);
       setUsers(usersData);
 
-      try {
-        const txResponse = await base44.functions.invoke('adminListTransactions');
-        const txData = txResponse.data || txResponse;
-        if (txData.success && txData.transactions) {
-          setTransactions(txData.transactions);
-        }
-      } catch (txError) {
-        console.error('Error loading transactions:', txError);
-        setTransactions([]);
-      }
-
-      // Trial reali da Stripe
-      try {
-        const trialResponse = await base44.functions.invoke('getTrialStatsFromStripe');
-        const trialData = trialResponse.data || trialResponse;
-        if (trialData.success) {
-          setStripeTrialUsers(trialData.trial_users || []);
-        }
-      } catch (trialError) {
-        console.error('Error loading Stripe trial data:', trialError);
-      }
+      // Carica transazioni e stats Stripe in parallelo
+      await Promise.all([
+        (async () => {
+          try {
+            const txResponse = await base44.functions.invoke('adminListTransactions');
+            const txData = txResponse.data || txResponse;
+            if (txData.success && txData.transactions) setTransactions(txData.transactions);
+          } catch (e) { console.error('Error loading transactions:', e); }
+        })(),
+        (async () => {
+          try {
+            const stripeResponse = await base44.functions.invoke('getSubscriptionStatsFromStripe');
+            const stripeData = stripeResponse.data || stripeResponse;
+            if (stripeData.success) setStripeStats(stripeData);
+          } catch (e) { console.error('Error loading Stripe stats:', e); }
+        })()
+      ]);
     } catch (error) {
       console.error('Error loading data:', error);
     }
