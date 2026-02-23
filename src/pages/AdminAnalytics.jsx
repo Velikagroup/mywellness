@@ -674,7 +674,7 @@ export default function AdminAnalytics() {
                 </div>
                 <p className="text-sm font-semibold text-gray-700 mb-1">ARR</p>
                 <p className="text-4xl font-black text-green-900">€{arr.toFixed(2)}</p>
-                <p className="text-xs text-gray-500 mt-2">Annual Recurring Revenue</p>
+                <p className="text-xs text-gray-500 mt-2">{dateRange ? `Fatturato annuale — ${revenueTrendLabel}` : 'Annual Recurring Revenue'}</p>
               </CardContent>
             </Card>
 
