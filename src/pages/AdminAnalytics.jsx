@@ -310,58 +310,6 @@ export default function AdminAnalytics() {
           </Button>
         </div>
 
-        {/* SECTION 1: Overview KPI */}
-        <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Overview KPI</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <Users className="w-8 h-8 text-gray-700" />
-                  <div className={`text-3xl font-black ${totalActiveUsers > 0 ? 'text-green-600' : 'text-gray-400'}`}>
-                    {totalActiveUsers}
-                  </div>
-                </div>
-                <p className="text-sm font-semibold text-gray-700">Total Active Users</p>
-                <p className="text-xs text-gray-500 mt-1">Abbonamenti attivi</p>
-              </CardContent>
-            </Card>
-
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <Calendar className="w-8 h-8 text-blue-600" />
-                  <div className="text-3xl font-black text-blue-600">{activeMonthlyUsers}</div>
-                </div>
-                <p className="text-sm font-semibold text-gray-700">Active Monthly</p>
-                <p className="text-xs text-gray-500 mt-1">Piano €9.99/mese</p>
-              </CardContent>
-            </Card>
-
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <CheckCircle2 className="w-8 h-8 text-[#26847F]" />
-                  <div className="text-3xl font-black text-[#26847F]">{activeYearlyUsers}</div>
-                </div>
-                <p className="text-sm font-semibold text-gray-700">Active Annual</p>
-                <p className="text-xs text-gray-500 mt-1">Piano €49.99/anno</p>
-              </CardContent>
-            </Card>
-
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <Clock className="w-8 h-8 text-purple-600" />
-                  <div className="text-3xl font-black text-purple-600">{trialUsersCount}</div>
-                </div>
-                <p className="text-sm font-semibold text-gray-700">Trial Active</p>
-                <p className="text-xs text-gray-500 mt-1">3 giorni trial annuale</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
         {/* SECTION 2: Funnel */}
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-4">Funnel Conversione (CORE BUSINESS)</h2>
