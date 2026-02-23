@@ -1332,32 +1332,7 @@ export default function AdminMarketing() {
                         </div>
                       </div>
 
-                      {/* Codice Referral/Coupon */}
-                      {influencer.referral_code && (
-                        <div className="mb-4 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-3 border border-indigo-200 flex items-center justify-between">
-                          <div>
-                            <p className="text-xs text-indigo-600 font-semibold mb-1">Codice Referral/Coupon</p>
-                            <code className="text-lg font-bold text-indigo-900">{influencer.referral_code}</code>
-                          </div>
-                          <Button
-                            onClick={() => {
-                              navigator.clipboard.writeText(influencer.referral_code);
-                              setCopiedLink(`referral_${influencer.id}`);
-                              setTimeout(() => setCopiedLink(null), 2000);
-                            }}
-                            variant="outline"
-                            size="sm"
-                            className="text-xs"
-                          >
-                            {copiedLink === `referral_${influencer.id}` ? (
-                              <CheckCircle className="w-3 h-3 mr-1" />
-                            ) : (
-                              <LinkIcon className="w-3 h-3 mr-1" />
-                            )}
-                            Copia
-                          </Button>
-                        </div>
-                      )}
+
 
                       {/* Actions */}
                       <div className="space-y-2">
