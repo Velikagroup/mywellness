@@ -295,19 +295,24 @@ export default function AdminAnalytics() {
   // Se esiste stripe_payment_intent_id senza invoice → è un pagamento diretto
   // Se esistono entrambi per lo stesso user nella stessa data (±60s) → stesso pagamento, tieni solo il più alto (o l'invoice)
   const deduplicateTx = (txList) => {
-    const seen = new Map();
-    const result = [];
+    // Un pagamento Stripe genera SEMPRE 2 record: uno con payment_intent_id (da charge) e uno con invoice_id.
+    // Strategia: per ogni user_id + giorno + importo, tieni solo il record con invoice_id (più affidabile).
+    // Se non c'è invoice_id, tieni il payment_intent.
+    const groups = new Map();
     for (const t of txList) {
-      // Crea una chiave unica: preferisci invoice_id, poi payment_intent_id
-      const key = t.stripe_invoice_id || t.stripe_payment_intent_id;
-      if (key) {
-        // Se già visto questo invoice/payment_intent, skippa (duplicato)
-        if (seen.has(key)) continue;
-        seen.set(key, true);
+      const day = t.payment_date ? t.payment_date.substring(0, 10) : 'nodate';
+      const key = `${t.user_id}__${day}__${t.amount}`;
+      if (!groups.has(key)) {
+        groups.set(key, t);
+      } else {
+        const existing = groups.get(key);
+        // Preferisci il record con stripe_invoice_id (più affidabile, evita duplicati)
+        if (t.stripe_invoice_id && !existing.stripe_invoice_id) {
+          groups.set(key, t);
+        }
       }
-      result.push(t);
     }
-    return result;
+    return Array.from(groups.values());
   };
   const succeededTxAll = deduplicateTx(filteredTxForRevenue.filter(t => t.status === 'succeeded'));
   const periodRevenue = succeededTxAll.reduce((sum, t) => sum + (t.amount || 0), 0);
