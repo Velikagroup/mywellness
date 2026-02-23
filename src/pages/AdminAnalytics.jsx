@@ -283,9 +283,15 @@ export default function AdminAnalytics() {
     yearly: 49.99
   };
 
-  const mrr = activeMonthlyUsers * PRICE_MAP.monthly;
-  const arr = activeYearlyUsers * PRICE_MAP.yearly;
-  const totalActiveRevenue = mrr + (activeYearlyUsers * PRICE_MAP.yearly);
+  const filteredTxForRevenue = dateRange ? filterByDate(transactions, 'payment_date') : transactions;
+  const succeededTxAll = filteredTxForRevenue.filter(t => t.status === 'succeeded');
+  const periodRevenue = succeededTxAll.reduce((sum, t) => sum + (t.amount || 0), 0);
+
+  const mrr = dateRange ? succeededTxAll.filter(t => t.billing_period === 'monthly').reduce((s, t) => s + (t.amount || 0), 0)
+    : activeMonthlyUsers * PRICE_MAP.monthly;
+  const arr = dateRange ? succeededTxAll.filter(t => t.billing_period === 'yearly').reduce((s, t) => s + (t.amount || 0), 0)
+    : activeYearlyUsers * PRICE_MAP.yearly;
+  const totalActiveRevenue = dateRange ? periodRevenue : (activeMonthlyUsers * PRICE_MAP.monthly + activeYearlyUsers * PRICE_MAP.yearly);
 
   // Revenue trend (last 6 months)
   const getRevenueTrend = () => {
