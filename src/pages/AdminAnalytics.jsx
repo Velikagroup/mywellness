@@ -208,13 +208,6 @@ export default function AdminAnalytics() {
   const quizLoggedIds = new Set(quizActivities.filter(a => a.user_id !== 'anonymous').map(a => a.user_id));
   const uniqueQuizVisitors = quizAnonCount + quizLoggedIds.size;
 
-  // Conversion rates → paganti
-  const pct = (num, denom) => denom > 0 ? ((num / denom) * 100).toFixed(1) + '%' : '—';
-  const convSite = pct(subscriptionsActive, uniqueSiteVisitors);
-  const convQuiz = pct(subscriptionsActive, uniqueQuizVisitors);
-  const convQuizCompleted = pct(subscriptionsActive, quizCompleted);
-  const convRegistrations = pct(subscriptionsActive, totalRegistrations);
-
   // Section 2: Funnel
   const totalRegistrations = users.length;
   const quizCompleted = users.filter(u => u.quiz_completed === true).length;
