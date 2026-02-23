@@ -238,6 +238,12 @@ export default function AdminAnalytics() {
   })));
 
   // Dati abbonamenti: se c'è filtro data → usa transazioni filtrate, altrimenti usa Stripe (snapshot live)
+  // Prezzi dei piani
+  const PRICE_MAP = {
+    monthly: 9.99,
+    yearly: 49.99
+  };
+
   let activeMonthlyUsers, activeYearlyUsers, totalActiveUsers, trialUsersCount;
   let monthlyRevenue = 0, yearlyRevenue = 0, totalSubscriptionRevenue = 0;
 
