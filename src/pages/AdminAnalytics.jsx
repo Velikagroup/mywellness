@@ -210,6 +210,7 @@ export default function AdminAnalytics() {
 
   // Dati abbonamenti: se c'è filtro data → usa transazioni filtrate, altrimenti usa Stripe (snapshot live)
   let activeMonthlyUsers, activeYearlyUsers, totalActiveUsers, trialUsersCount;
+  let monthlyRevenue = 0, yearlyRevenue = 0, totalSubscriptionRevenue = 0;
 
   if (dateRange) {
     // Filtra le transazioni per data e calcola i nuovi abbonamenti nel periodo
