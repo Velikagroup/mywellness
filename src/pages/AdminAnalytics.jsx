@@ -508,6 +508,32 @@ export default function AdminAnalytics() {
                   </div>
                 </div>
 
+                {/* Arrow down — full width */}
+                <div className="flex justify-center">
+                  <div className="w-1 h-8 bg-gray-300"></div>
+                </div>
+
+                {/* STEP FINALE: Totale Abbonamenti Attivi */}
+                <div className="bg-green-50 rounded-xl border-2 border-green-400 p-6">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-green-900 text-lg">✅ Totale Abbonamenti Attivi</span>
+                    <div className="flex gap-8 items-end">
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-blue-700 mb-1">Mensili</div>
+                        <div className="text-3xl font-black text-blue-900">{activeMonthlyUsers}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-teal-700 mb-1">Annuali</div>
+                        <div className="text-3xl font-black text-teal-900">{activeYearlyUsers}</div>
+                      </div>
+                      <div className="text-right border-l-2 border-green-300 pl-8">
+                        <div className="text-sm font-semibold text-green-700 mb-1">Totale</div>
+                        <div className="text-4xl font-black text-green-900">{totalActiveUsers}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
 
 
               </div>
