@@ -384,7 +384,7 @@ export default function AdminAnalytics() {
                       </span>
                     ))}
                   </div>
-                  <p className="text-xs text-slate-400 italic mt-2">📊 Somma di tutti gli eventi tracciati (quiz avviati, pricing, checkout, ecc.) dal Nov 2025</p>
+                  <p className="text-xs text-slate-400 italic mt-2">📊 Tutti gli eventi tracciati (quiz avviati, pricing, checkout, ecc.) dal Nov 2025. Gli utenti anonimi sono contati per evento (no cookie tracking).</p>
                 </div>
 
                 {/* Arrow down */}
