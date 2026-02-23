@@ -336,13 +336,6 @@ export default function AdminAnalytics() {
   const trialsConverted = activeYearlyUsers;
   const subscriptionsActive = totalActiveUsers;
   
-  // Abbonamenti Totali Mai Attivati = suddivisi per status
-  const usersActive = (dateRange ? filteredUsers : users).filter(u => u.subscription_status === 'active').length;
-  const usersTrial = (dateRange ? filteredUsers : users).filter(u => u.subscription_status === 'trial').length;
-  const usersCancelled = (dateRange ? filteredUsers : users).filter(u => u.subscription_status === 'cancelled').length;
-  const usersExpired = (dateRange ? filteredUsers : users).filter(u => u.subscription_status === 'expired').length;
-  const usersWithAnySubscription = usersActive + usersTrial + usersCancelled + usersExpired;
-
   // Suddivisione mensili vs annuali (totali mai attivati)
   const monthlyEverActivated = (dateRange ? filteredUsers : users).filter(u => {
     return u.subscription_status && ['active', 'trial', 'cancelled', 'expired'].includes(u.subscription_status) && u.billing_period === 'monthly';
@@ -350,6 +343,7 @@ export default function AdminAnalytics() {
   const yearlyEverActivated = (dateRange ? filteredUsers : users).filter(u => {
     return u.subscription_status && ['active', 'trial', 'cancelled', 'expired'].includes(u.subscription_status) && u.billing_period === 'yearly';
   }).length;
+  const usersWithAnySubscription = monthlyEverActivated + yearlyEverActivated;
 
   // Conversion rates → paganti
   const pct = (num, denom) => denom > 0 ? ((num / denom) * 100).toFixed(1) + '%' : '—';
