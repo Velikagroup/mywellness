@@ -38,8 +38,9 @@ export default function AdminCoupons() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const loadCoupons = async () => {
-    setIsLoading(true);
+  const loadCoupons = async (isRefresh = false) => {
+    if (isRefresh) setIsRefreshing(true);
+    else setIsLoading(true);
     const [fetchedCoupons, fetchedTransactions, fetchedUsers] = await Promise.all([
       base44.entities.Coupon.list('-created_date'),
       base44.entities.Transaction.list('-payment_date', 1000),
@@ -48,7 +49,8 @@ export default function AdminCoupons() {
     setCoupons(fetchedCoupons);
     setTransactions(fetchedTransactions);
     setUsers(fetchedUsers);
-    setIsLoading(false);
+    if (isRefresh) setIsRefreshing(false);
+    else setIsLoading(false);
   };
 
   useEffect(() => {
