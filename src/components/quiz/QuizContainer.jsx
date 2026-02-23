@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { format } from 'date-fns';
+import { it as itLocale, enUS as enLocale, es as esLocale, ptBR as ptLocale, de as deLocale, fr as frLocale } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, EyeOff, CheckCircle2, Loader2, ArrowLeft, LogIn } from "lucide-react";
