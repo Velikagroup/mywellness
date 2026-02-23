@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Trash2, PlusCircle, Calendar as CalendarIcon, Tag, Percent, Crown, Sparkles, TrendingUp, DollarSign, ShoppingCart, BarChart3 } from 'lucide-react';
+import { Trash2, PlusCircle, Calendar as CalendarIcon, Tag, Percent, Crown, Sparkles, TrendingUp, DollarSign, ShoppingCart, BarChart3, RefreshCw } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
