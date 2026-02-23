@@ -79,6 +79,19 @@ function HomeContent() {
   }, [navigate]);
 
   useEffect(() => {
+    // Track sito visit
+    let visitorId = localStorage.getItem('visitor_id');
+    if (!visitorId) {
+      visitorId = 'v_' + Math.random().toString(36).substr(2, 12) + '_' + Date.now();
+      localStorage.setItem('visitor_id', visitorId);
+    }
+    base44.functions.invoke('trackSiteVisit', {
+      pathname: window.location.pathname || '/',
+      visitor_id: visitorId
+    }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
     window.scrollTo(0, 0);
 
     // Verifica remember me token all'avvio
