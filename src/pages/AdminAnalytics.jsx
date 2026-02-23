@@ -343,6 +343,14 @@ export default function AdminAnalytics() {
   const usersExpired = (dateRange ? filteredUsers : users).filter(u => u.subscription_status === 'expired').length;
   const usersWithAnySubscription = usersActive + usersTrial + usersCancelled + usersExpired;
 
+  // Suddivisione mensili vs annuali (totali mai attivati)
+  const monthlyEverActivated = (dateRange ? filteredUsers : users).filter(u => {
+    return u.subscription_status && ['active', 'trial', 'cancelled', 'expired'].includes(u.subscription_status) && u.billing_period === 'monthly';
+  }).length;
+  const yearlyEverActivated = (dateRange ? filteredUsers : users).filter(u => {
+    return u.subscription_status && ['active', 'trial', 'cancelled', 'expired'].includes(u.subscription_status) && u.billing_period === 'yearly';
+  }).length;
+
   // Conversion rates → paganti
   const pct = (num, denom) => denom > 0 ? ((num / denom) * 100).toFixed(1) + '%' : '—';
   const convSite = pct(subscriptionsActive, uniqueSiteVisitors);
