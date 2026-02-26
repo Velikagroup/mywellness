@@ -19,8 +19,27 @@ const discoveryOptions = [
   { id: 'other', label: 'Altro' }
 ];
 
+const accessDashboardLabels = {
+  it: 'Accedi alla Dashboard',
+  en: 'Access Dashboard',
+  es: 'Acceder al Panel',
+  pt: 'Acessar o Painel',
+  de: 'Zum Dashboard',
+  fr: 'Accéder au tableau de bord'
+};
+
+const savingLabels = {
+  it: 'Salvataggio...',
+  en: 'Saving...',
+  es: 'Guardando...',
+  pt: 'Salvando...',
+  de: 'Speichern...',
+  fr: 'Enregistrement...'
+};
+
 export default function OnboardingTour({ user, onComplete }) {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedSource, setSelectedSource] = useState(null);
   const [sourceDetails, setSourceDetails] = useState('');
