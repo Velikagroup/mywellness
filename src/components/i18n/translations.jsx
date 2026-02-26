@@ -10188,7 +10188,7 @@ export const translations = {
       salesTax: "Steuern",
       menu: "Menü",
       pricing: "Preise",
-      login: "Zum Dashboard"
+      login: "Anmelden"
     },
     pricing: {
       title: "Wählen Sie",
