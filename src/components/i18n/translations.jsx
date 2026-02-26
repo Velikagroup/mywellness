@@ -7812,7 +7812,7 @@ export const translations = {
       salesTax: "Impostos",
       menu: "Menu",
       pricing: "Preços",
-      login: "Acessar o painel"
+      login: "Acessar"
     },
     pricing: {
       title: "Escolha",
