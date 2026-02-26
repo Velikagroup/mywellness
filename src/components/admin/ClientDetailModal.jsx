@@ -421,13 +421,22 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
                       <span className="text-gray-600">Email Inviate:</span>
                       <span className="font-semibold">{emailsSent}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-gray-600">Lingua:</span>
-                      <span className="font-semibold">
-                        {client.language === 'it' ? '🇮🇹 Italiano' :
-                         client.language === 'en' ? '🇬🇧 Inglese' :
-                         client.language || 'it'}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">
+                          {client.language === 'it' ? '🇮🇹 Italiano' :
+                           client.language === 'en' ? '🇬🇧 Inglese' :
+                           client.language === 'es' ? '🇪🇸 Spagnolo' :
+                           client.language === 'pt' ? '🇧🇷 Portoghese' :
+                           client.language === 'de' ? '🇩🇪 Tedesco' :
+                           client.language === 'fr' ? '🇫🇷 Francese' :
+                           client.language || 'it'}
+                        </span>
+                        <Button size="sm" variant="outline" className="h-6 text-xs px-2" onClick={() => { setNewLanguage(client.language || 'it'); setShowLanguageDialog(true); }}>
+                          Cambia
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
