@@ -3388,7 +3388,7 @@ export const translations = {
       salesTax: "Sales Tax",
       menu: "Menu",
       pricing: "Pricing",
-      login: "Access dashboard"
+      login: "Go to dashboard"
     },
     pricing: {
       title: "Choose",
@@ -5537,7 +5537,7 @@ export const translations = {
       salesTax: "Impuestos",
       menu: "Menú",
       pricing: "Precios",
-      login: "Acceder al panel"
+      login: "Ir al panel"
     },
     pricing: {
       title: "Elige",
@@ -7812,7 +7812,7 @@ export const translations = {
       salesTax: "Impostos",
       menu: "Menu",
       pricing: "Preços",
-      login: "Acessar o painel"
+      login: "Ir para o painel"
     },
     pricing: {
       title: "Escolha",
