@@ -39,6 +39,8 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
   const [extraCredits, setExtraCredits] = useState({ meal: 0, workout: 0 });
   const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [newPlan, setNewPlan] = useState('');
+  const [showLanguageDialog, setShowLanguageDialog] = useState(false);
+  const [newLanguage, setNewLanguage] = useState('');
 
   useEffect(() => {
     if (client && isOpen) {
