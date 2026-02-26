@@ -200,6 +200,27 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
     setIsProcessing(false);
   };
 
+  const handleChangeLanguage = async () => {
+    if (!newLanguage) return;
+    setIsProcessing(true);
+    try {
+      const response = await base44.functions.invoke('adminUpdateUserPlan', {
+        userEmail: client.email,
+        updates: { preferred_language: newLanguage }
+      });
+      if (response.data?.success || response.success) {
+        alert(`✅ Lingua aggiornata a ${newLanguage}!`);
+        setShowLanguageDialog(false);
+        await onUpdate();
+      } else {
+        alert('❌ Errore: ' + (response.data?.error || response.error));
+      }
+    } catch (error) {
+      alert('❌ Errore: ' + error.message);
+    }
+    setIsProcessing(false);
+  };
+
   const handleGrantCredits = async () => {
     setIsProcessing(true);
     try {
