@@ -63,13 +63,6 @@ Deno.serve(async (req) => {
         if (hasReachedGoal) {
             console.log(`🎉 GOAL REACHED! User ${user.email} reached ${currentWeight} kg (target: ${targetWeight} kg)`);
             
-            // Recupera lo storico peso per calcolare i progressi
-            const weightHistory = await base44.asServiceRole.entities.WeightHistory.filter(
-                { user_id: userId },
-                ['created_date'],  // Ordina dalla prima registrazione alla più recente
-                500
-            );
-
             // Peso iniziale: usa il current_weight dal quiz (peso di partenza)
             const startWeight = user.current_weight || currentWeight;
             
