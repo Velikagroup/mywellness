@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.3';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
     console.log('📧 sendBroadcastEmail - Start');
@@ -24,30 +24,24 @@ Deno.serve(async (req) => {
         // Carica tutti gli utenti
         const allUsers = await base44.asServiceRole.entities.User.list();
         
-        // Carica lista unsubscribed
-        const unsubscribedList = await base44.asServiceRole.entities.UnsubscribedEmail.list();
-        const unsubscribedEmails = new Set(unsubscribedList.map(u => u.email));
-        console.log(`🚫 Found ${unsubscribedEmails.size} unsubscribed emails`);
-        
         // Filtra in base al segmento
-        let targetUsers = allUsers.filter(u => !unsubscribedEmails.has(u.email));
+        let targetUsers = allUsers;
         
         switch(segment) {
             case 'active':
-                targetUsers = targetUsers.filter(u => u.subscription_status === 'active');
+                targetUsers = allUsers.filter(u => u.subscription_status === 'active');
                 break;
             case 'trial':
-                targetUsers = targetUsers.filter(u => u.subscription_status === 'trial');
+                targetUsers = allUsers.filter(u => u.subscription_status === 'trial');
                 break;
             case 'expired':
-                targetUsers = targetUsers.filter(u => 
+                targetUsers = allUsers.filter(u => 
                     u.subscription_status === 'expired' || u.subscription_status === 'cancelled'
                 );
                 break;
             case 'all':
             default:
-                // targetUsers already filtered by unsubscribed
-                break;
+                targetUsers = allUsers;
         }
 
         console.log(`📬 Sending to ${targetUsers.length} users`);
@@ -67,9 +61,6 @@ Deno.serve(async (req) => {
                 let personalizedBody = emailBody
                     .replace(/\{user_name\}/g, targetUser.full_name || 'Utente')
                     .replace(/\{user_email\}/g, targetUser.email);
-
-                // Genera link unsubscribe
-                const unsubscribeUrl = `https://projectmywellness.com/api/functions/unsubscribeEmail?email=${encodeURIComponent(targetUser.email)}&source=broadcast`;
 
                 // Wrap in proper HTML template with desktop spacing
                 const htmlEmail = `
@@ -115,9 +106,6 @@ Deno.serve(async (req) => {
                             <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
                             <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
                             <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
-                            <p style="margin: 15px 0 5px 0; font-size: 11px;">
-                                <a href="${unsubscribeUrl}" style="color: #999999; text-decoration: underline;">Disiscriviti da queste email</a>
-                            </p>
                         </td>
                     </tr>
                 </table>
