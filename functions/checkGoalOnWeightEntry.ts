@@ -43,6 +43,19 @@ Deno.serve(async (req) => {
         
         const targetWeight = parseFloat(user.target_weight);
         const currentWeight = parseFloat(weightEntry.weight);
+
+        // Recupera storico peso per verificare che ci siano almeno 2 registrazioni
+        const weightHistory = await base44.asServiceRole.entities.WeightHistory.filter(
+            { user_id: userId },
+            ['created_date'],
+            500
+        );
+
+        // Blocca se l'utente ha meno di 2 registrazioni (es. appena iscritto)
+        if (weightHistory.length < 2) {
+            console.log(`⏸️ Only ${weightHistory.length} weight entry/entries - skipping goal check (need at least 2)`);
+            return Response.json({ success: true, message: 'Not enough weight entries to check goal' });
+        }
         
         // Tolleranza di 0.5 kg
         const hasReachedGoal = currentWeight <= targetWeight + 0.5;
