@@ -977,7 +977,7 @@ export const translations = {
       salesTax: "Sales Tax",
       menu: "Menu",
       pricing: "Prezzi",
-      login: "Accedi alla dashboard"
+      login: "Accedi"
     },
     pricing: {
       title: "Scegli",
