@@ -977,7 +977,7 @@ export const translations = {
       salesTax: "Sales Tax",
       menu: "Menu",
       pricing: "Prezzi",
-      login: "Accedi"
+      login: "Accedi alla dashboard"
     },
     pricing: {
       title: "Scegli",
@@ -3388,7 +3388,7 @@ export const translations = {
       salesTax: "Sales Tax",
       menu: "Menu",
       pricing: "Pricing",
-      login: "Log in"
+      login: "Access dashboard"
     },
     pricing: {
       title: "Choose",
@@ -5537,7 +5537,7 @@ export const translations = {
       salesTax: "Impuestos",
       menu: "Menú",
       pricing: "Precios",
-      login: "Iniciar sesión"
+      login: "Acceder al panel"
     },
     pricing: {
       title: "Elige",
@@ -7812,7 +7812,7 @@ export const translations = {
       salesTax: "Impostos",
       menu: "Menu",
       pricing: "Preços",
-      login: "Entrar"
+      login: "Acessar o painel"
     },
     pricing: {
       title: "Escolha",
@@ -10188,7 +10188,7 @@ export const translations = {
       salesTax: "Steuern",
       menu: "Menü",
       pricing: "Preise",
-      login: "Anmelden"
+      login: "Zum Dashboard"
     },
     pricing: {
       title: "Wählen Sie",
@@ -12564,7 +12564,7 @@ export const translations = {
       salesTax: "Taxes",
       menu: "Menu",
       pricing: "Tarifs",
-      login: "Connexion"
+      login: "Accéder au tableau de bord"
     },
     pricing: {
       title: "Choisissez",
