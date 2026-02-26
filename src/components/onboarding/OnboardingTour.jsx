@@ -4,6 +4,7 @@ import { ArrowRight, ArrowLeft, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useLanguage } from '@/components/i18n/LanguageContext';
 
 const discoveryOptions = [
   { id: 'instagram', label: 'Instagram' },
