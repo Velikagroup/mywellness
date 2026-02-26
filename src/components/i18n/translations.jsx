@@ -12564,7 +12564,7 @@ export const translations = {
       salesTax: "Taxes",
       menu: "Menu",
       pricing: "Tarifs",
-      login: "Accéder au tableau de bord"
+      login: "Se connecter"
     },
     pricing: {
       title: "Choisissez",
