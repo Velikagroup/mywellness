@@ -351,7 +351,7 @@ export default function OnboardingTour({ user, onComplete }) {
                 disabled={!selectedSource || isSaving}
                 className="w-full liquid-glass-button-selected hover:opacity-90 text-[#26847F] font-semibold disabled:opacity-50 disabled:cursor-not-allowed border-none"
               >
-                {isSaving ? 'Salvataggio...' : 'Continua'}
+                {isSaving ? (savingLabels[language] || savingLabels.it) : (accessDashboardLabels[language] || accessDashboardLabels.it)}
               </Button>
             </div>
           </div>
