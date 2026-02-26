@@ -3388,7 +3388,7 @@ export const translations = {
       salesTax: "Sales Tax",
       menu: "Menu",
       pricing: "Pricing",
-      login: "Access dashboard"
+      login: "Log in"
     },
     pricing: {
       title: "Choose",
