@@ -809,6 +809,42 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
           </DialogContent>
         </Dialog>
 
+        {/* Dialog Cambia Lingua */}
+        <Dialog open={showLanguageDialog} onOpenChange={setShowLanguageDialog}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Cambia Lingua Utente</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { code: 'it', label: '🇮🇹 Italiano' },
+                  { code: 'en', label: '🇬🇧 Inglese' },
+                  { code: 'es', label: '🇪🇸 Spagnolo' },
+                  { code: 'pt', label: '🇧🇷 Portoghese' },
+                  { code: 'de', label: '🇩🇪 Tedesco' },
+                  { code: 'fr', label: '🇫🇷 Francese' },
+                ].map(lang => (
+                  <Button
+                    key={lang.code}
+                    onClick={() => setNewLanguage(lang.code)}
+                    variant={newLanguage === lang.code ? 'default' : 'outline'}
+                    className={newLanguage === lang.code ? 'bg-[#26847F] hover:bg-[#1f6b66] text-white' : ''}
+                  >
+                    {lang.label}
+                  </Button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={() => setShowLanguageDialog(false)} variant="outline" className="flex-1">Annulla</Button>
+                <Button onClick={handleChangeLanguage} disabled={isProcessing || newLanguage === client.language} className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white">
+                  Conferma
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Dialog Crediti */}
         <Dialog open={showCreditDialog} onOpenChange={setShowCreditDialog}>
           <DialogContent className="max-w-md">
