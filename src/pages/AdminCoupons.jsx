@@ -36,7 +36,7 @@ export default function AdminCoupons() {
   const [selectedPeriod, setSelectedPeriod] = useState('all');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
-  const [searchEmail, setSearchEmail] = useState('administration@bluadv.net');
+  const [searchEmail, setSearchEmail] = useState('');
 
   const loadCoupons = async () => {
     setIsLoading(true);
