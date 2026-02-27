@@ -537,6 +537,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
       const savedInfluencerCode = localStorage.getItem('influencerReferralCode');
       const savedInfluencerId = localStorage.getItem('influencerId');
 
+      // Get referral/coupon code from localStorage (set in ReferralCodeStep)
+      const savedReferralCode = localStorage.getItem('referralCode');
+
       const userDataToSave = {
         gender: quizData.gender,
         birthdate: quizData.birthdate,
@@ -556,7 +559,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
         daily_calories: Math.round(dailyCalories),
         quiz_completed: true,
         preferred_language: language,
-        coupon_applied: savedInfluencerCode || quizData.coupon_applied
+        coupon_applied: savedReferralCode || savedInfluencerCode || quizData.coupon_applied || quizData.referral_code
       };
 
       // Add influencer referral data if present
