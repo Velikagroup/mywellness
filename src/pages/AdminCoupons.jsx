@@ -743,8 +743,21 @@ export default function AdminCoupons() {
                                </span>
                              ) : <span className="text-gray-400">—</span>}
                            </TableCell>
+                          <TableCell className="text-center">
+                            {stats.uses > 0 ? (
+                              <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">{stats.uses}</span>
+                            ) : <span className="text-gray-400">—</span>}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {stats.totalUses > 0 ? (
+                              <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">{stats.totalUses}</span>
+                            ) : <span className="text-gray-400">—</span>}
+                          </TableCell>
                           <TableCell className="text-right font-semibold text-green-600">
                             {stats.revenue > 0 ? `€${stats.revenue.toFixed(2)}` : '-'}
+                          </TableCell>
+                          <TableCell className="text-right font-bold text-emerald-700">
+                            {stats.totalRevenue > 0 ? `€${stats.totalRevenue.toFixed(2)}` : '-'}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
