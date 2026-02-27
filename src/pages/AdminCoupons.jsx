@@ -165,124 +165,89 @@ export default function AdminCoupons() {
     }
   };
 
-  // Calcola statistiche coupon basandosi sui coupon usati (used_by e used_at)
+  // Calcola statistiche coupon basandosi sui coupon usati e sulle transazioni REALI
   const couponStats = useMemo(() => {
-    // Conta utilizzi direttamente dai coupon
-    const usedCoupons = coupons.filter(c => c.used_by || c.used_at);
-    
-    // Filtra per periodo
-    let filteredCoupons = usedCoupons;
+    // Mappa user_id -> transazioni reali pagate (amount > 0)
+    const revenueByUser = {};
+    transactions.forEach(tx => {
+      if (tx.amount > 0 && tx.status === 'succeeded') {
+        if (!revenueByUser[tx.user_id]) revenueByUser[tx.user_id] = 0;
+        revenueByUser[tx.user_id] += tx.amount;
+      }
+    });
+
+    // Per ogni coupon, trova gli utenti che lo hanno usato
+    const couponUsage = {};
+    coupons.forEach(coupon => {
+      const usersWithThisCoupon = users.filter(u =>
+        u.coupon_applied?.toUpperCase() === coupon.code.toUpperCase() ||
+        u.influencer_referral_code?.toUpperCase() === coupon.code.toUpperCase()
+      );
+
+      const purchasedUsers = usersWithThisCoupon.filter(u =>
+        u.subscription_status === 'active' &&
+        u.last_payment_amount > 0
+      );
+
+      const realRevenue = purchasedUsers.reduce((sum, u) => sum + (revenueByUser[u.id] || 0), 0);
+
+      couponUsage[coupon.code] = {
+        code: coupon.code,
+        uses: purchasedUsers.length,
+        revenue: realRevenue,
+        discounts: 0,
+        type: coupon.discount_type,
+        discount_value: coupon.discount_value
+      };
+    });
+
+    // Filtro per periodo sulle transazioni
+    let filteredTx = transactions.filter(tx => tx.amount > 0 && tx.status === 'succeeded');
     if (selectedPeriod === 'month') {
       const start = startOfMonth(new Date(selectedYear, selectedMonth));
       const end = endOfMonth(new Date(selectedYear, selectedMonth));
-      filteredCoupons = usedCoupons.filter(c => {
-        if (!c.used_at) return false;
-        const date = new Date(c.used_at);
-        return date >= start && date <= end;
+      filteredTx = filteredTx.filter(tx => {
+        const d = new Date(tx.payment_date);
+        return d >= start && d <= end;
       });
     } else if (selectedPeriod === 'year') {
       const start = startOfYear(new Date(selectedYear, 0));
       const end = endOfYear(new Date(selectedYear, 0));
-      filteredCoupons = usedCoupons.filter(c => {
-        if (!c.used_at) return false;
-        const date = new Date(c.used_at);
-        return date >= start && date <= end;
+      filteredTx = filteredTx.filter(tx => {
+        const d = new Date(tx.payment_date);
+        return d >= start && d <= end;
       });
     }
 
-    // Calcola totali dai coupon usati
-    const totalPurchases = filteredCoupons.length;
-    
-    // Stima revenue/sconti basandosi sul tipo di coupon
-    let totalRevenue = 0;
-    let totalDiscounts = 0;
-    
-    // Statistiche per coupon
-    const couponUsage = {};
-    
-    // Prima aggiungiamo tutti i coupon con i loro utilizzi
-    coupons.forEach(coupon => {
-      const isUsed = coupon.used_by || coupon.used_at;
-      
-      // Check periodo per coupon usati
-      let inPeriod = true;
-      if (isUsed && coupon.used_at) {
-        const usedDate = new Date(coupon.used_at);
-        if (selectedPeriod === 'month') {
-          const start = startOfMonth(new Date(selectedYear, selectedMonth));
-          const end = endOfMonth(new Date(selectedYear, selectedMonth));
-          inPeriod = usedDate >= start && usedDate <= end;
-        } else if (selectedPeriod === 'year') {
-          const start = startOfYear(new Date(selectedYear, 0));
-          const end = endOfYear(new Date(selectedYear, 0));
-          inPeriod = usedDate >= start && usedDate <= end;
-        }
-      }
-      
-      if (!couponUsage[coupon.code]) {
-        couponUsage[coupon.code] = {
-          code: coupon.code,
-          uses: 0,
-          revenue: 0,
-          discounts: 0,
-          type: coupon.discount_type,
-          discount_value: coupon.discount_value
-        };
-      }
-      
-      if (isUsed && inPeriod) {
-        couponUsage[coupon.code].uses++;
-        
-        // Prezzi reali dei piani mensili
-        const planPrices = { base: 19, pro: 29, premium: 39 };
-        const planPrice = planPrices[coupon.assigned_plan] || 39; // Default premium
-        
-        if (coupon.discount_type === 'lifetime_free') {
-          couponUsage[coupon.code].discounts += planPrice;
-          totalDiscounts += planPrice;
-        } else if (coupon.discount_type === 'percentage' && coupon.discount_value) {
-          const discount = planPrice * (coupon.discount_value / 100);
-          couponUsage[coupon.code].discounts += discount;
-          couponUsage[coupon.code].revenue += planPrice - discount;
-          totalRevenue += planPrice - discount;
-          totalDiscounts += discount;
-        }
-      }
-    });
+    // Utenti con coupon che hanno acquistato
+    const couponUserIds = new Set(
+      users.filter(u => u.coupon_applied || u.influencer_referral_code).map(u => u.id)
+    );
+    const couponTx = filteredTx.filter(tx => couponUserIds.has(tx.user_id));
+    const totalRevenue = couponTx.reduce((sum, tx) => sum + tx.amount, 0);
 
-    // Statistiche mensili (ultimi 12 mesi)
+    // Acquisti con coupon (utenti distinti con pagamento)
+    const paidUserIds = new Set(couponTx.map(tx => tx.user_id));
+    const totalPurchases = paidUserIds.size;
+
+    // Statistiche mensili (ultimi 12 mesi) basate su transazioni reali
     const monthlyStats = {};
     const now = new Date();
     for (let i = 11; i >= 0; i--) {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const key = format(date, 'MMM yyyy');
-      monthlyStats[key] = {
-        month: key,
-        purchases: 0,
-        revenue: 0,
-        discounts: 0
-      };
+      monthlyStats[key] = { month: key, purchases: 0, revenue: 0, discounts: 0 };
     }
 
-    usedCoupons.forEach(coupon => {
-      if (!coupon.used_at) return;
-      const date = new Date(coupon.used_at);
-      const key = format(date, 'MMM yyyy');
+    const allCouponTx = transactions.filter(tx => tx.amount > 0 && tx.status === 'succeeded' && couponUserIds.has(tx.user_id));
+    allCouponTx.forEach(tx => {
+      const key = format(new Date(tx.payment_date), 'MMM yyyy');
       if (monthlyStats[key]) {
         monthlyStats[key].purchases++;
-        const planPrices = { base: 19, pro: 29, premium: 39 };
-        const planPrice = planPrices[coupon.assigned_plan] || 39;
-        if (coupon.discount_type === 'percentage' && coupon.discount_value) {
-          const discount = planPrice * (coupon.discount_value / 100);
-          monthlyStats[key].discounts += discount;
-          monthlyStats[key].revenue += planPrice - discount;
-        } else if (coupon.discount_type === 'lifetime_free') {
-          monthlyStats[key].discounts += planPrice;
-        }
+        monthlyStats[key].revenue += tx.amount;
       }
     });
 
-    // Coupon più usati
     const topCoupons = Object.values(couponUsage)
       .filter(c => c.uses > 0)
       .sort((a, b) => b.uses - a.uses)
@@ -291,13 +256,13 @@ export default function AdminCoupons() {
     return {
       totalPurchases,
       totalRevenue: Math.round(totalRevenue * 100) / 100,
-      totalDiscounts: Math.round(totalDiscounts * 100) / 100,
-      avgDiscount: totalPurchases > 0 ? Math.round((totalDiscounts / totalPurchases) * 100) / 100 : 0,
+      totalDiscounts: 0,
+      avgDiscount: 0,
       couponUsage: Object.values(couponUsage),
       monthlyStats: Object.values(monthlyStats),
       topCoupons
     };
-  }, [coupons, transactions, selectedPeriod, selectedYear, selectedMonth]);
+  }, [coupons, transactions, users, selectedPeriod, selectedYear, selectedMonth]);
 
   const COLORS = ['#26847F', '#1f6b66', '#3b9b95', '#56b2ab', '#71c9c1'];
 
