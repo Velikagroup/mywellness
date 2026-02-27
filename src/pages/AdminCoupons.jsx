@@ -683,18 +683,21 @@ export default function AdminCoupons() {
                        // Count quiz_entered: used_by starts with quiz_ or user has coupon_applied
                        const quizEnteredCount = usersWithCoupon.length;
 
-                       // Count trial_started: users currently in trial (not yet converted to paid)
-                       const trialCount = usersWithCoupon.filter(u => 
-                         u.subscription_status === 'trial' ||
-                         u.subscription_status === 'trialing'
-                       ).length;
+                       // User IDs with this coupon
+                       const userIdSet = new Set(usersWithCoupon.map(u => u.id));
 
-                       // Count actual purchases: users with active subscription (paid, not trial)
-                       const purchaseCount = usersWithCoupon.filter(u =>
-                         u.subscription_status === 'active' &&
-                         u.subscription_status !== 'trial' &&
-                         u.subscription_status !== 'trialing'
-                       ).length;
+                       // Users with at least one real paid transaction (amount > 0, succeeded)
+                       const paidUserIds = new Set(
+                         transactions
+                           .filter(tx => userIdSet.has(tx.user_id) && tx.amount > 0 && tx.status === 'succeeded' && tx.type !== 'trial_setup')
+                           .map(tx => tx.user_id)
+                       );
+
+                       // Count trial_started: users with this coupon who have NO real paid transaction (only trial)
+                       const trialCount = usersWithCoupon.filter(u => !paidUserIds.has(u.id)).length;
+
+                       // Count actual purchases: users with at least one real paid transaction
+                       const purchaseCount = usersWithCoupon.filter(u => paidUserIds.has(u.id)).length;
 
                        return (
                          <TableRow key={coupon.id} className={coupon.discount_type === 'lifetime_free' ? 'bg-purple-50/30' : ''}>
