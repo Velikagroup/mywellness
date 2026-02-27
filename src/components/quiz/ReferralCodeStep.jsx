@@ -38,6 +38,12 @@ export default function ReferralCodeStep({ data, onDataChange, onNext, translati
         
         localStorage.setItem('referralCode', code.toUpperCase());
 
+        // Track coupon usage: quiz_entered stage (fire and forget)
+        base44.functions.invoke('trackCouponUsage', {
+          coupon_code: code.toUpperCase(),
+          stage: 'quiz_entered'
+        }).catch(e => console.warn('trackCouponUsage quiz_entered failed:', e));
+
         // Track influencer event if linked
         if (result.influencer_id) {
           localStorage.setItem('influencerReferralCode', code.toUpperCase());
