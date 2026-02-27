@@ -512,6 +512,40 @@ export default function PostQuizSubscription() {
           </div>
         )}
 
+        {/* Coupon Code Input */}
+        <div className="pb-4">
+          <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1">
+            <Tag className="w-4 h-4" />
+            {t('subscription.couponCode') || 'Hai un codice coupon?'}
+          </p>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Input
+                type="text"
+                value={couponCode}
+                onChange={e => { setCouponCode(e.target.value.toUpperCase()); setCouponStatus(null); }}
+                placeholder="CODICE"
+                className="h-11 font-mono text-sm uppercase bg-gray-50"
+                disabled={couponStatus === 'valid' || couponLoading}
+              />
+              {couponStatus === 'valid' && <CheckCircle2 className="absolute right-3 top-3 w-5 h-5 text-green-500" />}
+              {couponStatus === 'invalid' && <AlertCircle className="absolute right-3 top-3 w-5 h-5 text-red-500" />}
+            </div>
+            {couponStatus !== 'valid' && (
+              <Button
+                onClick={handleApplyCoupon}
+                disabled={!couponCode.trim() || couponLoading}
+                variant="outline"
+                className="h-11 px-4 font-semibold"
+              >
+                {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (t('subscription.applyCoupon') || 'Applica')}
+              </Button>
+            )}
+          </div>
+          {couponStatus === 'valid' && <p className="text-xs text-green-600 mt-1">✓ Codice applicato!</p>}
+          {couponStatus === 'invalid' && <p className="text-xs text-red-500 mt-1">Codice non valido</p>}
+        </div>
+
         {/* Plan Selection - SEMPRE Fixed a 20px dal basso */}
         <div className="fixed bottom-5 left-6 right-6 max-w-md mx-auto space-y-4 bg-white">
           <div className="grid grid-cols-2 gap-4">
