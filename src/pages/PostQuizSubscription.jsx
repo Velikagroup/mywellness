@@ -121,6 +121,26 @@ export default function PostQuizSubscription() {
     }
   }, [selectedPlan]);
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    try {
+      const response = await base44.functions.invoke('validateReferralCode', { code: couponCode.toUpperCase() });
+      const result = response?.data || response;
+      if (result.valid) {
+        setCouponStatus('valid');
+        localStorage.setItem('referralCode', couponCode.toUpperCase());
+        // Also save to user profile
+        base44.functions.invoke('trackCouponUsage', { coupon_code: couponCode.toUpperCase(), stage: 'quiz_entered' }).catch(() => {});
+      } else {
+        setCouponStatus('invalid');
+      }
+    } catch {
+      setCouponStatus('invalid');
+    }
+    setCouponLoading(false);
+  };
+
   const handleStartTrial = () => {
     if (selectedPlan === 'yearly') {
       setShowReminderScreen(true);
