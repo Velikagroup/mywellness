@@ -190,9 +190,11 @@ export default function Checkout() {
         }
         
         const couponParam = queryParams.get('coupon');
-        if (couponParam && currentUser.email) {
-          setCouponCode(couponParam);
-          await validateCouponFromURL(couponParam, currentUser.email);
+        const referralCode = localStorage.getItem('referralCode');
+        const codeToApply = couponParam || referralCode;
+        if (codeToApply && currentUser.email) {
+          setCouponCode(codeToApply);
+          await validateCouponFromURL(codeToApply, currentUser.email);
         }
 
         // Applica automaticamente sconto affiliato se presente
