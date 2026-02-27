@@ -787,34 +787,27 @@ export default function AdminCoupons() {
                        const stats = couponStats.couponUsage.find(u => u.code === coupon.code) || { uses: 0, revenue: 0, discounts: 0 };
 
                        // Debug: Mostra utenti con questo coupon
+                       // Users who entered this coupon in the quiz
                        const usersWithCoupon = users.filter(u => 
-                         u.influencer_referral_code?.toUpperCase() === coupon.code.toUpperCase() || 
-                         u.coupon_applied?.toUpperCase() === coupon.code.toUpperCase()
+                         u.coupon_applied?.toUpperCase() === coupon.code.toUpperCase() ||
+                         u.influencer_referral_code?.toUpperCase() === coupon.code.toUpperCase()
                        );
 
-                       // Conta gli utenti che hanno il coupon E hanno attivato trial
-                       // Solo trial_setup transactions o subscription_status === 'trial'
-                       const trialSetups = usersWithCoupon.filter(user => 
-                         user.subscription_status === 'trial' || 
-                         transactions.some(t => 
-                           t.user_id === user.id && 
-                           t.type === 'trial_setup' && 
-                           t.status === 'succeeded'
-                         )
+                       // Count quiz_entered: used_by starts with quiz_ or user has coupon_applied
+                       const quizEnteredCount = usersWithCoupon.length;
+
+                       // Count trial_started: users with trial subscription status or trial_setup tx
+                       const trialCount = usersWithCoupon.filter(u => 
+                         u.subscription_status === 'trial' ||
+                         u.subscription_status === 'trialing' ||
+                         transactions.some(t => t.user_id === u.id && t.type === 'trial_setup' && t.status === 'succeeded')
                        ).length;
 
-                       // Debug log per DALILA
-                       if (coupon.code === 'DALILA') {
-                         console.log('🔍 DALILA - Utenti trovati con coupon:', usersWithCoupon.length);
-                         usersWithCoupon.forEach(u => {
-                           console.log('  - Email:', u.email, '| influencer_referral_code:', u.influencer_referral_code, '| coupon_applied:', u.coupon_applied, '| subscription_status:', u.subscription_status);
-                           const userTrials = transactions.filter(t => t.user_id === u.id && t.type === 'trial_setup');
-                           console.log('    Transazioni trial_setup:', userTrials.length);
-                           userTrials.forEach(t => console.log('      - type:', t.type, '| status:', t.status));
-                         });
-                         console.log('🔍 DALILA - Trial_setup con status succeeded:', transactions.filter(t => t.type === 'trial_setup' && t.status === 'succeeded').length);
-                         console.log('🔍 DALILA - Trial Avviati CALCOLATI:', trialSetups);
-                       }
+                       // Count actual purchases: users with active subscription
+                       const purchaseCount = usersWithCoupon.filter(u =>
+                         u.subscription_status === 'active' ||
+                         transactions.some(t => t.user_id === u.id && t.type === 'subscription_payment' && t.status === 'succeeded')
+                       ).length;
 
                        return (
                          <TableRow key={coupon.id} className={coupon.discount_type === 'lifetime_free' ? 'bg-purple-50/30' : ''}>
@@ -839,26 +832,32 @@ export default function AdminCoupons() {
                              }
                            </TableCell>
                            <TableCell className="text-sm text-gray-600">
-                             {coupon.assigned_to_email || '-'}
+                             {coupon.assigned_to_email || (usersWithCoupon.length > 0 ? usersWithCoupon.map(u => u.email).join(', ') : '-')}
                            </TableCell>
                            <TableCell className="text-sm">{coupon.expires_at ? format(new Date(coupon.expires_at), 'dd/MM/yyyy') : 'Mai'}</TableCell>
                            <TableCell className="text-center">
-                             {trialSetups > 0 ? (
-                               <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
-                                 {trialSetups}
+                             {quizEnteredCount > 0 ? (
+                               <span className="inline-flex items-center px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold">
+                                 {quizEnteredCount}
                                </span>
-                             ) : (
-                               <span className="text-gray-400">—</span>
-                             )}
+                             ) : <span className="text-gray-400">—</span>}
                            </TableCell>
-                           <TableCell className="text-right font-semibold text-blue-600">
-                             {coupon.used_by ? '1' : '-'}
+                           <TableCell className="text-center">
+                             {trialCount > 0 ? (
+                               <span className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                                 {trialCount}
+                               </span>
+                             ) : <span className="text-gray-400">—</span>}
+                           </TableCell>
+                           <TableCell className="text-center">
+                             {purchaseCount > 0 ? (
+                               <span className="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                                 {purchaseCount}
+                               </span>
+                             ) : <span className="text-gray-400">—</span>}
                            </TableCell>
                           <TableCell className="text-right font-semibold text-green-600">
                             {stats.revenue > 0 ? `€${stats.revenue.toFixed(2)}` : '-'}
-                          </TableCell>
-                          <TableCell className="text-right font-semibold text-red-600">
-                            {stats.discounts > 0 ? `€${stats.discounts.toFixed(2)}` : '-'}
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
@@ -869,7 +868,7 @@ export default function AdminCoupons() {
                               />
                               {coupon.used_at && (
                                 <span className="text-xs text-green-600">
-                                  Usato {format(new Date(coupon.used_at), 'dd/MM/yy')}
+                                  {format(new Date(coupon.used_at), 'dd/MM/yy')}
                                 </span>
                               )}
                             </div>
