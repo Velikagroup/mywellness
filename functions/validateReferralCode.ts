@@ -28,8 +28,8 @@ Deno.serve(async (req) => {
             return Response.json({ valid: false, error: 'Codice scaduto' });
         }
 
-        // Check if already used (used_by set and not a quiz placeholder)
-        if (coupon.used_by && !coupon.used_by.startsWith('quiz_')) {
+        // Check if already used (used_by set and not a quiz/trial placeholder)
+        if (coupon.used_by && !coupon.used_by.startsWith('quiz_') && !coupon.used_by.startsWith('trial_')) {
             return Response.json({ valid: false, error: 'Codice già utilizzato' });
         }
 
