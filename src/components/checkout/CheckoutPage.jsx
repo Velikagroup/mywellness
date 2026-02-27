@@ -78,6 +78,14 @@ export default function CheckoutPage() {
   const [trafficSource, setTrafficSource] = useState('direct');
   const [affiliateDiscount, setAffiliateDiscount] = useState(null);
 
+  // Pre-load referral code from quiz localStorage
+  useEffect(() => {
+    const savedReferralCode = localStorage.getItem('referralCode');
+    if (savedReferralCode) {
+      setCouponCode(savedReferralCode);
+    }
+  }, []);
+
   // Get plan and billing from URL params
   const urlParams = new URLSearchParams(location.search);
   const selectedPlan = urlParams.get('plan') || 'base';
