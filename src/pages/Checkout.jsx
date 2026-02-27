@@ -62,7 +62,7 @@ export default function Checkout() {
   });
   const [showBillingFields, setShowBillingFields] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [couponCode, setCouponCode] = useState('');
+  const [couponCode, setCouponCode] = useState(() => localStorage.getItem('referralCode') || '');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [discountError, setDiscountError] = useState('');
