@@ -771,10 +771,10 @@ export default function AdminCoupons() {
                     <TableHead>Sconto/Piano</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Scadenza</TableHead>
-                    <TableHead className="text-right">Trial Avviati</TableHead>
-                    <TableHead className="text-right">Utilizzi</TableHead>
+                    <TableHead className="text-center">👀 Quiz</TableHead>
+                    <TableHead className="text-center">🎯 Trial</TableHead>
+                    <TableHead className="text-center">💳 Acquisti</TableHead>
                     <TableHead className="text-right">Fatturato</TableHead>
-                    <TableHead className="text-right">Sconti Dati</TableHead>
                     <TableHead>Stato</TableHead>
                     <TableHead className="text-right">Azioni</TableHead>
                   </TableRow>
