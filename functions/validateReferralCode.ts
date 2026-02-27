@@ -28,8 +28,12 @@ Deno.serve(async (req) => {
             return Response.json({ valid: false, error: 'Codice scaduto' });
         }
 
-        // Just validate - do NOT mark as used here. Will be marked at checkout.
-        console.log(`✅ Coupon ${upperCode} validated in quiz (not yet marked as used)`);
+        // Check if already used (used_by set and not a quiz placeholder)
+        if (coupon.used_by && !coupon.used_by.startsWith('quiz_')) {
+            return Response.json({ valid: false, error: 'Codice già utilizzato' });
+        }
+
+        console.log(`✅ Coupon ${upperCode} validated in quiz`);
 
         // Check if linked to an influencer
         let influencer_id = null;
@@ -45,9 +49,7 @@ Deno.serve(async (req) => {
             coupon_id: coupon.id,
             discount_type: coupon.discount_type,
             discount_value: coupon.discount_value || 0,
-            influencer_id,
-            user_id: userId,
-            used_at: usedAtTimestamp
+            influencer_id
         });
 
     } catch (error) {
