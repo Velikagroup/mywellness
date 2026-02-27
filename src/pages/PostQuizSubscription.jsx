@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Check, Bell, Lock, Crown, Sparkles } from 'lucide-react';
+import { Check, Bell, Lock, Crown, Sparkles, Tag, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 
 export default function PostQuizSubscription() {
