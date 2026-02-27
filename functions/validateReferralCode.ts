@@ -28,40 +28,8 @@ Deno.serve(async (req) => {
             return Response.json({ valid: false, error: 'Codice scaduto' });
         }
 
-        // Try to get current user, but mark coupon as used regardless
-        let currentUser = null;
-        try {
-            currentUser = await base44.auth.me();
-        } catch (e) {
-            // User not logged in yet - that's OK
-            console.log('⚠️ User not authenticated in quiz, but marking coupon as used anyway');
-        }
-
-        let userId = currentUser?.id || null;
-        const usedAtTimestamp = new Date().toISOString();
-
-        // Mark coupon as used NOW (when entered in quiz) - even if not logged in
-        if (!coupon.used_by) {
-            try {
-                const updatePayload = {
-                    used_at: usedAtTimestamp
-                };
-                
-                // If user is logged in, save their ID; otherwise use a placeholder
-                if (userId) {
-                    updatePayload.used_by = userId;
-                } else {
-                    // Mark with email or anonymous + timestamp
-                    updatePayload.used_by = `quiz_${usedAtTimestamp}`;
-                }
-
-                await base44.asServiceRole.entities.Coupon.update(coupon.id, updatePayload);
-                console.log(`✅ Coupon ${upperCode} marked as used on ${usedAtTimestamp}`);
-            } catch (updateError) {
-                console.error('❌ Could not mark coupon as used:', updateError.message);
-                return Response.json({ valid: false, error: 'Errore nell\'utilizzo del codice' });
-            }
-        }
+        // Just validate - do NOT mark as used here. Will be marked at checkout.
+        console.log(`✅ Coupon ${upperCode} validated in quiz (not yet marked as used)`);
 
         // Check if linked to an influencer
         let influencer_id = null;
