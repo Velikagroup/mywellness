@@ -160,6 +160,11 @@ export default function PostQuizSubscription() {
 
           if (data?.success) {
             e.complete('success');
+            // Track trial started with coupon if present
+            const referralCode = localStorage.getItem('referralCode');
+            if (referralCode) {
+              base44.functions.invoke('trackCouponUsage', { coupon_code: referralCode, stage: 'trial_started' }).catch(() => {});
+            }
             await new Promise(resolve => setTimeout(resolve, 1000));
             navigate(createPageUrl('Dashboard'), { replace: true });
           } else {
