@@ -540,6 +540,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
       // Get referral/coupon code from localStorage (set in ReferralCodeStep)
       const savedReferralCode = localStorage.getItem('referralCode');
 
+      const finalCouponCode = savedReferralCode || savedInfluencerCode || quizData.coupon_applied || quizData.referral_code;
+
       const userDataToSave = {
         gender: quizData.gender,
         birthdate: quizData.birthdate,
@@ -559,7 +561,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
         daily_calories: Math.round(dailyCalories),
         quiz_completed: true,
         preferred_language: language,
-        coupon_applied: savedReferralCode || savedInfluencerCode || quizData.coupon_applied || quizData.referral_code
+        coupon_applied: finalCouponCode
       };
 
       // Add influencer referral data if present
@@ -569,6 +571,15 @@ export default function QuizContainer({ translations, language = 'it' }) {
       }
 
       await base44.auth.updateMe(userDataToSave);
+
+      // ✅ Ora che l'utente è autenticato, assicuriamo che il coupon venga tracciato correttamente
+      // (il trackCouponUsage nel ReferralCodeStep potrebbe aver fallito se l'utente non era loggato)
+      if (finalCouponCode) {
+        base44.functions.invoke('trackCouponUsage', {
+          coupon_code: finalCouponCode,
+          stage: 'quiz_entered'
+        }).catch(e => console.warn('trackCouponUsage quiz_entered (post-login) failed:', e));
+      }
 
       const today = new Date().toISOString().split('T')[0];
       try {
