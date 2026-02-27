@@ -165,72 +165,68 @@ export default function AdminCoupons() {
     }
   };
 
-  // Calcola statistiche coupon basandosi sui coupon usati e sulle transazioni REALI
+  // Calcola statistiche coupon basandosi sulle transazioni REALI filtrate per periodo
   const couponStats = useMemo(() => {
-    // Mappa user_id -> transazioni reali pagate (amount > 0)
-    const revenueByUser = {};
-    transactions.forEach(tx => {
-      if (tx.amount > 0 && tx.status === 'succeeded') {
-        if (!revenueByUser[tx.user_id]) revenueByUser[tx.user_id] = 0;
-        revenueByUser[tx.user_id] += tx.amount;
+    // Helper: filtra transazioni per periodo
+    const filterTxByPeriod = (txList) => {
+      if (selectedPeriod === 'month') {
+        const start = startOfMonth(new Date(selectedYear, selectedMonth));
+        const end = endOfMonth(new Date(selectedYear, selectedMonth));
+        return txList.filter(tx => { const d = new Date(tx.payment_date); return d >= start && d <= end; });
+      } else if (selectedPeriod === 'year') {
+        const start = startOfYear(new Date(selectedYear, 0));
+        const end = endOfYear(new Date(selectedYear, 0));
+        return txList.filter(tx => { const d = new Date(tx.payment_date); return d >= start && d <= end; });
       }
-    });
+      return txList;
+    };
 
-    // Per ogni coupon, trova gli utenti che lo hanno usato
+    // Mappa userId -> tutte le transazioni reali pagate (storico completo per la tabella)
+    const allPaidTx = transactions.filter(tx => tx.amount > 0 && tx.status === 'succeeded');
+
+    // Mappa userId -> transazioni nel periodo selezionato
+    const periodPaidTx = filterTxByPeriod(allPaidTx);
+
+    // Per ogni coupon: calcola utilizzi e fatturato nel periodo selezionato
     const couponUsage = {};
     coupons.forEach(coupon => {
       const usersWithThisCoupon = users.filter(u =>
         u.coupon_applied?.toUpperCase() === coupon.code.toUpperCase() ||
         u.influencer_referral_code?.toUpperCase() === coupon.code.toUpperCase()
       );
+      const userIdSet = new Set(usersWithThisCoupon.map(u => u.id));
 
-      const purchasedUsers = usersWithThisCoupon.filter(u =>
-        u.subscription_status === 'active' &&
-        u.last_payment_amount > 0
-      );
+      // Utilizzi nel periodo (transazioni di utenti con questo coupon nel periodo)
+      const periodTxForCoupon = periodPaidTx.filter(tx => userIdSet.has(tx.user_id));
+      const periodRevenue = periodTxForCoupon.reduce((sum, tx) => sum + tx.amount, 0);
+      const periodUses = new Set(periodTxForCoupon.map(tx => tx.user_id)).size;
 
-      const realRevenue = purchasedUsers.reduce((sum, u) => sum + (revenueByUser[u.id] || 0), 0);
+      // Storico totale (tutti i tempi)
+      const allTxForCoupon = allPaidTx.filter(tx => userIdSet.has(tx.user_id));
+      const totalRevenue = allTxForCoupon.reduce((sum, tx) => sum + tx.amount, 0);
+      const totalUses = new Set(allTxForCoupon.map(tx => tx.user_id)).size;
 
       couponUsage[coupon.code] = {
         code: coupon.code,
-        uses: purchasedUsers.length,
-        revenue: realRevenue,
+        uses: periodUses,          // filtrato per periodo
+        totalUses,                 // storico completo
+        revenue: periodRevenue,   // fatturato nel periodo
+        totalRevenue,             // fatturato storico completo
         discounts: 0,
         type: coupon.discount_type,
         discount_value: coupon.discount_value
       };
     });
 
-    // Filtro per periodo sulle transazioni
-    let filteredTx = transactions.filter(tx => tx.amount > 0 && tx.status === 'succeeded');
-    if (selectedPeriod === 'month') {
-      const start = startOfMonth(new Date(selectedYear, selectedMonth));
-      const end = endOfMonth(new Date(selectedYear, selectedMonth));
-      filteredTx = filteredTx.filter(tx => {
-        const d = new Date(tx.payment_date);
-        return d >= start && d <= end;
-      });
-    } else if (selectedPeriod === 'year') {
-      const start = startOfYear(new Date(selectedYear, 0));
-      const end = endOfYear(new Date(selectedYear, 0));
-      filteredTx = filteredTx.filter(tx => {
-        const d = new Date(tx.payment_date);
-        return d >= start && d <= end;
-      });
-    }
-
-    // Utenti con coupon che hanno acquistato
-    const couponUserIds = new Set(
+    // Totali globali nel periodo (tutti i coupon)
+    const allCouponUserIds = new Set(
       users.filter(u => u.coupon_applied || u.influencer_referral_code).map(u => u.id)
     );
-    const couponTx = filteredTx.filter(tx => couponUserIds.has(tx.user_id));
-    const totalRevenue = couponTx.reduce((sum, tx) => sum + tx.amount, 0);
+    const couponTxPeriod = periodPaidTx.filter(tx => allCouponUserIds.has(tx.user_id));
+    const totalRevenue = couponTxPeriod.reduce((sum, tx) => sum + tx.amount, 0);
+    const totalPurchases = new Set(couponTxPeriod.map(tx => tx.user_id)).size;
 
-    // Acquisti con coupon (utenti distinti con pagamento)
-    const paidUserIds = new Set(couponTx.map(tx => tx.user_id));
-    const totalPurchases = paidUserIds.size;
-
-    // Statistiche mensili (ultimi 12 mesi) basate su transazioni reali
+    // Statistiche mensili (ultimi 12 mesi)
     const monthlyStats = {};
     const now = new Date();
     for (let i = 11; i >= 0; i--) {
@@ -238,9 +234,7 @@ export default function AdminCoupons() {
       const key = format(date, 'MMM yyyy');
       monthlyStats[key] = { month: key, purchases: 0, revenue: 0, discounts: 0 };
     }
-
-    const allCouponTx = transactions.filter(tx => tx.amount > 0 && tx.status === 'succeeded' && couponUserIds.has(tx.user_id));
-    allCouponTx.forEach(tx => {
+    allPaidTx.filter(tx => allCouponUserIds.has(tx.user_id)).forEach(tx => {
       const key = format(new Date(tx.payment_date), 'MMM yyyy');
       if (monthlyStats[key]) {
         monthlyStats[key].purchases++;
