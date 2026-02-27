@@ -658,8 +658,10 @@ export default function AdminCoupons() {
                     <TableHead>Scadenza</TableHead>
                     <TableHead className="text-center">👀 Quiz</TableHead>
                     <TableHead className="text-center">🎯 Trial</TableHead>
-                    <TableHead className="text-center">💳 Acquisti</TableHead>
-                    <TableHead className="text-right">Fatturato</TableHead>
+                    <TableHead className="text-center">💳 Acquisti (periodo)</TableHead>
+                    <TableHead className="text-center">📊 Storico Utilizzi</TableHead>
+                    <TableHead className="text-right">💰 Fatturato (periodo)</TableHead>
+                    <TableHead className="text-right">📈 Fatturato Totale</TableHead>
                     <TableHead>Stato</TableHead>
                     <TableHead className="text-right">Azioni</TableHead>
                   </TableRow>
