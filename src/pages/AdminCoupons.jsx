@@ -722,17 +722,17 @@ export default function AdminCoupons() {
                        // Count quiz_entered: used_by starts with quiz_ or user has coupon_applied
                        const quizEnteredCount = usersWithCoupon.length;
 
-                       // Count trial_started: users with trial subscription status or trial_setup tx
+                       // Count trial_started: users currently in trial (not yet converted to paid)
                        const trialCount = usersWithCoupon.filter(u => 
                          u.subscription_status === 'trial' ||
-                         u.subscription_status === 'trialing' ||
-                         transactions.some(t => t.user_id === u.id && t.type === 'trial_setup' && t.status === 'succeeded')
+                         u.subscription_status === 'trialing'
                        ).length;
 
-                       // Count actual purchases: users with active subscription
+                       // Count actual purchases: users with active subscription (paid, not trial)
                        const purchaseCount = usersWithCoupon.filter(u =>
-                         u.subscription_status === 'active' ||
-                         transactions.some(t => t.user_id === u.id && t.type === 'subscription_payment' && t.status === 'succeeded')
+                         u.subscription_status === 'active' &&
+                         u.subscription_status !== 'trial' &&
+                         u.subscription_status !== 'trialing'
                        ).length;
 
                        return (
