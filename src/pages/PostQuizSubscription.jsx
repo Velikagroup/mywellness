@@ -16,6 +16,9 @@ export default function PostQuizSubscription() {
   const [timelineProgress, setTimelineProgress] = useState(0);
   const [walletAvailable, setWalletAvailable] = useState(false);
   const stripeRef = React.useRef(null);
+  const [couponCode, setCouponCode] = useState(localStorage.getItem('referralCode') || '');
+  const [couponStatus, setCouponStatus] = useState(localStorage.getItem('referralCode') ? 'valid' : null);
+  const [couponLoading, setCouponLoading] = useState(false);
 
   useEffect(() => {
     const loadInitialData = async () => {
