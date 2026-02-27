@@ -476,7 +476,7 @@ export default function AdminCoupons() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {[2025, 2024, 2023].map(y => (
+                      {Array.from({length: 13}, (_, i) => 2035 - i).map(y => (
                         <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
                       ))}
                     </SelectContent>
