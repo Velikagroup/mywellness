@@ -145,8 +145,38 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
               </span>
             </Link>
           ))}
+
+          {/* Admin menu button - mobile only */}
+          {adminItems.length > 0 && isMobile && (
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowAdminMenu(!showAdminMenu); }}
+              className={`flex flex-col items-center justify-center gap-0.5 px-2 py-2 rounded-lg transition-all pointer-events-auto flex-1 ${showAdminMenu ? 'text-[#26847F]' : 'text-gray-400'}`}
+            >
+              <MenuIcon className="w-5 h-5" />
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Admin popup menu - mobile */}
+      {adminItems.length > 0 && isMobile && showAdminMenu && (
+        <div
+          className="fixed bottom-24 left-4 right-20 z-[60] water-glass-effect rounded-2xl p-3 grid grid-cols-3 gap-2"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {adminItems.map((item) => (
+            <Link
+              key={item.name}
+              to={createPageUrl(item.path)}
+              onClick={() => setShowAdminMenu(false)}
+              className="flex flex-col items-center justify-center gap-1 px-2 py-3 rounded-xl text-gray-600 hover:text-[#26847F] hover:bg-white/50 transition-all"
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="text-[10px] font-medium text-center leading-tight">{item.name}</span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
