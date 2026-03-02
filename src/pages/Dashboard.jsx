@@ -108,6 +108,22 @@ export default function Dashboard() {
       
       setUser(currentUser);
 
+      // 🎯 FIRST VISIT: se è il primo accesso in Dashboard dopo acquisto, aggiungi ?pch all'URL
+      const firstVisitKey = `dashboard_first_visit_${currentUser.id}`;
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasPch = urlParams.has('pch');
+      const alreadyTracked = localStorage.getItem(firstVisitKey) === 'true';
+
+      if (!alreadyTracked && !hasPch) {
+        // Prima volta: redirect con ?pch
+        localStorage.setItem(firstVisitKey, 'true');
+        window.location.replace(window.location.pathname + '?pch');
+        return;
+      } else if (hasPch && !alreadyTracked) {
+        // Siamo qui con ?pch per la prima volta
+        localStorage.setItem(firstVisitKey, 'true');
+      }
+
       const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
       const todayDate = new Date().toISOString().split('T')[0];
 
