@@ -206,6 +206,9 @@ export default function AdminCoupons() {
       const totalRevenue = allTxForCoupon.reduce((sum, tx) => sum + tx.amount, 0);
       const totalUses = new Set(allTxForCoupon.map(tx => tx.user_id)).size;
 
+      console.log(`🎫 Coupon ${coupon.code} - utenti trovati:`, usersWithCoupon.map(u => u.email));
+      console.log(`🎫 Coupon ${coupon.code} - transazioni storiche:`, allTxForCoupon.map(tx => ({ id: tx.id, amount: tx.amount, type: tx.type, status: tx.status, date: tx.payment_date })));
+
       couponUsage[coupon.code] = {
         code: coupon.code,
         uses: periodUses,          // filtrato per periodo
