@@ -41,6 +41,18 @@ Deno.serve(async (req) => {
                 console.log('⏭️ Transaction not succeeded, skipping welcome email');
                 return Response.json({ success: true, message: 'Payment not succeeded' });
             }
+
+            // ✅ DEDUPLICAZIONE: controlla se welcome email già inviata nelle ultime 24h
+            const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+            const recentLogs = await base44.asServiceRole.entities.EmailLog.filter({
+                user_id: userId,
+                trigger_source: 'sendWelcomeEmailOnPurchase'
+            });
+            const recentWelcome = recentLogs.filter(l => l.created_date >= since24h);
+            if (recentWelcome.length > 0) {
+                console.log(`⏭️ Welcome email already sent to user ${userId} in last 24h, skipping`);
+                return Response.json({ success: true, message: 'Welcome email already sent (dedup)' });
+            }
         } 
         // Caso 2: UserOnboarding (trial)
         else if (event.entity_name === 'UserOnboarding') {
