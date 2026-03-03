@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
         // Invia email tramite Resend
         await base44.asServiceRole.functions.invoke('sendResendEmail', {
             to: userEmail,
-            resendTemplateId: 'plan-renewal-reminder',
+            resendTemplateId: templateId,
             variables: {
                 NAME: user.full_name || 'Utente'
             },
