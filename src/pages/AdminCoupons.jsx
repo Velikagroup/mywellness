@@ -182,7 +182,16 @@ export default function AdminCoupons() {
     };
 
     // Mappa userId -> tutte le transazioni reali pagate (storico completo per la tabella)
-    const allPaidTx = transactions.filter(tx => tx.amount > 0 && tx.status === 'succeeded');
+    // Deduplicazione: per ogni pagamento Stripe vengono create 2 tx (una con invoice_id, una con payment_intent_id).
+    // Teniamo solo quelle con stripe_invoice_id (la fattura ufficiale). Se non ha invoice_id ma ha payment_intent_id, la teniamo solo se non esiste già un'altra tx con invoice per lo stesso utente+data+importo.
+    const rawPaidTx = transactions.filter(tx => tx.amount > 0 && tx.status === 'succeeded' && tx.type !== 'trial_setup');
+    const invoiceTxKeys = new Set(rawPaidTx.filter(tx => tx.stripe_invoice_id).map(tx => `${tx.user_id}_${tx.amount}_${tx.payment_date?.substring(0,10)}`));
+    const allPaidTx = rawPaidTx.filter(tx => {
+      if (tx.stripe_invoice_id) return true; // tieni sempre le tx con invoice
+      // escludi le tx con solo payment_intent se esiste già un invoice per stesso utente+importo+giorno
+      const key = `${tx.user_id}_${tx.amount}_${tx.payment_date?.substring(0,10)}`;
+      return !invoiceTxKeys.has(key);
+    });
 
     // Mappa userId -> transazioni nel periodo selezionato
     const periodPaidTx = filterTxByPeriod(allPaidTx);
