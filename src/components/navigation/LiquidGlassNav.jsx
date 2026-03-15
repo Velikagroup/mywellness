@@ -151,7 +151,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
           {adminItems.length > 0 && isMobile && (
             <button
               onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowAdminMenu(!showAdminMenu); }}
-              className={`flex flex-col items-center justify-center gap-0.5 px-2 py-2 rounded-lg transition-all pointer-events-auto flex-1 ${showAdminMenu ? 'text-[#26847F]' : 'text-gray-400'}`}
+              className={`flex flex-col items-center justify-center gap-0.5 px-2 py-2 rounded-lg transition-all pointer-events-auto flex-1 min-h-[44px] min-w-[44px] ${showAdminMenu ? 'text-[#26847F]' : 'text-gray-400'}`}
             >
               <MenuIcon className="w-5 h-5" />
             </button>
