@@ -1,7 +1,7 @@
 import React from "react";
       import { Link, useLocation, useNavigate } from "react-router-dom";
       import { createPageUrl } from "@/utils";
-      import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Video, Receipt, Plus, X as XIcon, Camera, ScanLine } from "lucide-react";
+      import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Video, Receipt, Plus, X as XIcon, Camera, ScanLine, ChevronLeft } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 import { LanguageProvider, useLanguage, createLocalizedPageUrl } from "@/components/i18n/LanguageContext";
@@ -14,6 +14,9 @@ import LiquidGlassNav from "@/components/navigation/LiquidGlassNav";
 import ProgressPhotoAnalyzer from "@/components/training/ProgressPhotoAnalyzer";
 import UnifiedCameraModal from "@/components/camera/UnifiedCameraModal";
 import { AnimatePresence, motion } from "framer-motion";
+
+// Preserve scroll positions when switching main tabs
+const tabScrollPositions = new Map();
 
 function LayoutContent({ children }) {
   const location = useLocation();
@@ -29,8 +32,25 @@ function LayoutContent({ children }) {
   const [showProgressAnalysis, setShowProgressAnalysis] = React.useState(false);
   const [showUnifiedCamera, setShowUnifiedCamera] = React.useState(false);
 
+  // Save scroll position when leaving a main tab
   React.useEffect(() => {
-    window.scrollTo(0, 0);
+    const savedPath = location.pathname;
+    const mainTabs = ['dashboard', 'meals', 'workouts', 'settings', 'bodyscan'];
+    return () => {
+      if (mainTabs.some(p => savedPath.toLowerCase().includes(p))) {
+        tabScrollPositions.set(savedPath, window.scrollY);
+      }
+    };
+  }, [location.pathname]);
+
+  // Restore or reset scroll when navigating
+  React.useEffect(() => {
+    const savedPos = tabScrollPositions.get(location.pathname);
+    if (savedPos !== undefined) {
+      requestAnimationFrame(() => window.scrollTo(0, savedPos));
+    } else {
+      window.scrollTo(0, 0);
+    }
   }, [location.pathname]);
 
   // Meta Pixel
@@ -155,6 +175,30 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   }, [location.pathname, language, navigate]);
   
   const fontOption = "inter";
+
+  // Header back-button logic
+  const mainTabPages = ['dashboard', 'meals', 'workouts', 'settings'];
+  const isMainTabPage = mainTabPages.some(p => location.pathname.toLowerCase().includes(p));
+  const showBackButton = !isMainTabPage &&
+    location.pathname !== '/' &&
+    !location.pathname.toLowerCase().includes('quiz') &&
+    location.pathname !== createPageUrl('Video');
+
+  const getPageTitle = (pathname) => {
+    const p = pathname.toLowerCase();
+    if (p.includes('bodyscan')) return 'Body Scan';
+    if (p.includes('admincoupons')) return 'Coupons';
+    if (p.includes('adminclients')) return 'Clients';
+    if (p.includes('adminsupporttickets')) return 'Support Tickets';
+    if (p.includes('adminfeedback')) return 'Feedback';
+    if (p.includes('adminblog')) return 'Blog';
+    if (p.includes('adminemails')) return 'Emails';
+    if (p.includes('adminanalytics')) return 'Analytics';
+    if (p.includes('adminmarketing')) return 'Marketing';
+    if (p.includes('adminsalestax')) return 'Sales Tax';
+    const last = pathname.split('/').filter(Boolean).pop() || '';
+    return last.charAt(0).toUpperCase() + last.slice(1).replace(/([A-Z])/g, ' $1').trim();
+  };
   
   const fontStyles = {
     default: {
@@ -555,18 +599,35 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       </Dialog>
 
       {location.pathname !== createPageUrl('Video') && !location.pathname.toLowerCase().includes('quiz') && (
-        <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 md:top-6`} style={{ top: ['dashboard', 'settings', 'workouts', 'meals', 'bodyscan'].some(p => location.pathname.toLowerCase().includes(p)) ? '3.625rem' : '1.5rem' }}>
-          <div className="water-glass-effect rounded-full px-6 py-3">
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" 
-              alt="MyWellness" 
-              className="h-6"
-            />
+        <div
+          className="fixed left-1/2 transform -translate-x-1/2 z-50 md:top-6"
+          style={{ top: isMainTabPage ? 'calc(3.625rem + env(safe-area-inset-top, 0px))' : 'calc(1.5rem + env(safe-area-inset-top, 0px))' }}
+        >
+          <div className="water-glass-effect rounded-full px-4 py-2 flex items-center gap-2 min-h-[44px]">
+            {showBackButton ? (
+              <>
+                <button
+                  onClick={() => navigate(-1)}
+                  className="flex items-center justify-center min-w-[44px] min-h-[44px] -ml-1 text-gray-700 hover:text-gray-900 transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                <span className="text-sm font-semibold text-gray-800 pr-2 whitespace-nowrap">
+                  {getPageTitle(location.pathname)}
+                </span>
+              </>
+            ) : (
+              <img
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
+                alt="MyWellness"
+                className="h-6 px-2"
+              />
+            )}
           </div>
         </div>
       )}
 
-      <main className={location.pathname.toLowerCase().includes('quiz') ? 'pt-0 pb-0' : 'pt-28 pb-20'}>
+      <main className={location.pathname.toLowerCase().includes('quiz') ? 'pt-0 pb-0' : 'pt-28'} style={!location.pathname.toLowerCase().includes('quiz') ? { paddingBottom: 'calc(5rem + env(safe-area-inset-bottom, 0px))' } : {}}>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -604,7 +665,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             </button>
           </div>
 
-          <div className={`md:hidden fixed bottom-6 left-4 right-4 z-50 flex items-center gap-3 transition-opacity ${showUnifiedCamera ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} data-menu="mobile-nav">
+          <div className={`md:hidden fixed left-4 right-4 z-50 flex items-center gap-3 transition-opacity ${showUnifiedCamera ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))' }} data-menu="mobile-nav">
             <div className="flex-1">
               <LiquidGlassNav 
                 navItems={allNavItems} 

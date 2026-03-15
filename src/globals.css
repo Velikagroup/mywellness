@@ -211,3 +211,39 @@ html {
 .hover\:bg-\[var\(--brand-primary-hover\)\]:hover {
   background-color: #1f6b66 !important;
 }
+
+/* ============================================
+   iOS SAFE AREA & MINIMUM TAP TARGETS
+   ============================================ */
+
+/* Minimum 44px tap targets for inputs on mobile */
+@media (max-width: 768px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="tel"],
+  input[type="search"],
+  select,
+  textarea {
+    min-height: 44px;
+  }
+}
+
+/* Safe area utility classes */
+.nav-bottom-safe {
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px)) !important;
+}
+
+.header-top-safe-main {
+  top: calc(3.625rem + env(safe-area-inset-top, 0px)) !important;
+}
+
+.header-top-safe-sub {
+  top: calc(1.5rem + env(safe-area-inset-top, 0px)) !important;
+}
+
+/* Safe area padding for main content */
+.main-content-safe {
+  padding-bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+}

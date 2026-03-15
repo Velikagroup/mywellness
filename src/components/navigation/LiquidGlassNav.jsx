@@ -113,6 +113,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
                   flex flex-col items-center justify-center gap-0.5 md:gap-1 
                   px-2 md:px-3 py-2 md:py-2 rounded-lg md:rounded-xl
                   transition-all duration-300 pointer-events-auto
+                  min-h-[44px] min-w-[44px]
                   ${isMobile ? 'flex-1' : 'w-[70px]'}
                   ${isSelected 
                     ? 'text-[#26847F] md:text-[#26847F]' 
