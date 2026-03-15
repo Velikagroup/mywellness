@@ -555,7 +555,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       </Dialog>
 
       {location.pathname !== createPageUrl('Video') && !location.pathname.toLowerCase().includes('quiz') && (
-        <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 ${location.pathname.toLowerCase().includes('dashboard') ? 'top-6 md:top-6' : 'top-6'}`}>
+        <div className={`fixed left-1/2 transform -translate-x-1/2 z-50 ${location.pathname.toLowerCase().includes('dashboard') ? 'top-16 md:top-6' : 'top-6'}`}>
           <div className="water-glass-effect rounded-full px-6 py-3">
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" 
