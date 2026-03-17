@@ -359,7 +359,7 @@ Per meal_type usa: breakfast (colazione), snack1 (spuntino mattina), lunch (pran
 
               <Button
                 onClick={handleParseWithAI}
-                disabled={step === 'parsing' || !planText.trim()}
+                disabled={step === 'parsing' || !selectedFile}
                 className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white py-5 font-semibold rounded-xl text-base"
               >
                 {step === 'parsing' ? (
