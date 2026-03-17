@@ -1838,12 +1838,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     return goalLabels[goal] || goal;
   };
   
-  // Il nome del workout plan ora viene generato direttamente nella lingua corretta dall'AI
-  // Non serve più traduzione client-side
-  
-  // Warm-up e cool-down ora sono generati direttamente nella lingua corretta dall'AI
-  // Non serve più traduzione client-side
-
+import WorkoutHeader from '../components/workouts/WorkoutHeader';
 
   if (isGenerating) {
     return (
