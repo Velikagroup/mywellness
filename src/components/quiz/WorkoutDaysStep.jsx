@@ -129,16 +129,7 @@ export default function WorkoutDaysStep({ data, onDataChange, nextStep }) {
             )}
           </div>
 
-          {canProceed && (
-            <div className="mt-8 text-center">
-              <Button 
-                onClick={nextStep}
-                className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-8 shadow-[0_4px_16px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_20px_rgba(38,132,127,0.4)]"
-              >
-                {t('workouts.continue')}
-              </Button>
-            </div>
-          )}
+
         </div>
       )}
     </div>
