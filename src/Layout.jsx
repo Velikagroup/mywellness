@@ -523,6 +523,40 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       
 
 
+      {!location.pathname.toLowerCase().includes('quiz') && (
+        <>
+          <div
+            className="fixed left-1/2 transform -translate-x-1/2 z-50 md:top-6"
+            style={{ 
+              top: isMainTabPage ? 'calc(3.625rem + env(safe-area-inset-top, 0px))' : 'calc(1.5rem + env(safe-area-inset-top, 0px))',
+              ...(location.pathname.toLowerCase().includes('bodyscan') && { top: 'calc(3.625rem + 44px + env(safe-area-inset-top, 0px))' })
+            }}
+          >
+            <div className="water-glass-effect rounded-full px-4 py-2 flex items-center gap-2 min-h-[44px]">
+              {showBackButton ? (
+                <>
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="flex items-center justify-center min-w-[44px] min-h-[44px] -ml-1 text-gray-700 hover:text-gray-900 transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <span className="text-sm font-semibold text-gray-800 pr-2 whitespace-nowrap">
+                    {getPageTitle(location.pathname)}
+                  </span>
+                </>
+              ) : (
+                <img
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
+                  alt="MyWellness"
+                  className="h-6 px-2"
+                />
+              )}
+            </div>
+          </div>
+        </>
+      )}
+
       <Dialog open={showWeightModal} onOpenChange={setShowWeightModal}>
         <DialogContent>
           <DialogHeader>
