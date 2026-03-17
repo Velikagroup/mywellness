@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Sparkles, Plus, Trash2, ChevronLeft, ChevronRight, Check, Loader2, AlertCircle, Upload, Edit3 } from 'lucide-react';
+import { Sparkles, Plus, Trash2, ChevronLeft, ChevronRight, Check, Loader2, AlertCircle, Upload, Edit3, FileText, X } from 'lucide-react';
 
 const DAYS = [
   { key: 'monday', label: 'Lunedì' },
