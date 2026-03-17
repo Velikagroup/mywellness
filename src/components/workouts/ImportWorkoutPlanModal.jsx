@@ -377,20 +377,23 @@ Return a structured and validated array of exercises.`,
 
               {/* Giorni come tab in alto */}
               <div className="flex gap-1 overflow-x-auto pb-2">
-                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
-                  <button
-                    key={day}
-                    onClick={() => setSelectedDay(day)}
-                    className={`px-3 py-2 text-xs font-medium rounded-t-lg border-b-2 transition-all whitespace-nowrap ${
-                      selectedDay === day
-                        ? 'border-[#26847F] bg-[#e9f6f5] text-[#26847F]'
-                        : 'border-gray-300 bg-gray-100 text-gray-600 hover:border-[#26847F]'
-                    }`}
-                  >
-                    {dayTranslations[language][day]}
-                    <span className="ml-1 text-xs">({exercisesByDay[day]?.length || 0})</span>
-                  </button>
-                ))}
+                {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => {
+                  const dayExerciseCount = exercisesByDay && exercisesByDay[day] ? exercisesByDay[day].length : 0;
+                  return (
+                    <button
+                      key={day}
+                      onClick={() => setSelectedDay(day)}
+                      className={`px-3 py-2 text-xs font-medium rounded-t-lg border-b-2 transition-all whitespace-nowrap ${
+                        selectedDay === day
+                          ? 'border-[#26847F] bg-[#e9f6f5] text-[#26847F]'
+                          : 'border-gray-300 bg-gray-100 text-gray-600 hover:border-[#26847F]'
+                      }`}
+                    >
+                      {dayTranslations[language][day]}
+                      <span className="ml-1 text-xs">({dayExerciseCount})</span>
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Esercizi del giorno selezionato */}
