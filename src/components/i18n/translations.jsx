@@ -8940,7 +8940,7 @@ export const translations = {
       cookingRelaxed: "Relaxado",
       cookingRelaxedDesc: "30+ minutos",
       // Cheat meal
-      cheatMealTitle: "Cheat Meal",
+      cheatMealTitle: "Cheat Meal - Planeje Seus Escapes da Dieta",
       cheatMealSubtitle: "Você quer planejar uma refeição livre semanal?",
       skipCheatMeal: "Pular",
       // Pantry Modal
