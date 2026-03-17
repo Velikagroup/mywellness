@@ -65,8 +65,8 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
               </div>
             </div>
 
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-              <p className="text-xs text-gray-700">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 md:p-3">
+              <p className="text-xs text-gray-700 leading-tight md:leading-normal">
                 <span className="font-semibold">Importante:</span> Cliccando su "Accetto", confermi di aver letto, compreso e accettato di essere vincolato dai nostri Termini di Servizio e dalla Privacy Policy.
               </p>
             </div>
