@@ -355,23 +355,78 @@ Return a structured and validated array of exercises.`,
                 </div>
               )}
 
-              <div className="max-h-[400px] overflow-y-auto border border-gray-200 rounded-lg">
-                <div className="space-y-2 p-4">
-                  {analysisResult.exercises.map((ex, idx) => (
-                    <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                      <div className="flex justify-between items-start mb-1">
-                        <h4 className="font-medium text-gray-900">{ex.name}</h4>
-                        <span className="text-xs bg-[#26847F] text-white px-2 py-1 rounded">
-                          {ex.sets}x{ex.reps}
-                        </span>
-                      </div>
-                      <p className="text-xs text-gray-600">
-                        {tx.rest}: {ex.rest} • {tx.groups}: {ex.muscle_groups?.join(', ')}
-                      </p>
-                    </div>
-                  ))}
+              {!selectedDay ? (
+                <div className="space-y-3">
+                  <p className="text-sm font-medium text-gray-800">{tx.assignDay}</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                      <button
+                        key={day}
+                        onClick={() => setSelectedDay(day)}
+                        className="p-2 text-sm font-medium border-2 rounded-lg transition-all hover:border-[#26847F] hover:bg-[#e9f6f5]"
+                      >
+                        {dayTranslations[language][day]}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-sm font-medium text-gray-800">
+                      {dayTranslations[language][selectedDay]} - {analysisResult.exercises.length} {tx.exercises}
+                    </p>
+                    <button
+                      onClick={() => setSelectedDay(null)}
+                      className="text-xs text-gray-500 hover:text-gray-700 underline"
+                    >
+                      Cambia giorno
+                    </button>
+                  </div>
+                  <div className="max-h-[400px] overflow-y-auto border border-gray-200 rounded-lg">
+                    <div className="space-y-2 p-4">
+                      {analysisResult.exercises.map((ex, idx) => (
+                        <div key={idx} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                          <div className="flex justify-between items-start mb-2">
+                            <input
+                              type="text"
+                              value={editingExercises[idx]?.name || ex.name}
+                              onChange={(e) => setEditingExercises({...editingExercises, [idx]: {...editingExercises[idx], name: e.target.value}})}
+                              className="font-medium text-gray-900 text-sm border-b border-gray-300 focus:border-[#26847F] outline-none flex-1 mr-2"
+                            />
+                            <span className="text-xs bg-[#26847F] text-white px-2 py-1 rounded whitespace-nowrap">
+                              {editingExercises[idx]?.sets || ex.sets}x{editingExercises[idx]?.reps || ex.reps}
+                            </span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+                            <div>
+                              <label className="text-gray-600">{tx.rest}:</label>
+                              <input
+                                type="text"
+                                value={editingExercises[idx]?.rest || ex.rest}
+                                onChange={(e) => setEditingExercises({...editingExercises, [idx]: {...editingExercises[idx], rest: e.target.value}})}
+                                className="w-full border border-gray-300 rounded px-2 py-1 focus:border-[#26847F] outline-none"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-gray-600">Serie:</label>
+                              <input
+                                type="number"
+                                value={editingExercises[idx]?.sets || ex.sets}
+                                onChange={(e) => setEditingExercises({...editingExercises, [idx]: {...editingExercises[idx], sets: parseInt(e.target.value)}})}
+                                className="w-full border border-gray-300 rounded px-2 py-1 focus:border-[#26847F] outline-none"
+                              />
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600">
+                            {tx.groups}: {ex.muscle_groups?.join(', ')}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {error && (
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3">
