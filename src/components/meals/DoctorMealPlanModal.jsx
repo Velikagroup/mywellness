@@ -34,7 +34,8 @@ const emptyDay = () => MEAL_TYPES.slice(0, 3).map(mt => emptyMeal(mt.key));
 
 export default function DoctorMealPlanModal({ isOpen, onClose, user, existingMealPlans, onPlanSaved }) {
   const [step, setStep] = useState('input'); // 'input' | 'parsing' | 'review'
-  const [planText, setPlanText] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
   const [plan, setPlan] = useState(() => {
     const initial = {};
     DAYS.forEach(d => { initial[d.key] = emptyDay(); });
