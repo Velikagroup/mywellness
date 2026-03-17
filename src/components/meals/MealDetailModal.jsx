@@ -159,7 +159,7 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
             <DialogTitle className="text-2xl font-bold text-gray-900">{currentMeal.name}</DialogTitle>
           </DialogHeader>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-y-auto pr-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-y-auto pr-2 max-h-[calc(90vh-120px)]">
             <div className="space-y-6">
               <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden border">
                 {(isGeneratingImage || !currentMeal.image_url) ? (
