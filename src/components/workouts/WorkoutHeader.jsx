@@ -66,14 +66,6 @@ export default function WorkoutHeader({
         </div>
         <div className="flex gap-3 w-full lg:w-auto">
           <Button 
-            onClick={() => setShowImportModal(true)}
-            variant="outline"
-            className="border-[#26847F] text-[#26847F] hover:bg-[#e9f6f5] flex items-center gap-2 px-4 py-6 text-base font-semibold rounded-xl"
-          >
-            <Upload className="w-5 h-5" /> 
-            {importPlanLabels[language] || 'Importa Piano'}
-          </Button>
-          <Button 
             onClick={onGenerateClick}
             className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center gap-2 shadow-[0_4px_20px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_25px_rgba(38,132,127,0.4)] transition-all px-6 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-none relative"
             disabled={!trainingData.subscription_plan}
