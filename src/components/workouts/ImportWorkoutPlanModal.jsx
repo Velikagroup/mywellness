@@ -248,6 +248,18 @@ Return a structured and validated array of exercises.`,
       });
 
       setAnalysisResult(aiResponse);
+      
+      // Distribuisci esercizi per giorno (cicla attraverso giorni della settimana)
+      const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+      const dayExercises = { monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [] };
+      
+      aiResponse.exercises?.forEach((ex, idx) => {
+        const dayIndex = idx % 7;
+        dayExercises[days[dayIndex]].push({ ...ex, originalIndex: idx });
+      });
+      
+      setExercisesByDay(dayExercises);
+      setSelectedDay('monday');
       setStep('review');
     } catch (err) {
       console.error('Error analyzing file:', err);
