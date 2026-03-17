@@ -51,13 +51,29 @@ export default function DoctorMealPlanModal({ isOpen, onClose, user, existingMea
 
   // ── AI parsing ──────────────────────────────────────────────────────────────
 
+  const handleFileChange = (file) => {
+    if (!file) return;
+    const allowed = ['application/pdf', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'text/csv', 'text/plain'];
+    const ext = file.name.split('.').pop().toLowerCase();
+    const allowedExt = ['pdf', 'xlsx', 'xls', 'csv', 'txt'];
+    if (!allowed.includes(file.type) && !allowedExt.includes(ext)) {
+      setError('Formato non supportato. Usa PDF, Excel (.xlsx/.xls), CSV o TXT.');
+      return;
+    }
+    setError('');
+    setSelectedFile(file);
+  };
+
   const handleParseWithAI = async () => {
-    if (!planText.trim()) {
-      setError('Inserisci il testo del piano alimentare prima di procedere.');
+    if (!selectedFile) {
+      setError('Carica un file prima di procedere.');
       return;
     }
     setError('');
     setStep('parsing');
+
+    // Upload file first, then extract data
+    const { file_url } = await base44.integrations.Core.UploadFile({ file: selectedFile });
 
     const schema = {
       type: "object",
