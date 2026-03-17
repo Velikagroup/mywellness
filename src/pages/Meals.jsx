@@ -1610,7 +1610,14 @@ STRICT RULES:
                   <AlertCircle className="w-4 h-4 ml-1 animate-pulse" />
                 )}
               </Button>
-              <div className="flex gap-2 w-full lg:w-auto order-2">
+              <Button
+                onClick={() => setShowDoctorPlanModal(true)}
+                className="bg-white border-2 border-blue-500 text-blue-600 hover:bg-blue-50 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl w-full lg:w-auto order-2 lg:order-2"
+              >
+                <Stethoscope className="w-5 h-5" />
+                <span>Piano del Medico</span>
+              </Button>
+              <div className="flex gap-2 w-full lg:w-auto order-3">
                 <Button
                   onClick={() => setShowPantry(true)}
                   className="bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial"
@@ -1879,6 +1886,17 @@ STRICT RULES:
       )}
       {showUpgradeModal && (
         <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} currentPlan={user?.subscription_plan || 'base'} />
+      )}
+      {showDoctorPlanModal && (
+        <DoctorMealPlanModal
+          isOpen={showDoctorPlanModal}
+          onClose={() => setShowDoctorPlanModal(false)}
+          user={user}
+          existingMealPlans={mealPlans}
+          onPlanSaved={() => {
+            queryClient.invalidateQueries({ queryKey: ['mealPlans'] });
+          }}
+        />
       )}
       {replaceMealTarget && (
         <ReplaceMealModal
