@@ -22,7 +22,44 @@ export default function ExerciseCard({
   userStrengthLevel = 'moderate'
 }) {
   const [showDetails, setShowDetails] = useState(false);
+  const [localizedDetails, setLocalizedDetails] = useState(null);
+  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const { t, language } = useLanguage();
+
+  const openDetails = useCallback(async () => {
+    setShowDetails(true);
+    // If already localized for this language, skip
+    if (localizedDetails?.lang === language) return;
+    setIsLoadingDetails(true);
+    try {
+      const langName = LANG_NAMES[language] || 'English';
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are a personal trainer. Generate content in ${langName} ONLY for the exercise: "${exercise.name}".
+Provide:
+1. detailed_description: 2-3 sentences describing the exercise and how to perform it correctly.
+2. form_tips: 5-6 specific tips for correct form and technique.
+3. target_muscles: list of specific muscles targeted (in ${langName}).
+4. intensity_tips: 2-3 tips about recommended load/intensity for a "${exercise.difficulty || 'intermediate'}" difficulty level.
+
+ALL text MUST be in ${langName}. Return ONLY valid JSON.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            detailed_description: { type: "string" },
+            form_tips: { type: "array", items: { type: "string" } },
+            target_muscles: { type: "array", items: { type: "string" } },
+            intensity_tips: { type: "array", items: { type: "string" } },
+          },
+          required: ["detailed_description", "form_tips", "target_muscles", "intensity_tips"]
+        }
+      });
+      setLocalizedDetails({ ...result, lang: language });
+    } catch (e) {
+      console.error('Failed to generate localized details:', e);
+    } finally {
+      setIsLoadingDetails(false);
+    }
+  }, [language, exercise.name, exercise.difficulty, localizedDetails]);
   
   // Genera intensity tips una volta per evitare loop infiniti
   const intensityTipsRef = React.useRef(null);
