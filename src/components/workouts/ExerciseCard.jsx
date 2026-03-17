@@ -75,7 +75,7 @@ ALL text MUST be in ${langName}. Return ONLY valid JSON.`,
     const exerciseNameLower = (exercise.name || '').toLowerCase();
     
     const weightsByLevel = {
-      never_lifted: { dumbbell: '1-3kg', barbell: 'solo bilanciere (10-15kg)', machine: 'carico minimo' },
+      never_lifted: { dumbbell: '1-3kg', barbell: '10-15kg', machine: 'min load' },
       light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
       moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
       intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
@@ -88,25 +88,71 @@ ALL text MUST be in ${langName}. Return ONLY valid JSON.`,
     const isBarbell = exerciseNameLower.includes('bilanciere') || exerciseNameLower.includes('barbell') || exerciseNameLower.includes('barra') || exerciseNameLower.includes('langhantel');
     const isMachine = ['macchina', 'leg press', 'cable', 'cavo', 'machine', 'polia', 'polea', 'maschine'].some(kw => exerciseNameLower.includes(kw));
     const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch', 'flexiones', 'pompes', 'liegestütz', 'flexões'].some(kw => exerciseNameLower.includes(kw));
+
+    const tipsByLang = {
+      it: {
+        isometric: [`⏱️ Tieni la posizione per 30-45 secondi per serie`, `💪 Quando inizi a tremare, l'intensità è giusta`],
+        dumbbell: [`🏋️ Usa manubri da ${weights.dumbbell} per lato`, `🔥 Le ultime 2-3 ripetizioni devono essere difficili`],
+        barbell: [`🏋️ Carica il bilanciere con ${weights.barbell}`, `📊 RPE 7-8: dovresti poter fare 2-3 rip. in più`],
+        machine: [`🏋️ Imposta la macchina a ${weights.machine}`, `🔥 Le ultime ripetizioni devono essere impegnative`],
+        bodyweight: [`⏱️ Rallenta la discesa a 3 secondi se troppo facile`, `✅ Mantieni la forma corretta`],
+        default: [`💪 Scegli un carico che renda difficili le ultime rip.`, `📊 RPE 7-8`],
+      },
+      en: {
+        isometric: [`⏱️ Hold for 30-45 seconds per set`, `💪 When you start shaking, intensity is right`],
+        dumbbell: [`🏋️ Use ${weights.dumbbell} dumbbells per side`, `🔥 Last 2-3 reps should be hard`],
+        barbell: [`🏋️ Load barbell with ${weights.barbell}`, `📊 RPE 7-8: you should be able to do 2-3 more reps`],
+        machine: [`🏋️ Set machine to ${weights.machine}`, `🔥 Last reps should be challenging`],
+        bodyweight: [`⏱️ Slow down descent to 3 seconds if too easy`, `✅ Maintain perfect form`],
+        default: [`💪 Choose a load that makes last reps hard`, `📊 RPE 7-8`],
+      },
+      es: {
+        isometric: [`⏱️ Mantén la posición 30-45 segundos por serie`, `💪 Cuando empieces a temblar, la intensidad es correcta`],
+        dumbbell: [`🏋️ Usa mancuernas de ${weights.dumbbell} por lado`, `🔥 Las últimas 2-3 repeticiones deben ser difíciles`],
+        barbell: [`🏋️ Carga la barra con ${weights.barbell}`, `📊 RPE 7-8: deberías poder hacer 2-3 reps más`],
+        machine: [`🏋️ Ajusta la máquina a ${weights.machine}`, `🔥 Las últimas repeticiones deben ser exigentes`],
+        bodyweight: [`⏱️ Baja en 3 segundos si es muy fácil`, `✅ Mantén la forma correcta`],
+        default: [`💪 Elige un peso que haga difíciles las últimas reps`, `📊 RPE 7-8`],
+      },
+      pt: {
+        isometric: [`⏱️ Segura a posição por 30-45 segundos por série`, `💪 Quando começares a tremer, a intensidade está certa`],
+        dumbbell: [`🏋️ Usa halteres de ${weights.dumbbell} por lado`, `🔥 As últimas 2-3 reps devem ser difíceis`],
+        barbell: [`🏋️ Carrega a barra com ${weights.barbell}`, `📊 RPE 7-8: deves conseguir fazer 2-3 reps a mais`],
+        machine: [`🏋️ Ajusta a máquina a ${weights.machine}`, `🔥 As últimas reps devem ser desafiantes`],
+        bodyweight: [`⏱️ Abranda a descida para 3 segundos se for fácil`, `✅ Mantém a forma correta`],
+        default: [`💪 Escolhe um peso que torne as últimas reps difíceis`, `📊 RPE 7-8`],
+      },
+      de: {
+        isometric: [`⏱️ Halte die Position 30-45 Sekunden pro Satz`, `💪 Wenn du zitterst, ist die Intensität richtig`],
+        dumbbell: [`🏋️ Verwende ${weights.dumbbell} Kurzhanteln pro Seite`, `🔥 Die letzten 2-3 Wiederholungen sollten schwer sein`],
+        barbell: [`🏋️ Belaste die Langhantel mit ${weights.barbell}`, `📊 RPE 7-8: du solltest 2-3 weitere Wdh. schaffen`],
+        machine: [`🏋️ Stelle die Maschine auf ${weights.machine}`, `🔥 Die letzten Wdh. sollten anspruchsvoll sein`],
+        bodyweight: [`⏱️ Verlangsame die Absenkung auf 3 Sek. wenn zu leicht`, `✅ Korrekte Form beibehalten`],
+        default: [`💪 Wähle ein Gewicht, das die letzten Wdh. schwer macht`, `📊 RPE 7-8`],
+      },
+      fr: {
+        isometric: [`⏱️ Tiens la position 30-45 secondes par série`, `💪 Quand tu commences à trembler, l'intensité est bonne`],
+        dumbbell: [`🏋️ Utilise des haltères de ${weights.dumbbell} par côté`, `🔥 Les 2-3 dernières reps doivent être difficiles`],
+        barbell: [`🏋️ Charge la barre avec ${weights.barbell}`, `📊 RPE 7-8: tu devrais pouvoir faire 2-3 reps de plus`],
+        machine: [`🏋️ Règle la machine à ${weights.machine}`, `🔥 Les dernières reps doivent être exigeantes`],
+        bodyweight: [`⏱️ Ralentis la descente à 3 sec. si trop facile`, `✅ Maintiens une forme correcte`],
+        default: [`💪 Choisis une charge qui rend les dernières reps difficiles`, `📊 RPE 7-8`],
+      },
+    };
+
+    const langTips = tipsByLang[language] || tipsByLang.en;
     
     let tips;
-    if (isIsometric) {
-      tips = ["⏱️ Hold for 30-45 seconds per set", "💪 When you start shaking, intensity is right"];
-    } else if (isDumbbell) {
-      tips = [`🏋️ Use ${weights.dumbbell} dumbbells per side`, "🔥 Last 2-3 reps should be hard"];
-    } else if (isBarbell) {
-      tips = [`🏋️ Load barbell with ${weights.barbell}`, "📊 RPE 7-8: you should be able to do 2-3 more reps"];
-    } else if (isMachine) {
-      tips = [`🏋️ Set machine to ${weights.machine}`, "🔥 Last reps should be challenging"];
-    } else if (isBodyweight) {
-      tips = ["⏱️ Slow down descent to 3 seconds if too easy", "✅ Maintain perfect form"];
-    } else {
-      tips = ["💪 Choose a load that makes last reps hard", "📊 RPE 7-8"];
-    }
+    if (isIsometric) tips = langTips.isometric;
+    else if (isDumbbell) tips = langTips.dumbbell;
+    else if (isBarbell) tips = langTips.barbell;
+    else if (isMachine) tips = langTips.machine;
+    else if (isBodyweight) tips = langTips.bodyweight;
+    else tips = langTips.default;
     
     intensityTipsRef.current = tips;
     return tips;
-  }, [exercise.name, exercise.intensity_tips, userStrengthLevel]);
+  }, [exercise.name, exercise.intensity_tips, userStrengthLevel, language]);
   
   // NO REAL-TIME TRANSLATION - il piano viene generato già nella lingua corretta
   const displayExercise = exercise;
