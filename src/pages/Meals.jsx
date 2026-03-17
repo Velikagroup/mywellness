@@ -326,6 +326,62 @@ export default function MealsPage() {
     setSelectedMeal(null);
   };
 
+  const addMealsToShoppingList = async (mealsToAdd, dayKeys) => {
+    let currentList = shoppingLists.length > 0 ? shoppingLists[0] : null;
+    const ingredientsMap = new Map();
+
+    mealsToAdd.forEach((meal, idx) => {
+      const dayKey = dayKeys[idx] || meal.day_of_week || selectedDay;
+      meal.ingredients?.forEach(ing => {
+        const key = ing.name.toLowerCase();
+        if (ingredientsMap.has(key)) {
+          const existing = ingredientsMap.get(key);
+          existing.quantity += ing.quantity;
+          if (!existing.days.includes(dayKey)) existing.days.push(dayKey);
+        } else {
+          ingredientsMap.set(key, {
+            name: ing.name,
+            quantity: ing.quantity,
+            unit: ing.unit,
+            category: categorizeIngredient(ing.name),
+            checked: false,
+            days: [dayKey]
+          });
+        }
+      });
+    });
+
+    const newItemsToAdd = Array.from(ingredientsMap.values());
+
+    if (currentList) {
+      const existingItemsMap = new Map();
+      currentList.items.forEach(item => {
+        existingItemsMap.set(item.name.toLowerCase(), { ...item });
+      });
+      newItemsToAdd.forEach(newItem => {
+        const key = newItem.name.toLowerCase();
+        if (existingItemsMap.has(key)) {
+          const existing = existingItemsMap.get(key);
+          existing.quantity += newItem.quantity;
+          existing.days = Array.from(new Set([...existing.days, ...newItem.days]));
+        } else {
+          existingItemsMap.set(key, newItem);
+        }
+      });
+      await updateShoppingListMutation.mutateAsync({
+        id: currentList.id,
+        data: { items: Array.from(existingItemsMap.values()), last_updated: new Date().toISOString() }
+      });
+    } else {
+      await createShoppingListMutation.mutateAsync({
+        user_id: user.id,
+        week_start_date: startOfWeek,
+        items: newItemsToAdd,
+        last_updated: new Date().toISOString()
+      });
+    }
+  };
+
   const addDayToShoppingList = async (dayKey) => {
     if (!user) return;
     
