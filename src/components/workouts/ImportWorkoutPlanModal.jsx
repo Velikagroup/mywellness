@@ -5,9 +5,134 @@ import { base44 } from '@/api/base44Client';
 import { useLanguage } from '../i18n/LanguageContext';
 import { Upload, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
+const i18n = {
+  it: {
+    title: 'Importa Piano di Allenamento',
+    description: 'Carica un file PDF, Excel o CSV con i tuoi esercizi. L\'AI analizzerà il contenuto e creerà automaticamente una bozza del piano.',
+    clickToSelect: 'Clicca per selezionare un file',
+    fileFormats: 'PDF, Excel, CSV o JSON',
+    analyzing: 'Analisi in corso...',
+    analyzingDesc: 'L\'AI sta elaborando gli esercizi dal tuo file',
+    aiDraft: '✨ L\'AI ha analizzato il file e creato una bozza con',
+    exercises: 'esercizi',
+    warnings: '⚠️ Avvisi:',
+    rest: 'Riposo',
+    groups: 'Muscoli',
+    saving: 'Salvataggio in corso...',
+    imported: 'Piano importato con successo!',
+    importedDesc: 'Gli esercizi sono stati aggiunti al tuo piano settimanale',
+    cancel: 'Annulla',
+    analyze: 'Analizza File',
+    confirm: 'Conferma e Salva',
+    selectFile: 'Seleziona un file prima di continuare',
+  },
+  en: {
+    title: 'Import Workout Plan',
+    description: 'Upload a PDF, Excel or CSV file with your exercises. AI will analyze the content and automatically create a draft plan.',
+    clickToSelect: 'Click to select a file',
+    fileFormats: 'PDF, Excel, CSV or JSON',
+    analyzing: 'Analyzing...',
+    analyzingDesc: 'AI is processing the exercises from your file',
+    aiDraft: '✨ AI analyzed the file and created a draft with',
+    exercises: 'exercises',
+    warnings: '⚠️ Warnings:',
+    rest: 'Rest',
+    groups: 'Muscles',
+    saving: 'Saving...',
+    imported: 'Plan imported successfully!',
+    importedDesc: 'Exercises have been added to your weekly plan',
+    cancel: 'Cancel',
+    analyze: 'Analyze File',
+    confirm: 'Confirm & Save',
+    selectFile: 'Please select a file first',
+  },
+  es: {
+    title: 'Importar Plan de Entrenamiento',
+    description: 'Sube un archivo PDF, Excel o CSV con tus ejercicios. La IA analizará el contenido y creará automáticamente un borrador del plan.',
+    clickToSelect: 'Haz clic para seleccionar un archivo',
+    fileFormats: 'PDF, Excel, CSV o JSON',
+    analyzing: 'Analizando...',
+    analyzingDesc: 'La IA está procesando los ejercicios de tu archivo',
+    aiDraft: '✨ La IA analizó el archivo y creó un borrador con',
+    exercises: 'ejercicios',
+    warnings: '⚠️ Advertencias:',
+    rest: 'Descanso',
+    groups: 'Músculos',
+    saving: 'Guardando...',
+    imported: '¡Plan importado con éxito!',
+    importedDesc: 'Los ejercicios se han añadido a tu plan semanal',
+    cancel: 'Cancelar',
+    analyze: 'Analizar Archivo',
+    confirm: 'Confirmar y Guardar',
+    selectFile: 'Selecciona un archivo primero',
+  },
+  pt: {
+    title: 'Importar Plano de Treino',
+    description: 'Carrega um ficheiro PDF, Excel ou CSV com os teus exercícios. A IA irá analisar o conteúdo e criar automaticamente um rascunho do plano.',
+    clickToSelect: 'Clica para selecionar um ficheiro',
+    fileFormats: 'PDF, Excel, CSV ou JSON',
+    analyzing: 'A analisar...',
+    analyzingDesc: 'A IA está a processar os exercícios do teu ficheiro',
+    aiDraft: '✨ A IA analisou o ficheiro e criou um rascunho com',
+    exercises: 'exercícios',
+    warnings: '⚠️ Avisos:',
+    rest: 'Descanso',
+    groups: 'Músculos',
+    saving: 'A guardar...',
+    imported: 'Plano importado com sucesso!',
+    importedDesc: 'Os exercícios foram adicionados ao teu plano semanal',
+    cancel: 'Cancelar',
+    analyze: 'Analisar Ficheiro',
+    confirm: 'Confirmar e Guardar',
+    selectFile: 'Seleciona um ficheiro primeiro',
+  },
+  de: {
+    title: 'Trainingsplan Importieren',
+    description: 'Lade eine PDF-, Excel- oder CSV-Datei mit deinen Übungen hoch. Die KI analysiert den Inhalt und erstellt automatisch einen Planentwurf.',
+    clickToSelect: 'Klicken um Datei auszuwählen',
+    fileFormats: 'PDF, Excel, CSV oder JSON',
+    analyzing: 'Analyse läuft...',
+    analyzingDesc: 'Die KI verarbeitet die Übungen aus deiner Datei',
+    aiDraft: '✨ Die KI hat die Datei analysiert und einen Entwurf mit',
+    exercises: 'Übungen erstellt',
+    warnings: '⚠️ Hinweise:',
+    rest: 'Pause',
+    groups: 'Muskeln',
+    saving: 'Wird gespeichert...',
+    imported: 'Plan erfolgreich importiert!',
+    importedDesc: 'Die Übungen wurden deinem Wochenplan hinzugefügt',
+    cancel: 'Abbrechen',
+    analyze: 'Datei Analysieren',
+    confirm: 'Bestätigen & Speichern',
+    selectFile: 'Bitte zuerst eine Datei auswählen',
+  },
+  fr: {
+    title: 'Importer un Plan d\'Entraînement',
+    description: 'Télécharge un fichier PDF, Excel ou CSV avec tes exercices. L\'IA analysera le contenu et créera automatiquement un brouillon du plan.',
+    clickToSelect: 'Clique pour sélectionner un fichier',
+    fileFormats: 'PDF, Excel, CSV ou JSON',
+    analyzing: 'Analyse en cours...',
+    analyzingDesc: 'L\'IA traite les exercices de ton fichier',
+    aiDraft: '✨ L\'IA a analysé le fichier et créé un brouillon avec',
+    exercises: 'exercices',
+    warnings: '⚠️ Avertissements :',
+    rest: 'Repos',
+    groups: 'Muscles',
+    saving: 'Enregistrement...',
+    imported: 'Plan importé avec succès !',
+    importedDesc: 'Les exercices ont été ajoutés à ton plan hebdomadaire',
+    cancel: 'Annuler',
+    analyze: 'Analyser le Fichier',
+    confirm: 'Confirmer et Enregistrer',
+    selectFile: 'Sélectionne d\'abord un fichier',
+  },
+};
+
 export default function ImportWorkoutPlanModal({ isOpen, onClose, user, onWorkoutImported }) {
-  const { t } = useLanguage();
-  const [step, setStep] = useState('upload'); // upload, analyzing, review, saving
+  const { language } = useLanguage();
+  const tx = i18n[language] || i18n.it;
+
+  const [step, setStep] = useState('upload');
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
@@ -24,7 +149,7 @@ export default function ImportWorkoutPlanModal({ isOpen, onClose, user, onWorkou
 
   const handleAnalyze = async () => {
     if (!uploadedFile) {
-      setError(t('workouts.importSelectFile') || 'Seleziona un file');
+      setError(tx.selectFile);
       return;
     }
 
@@ -33,10 +158,8 @@ export default function ImportWorkoutPlanModal({ isOpen, onClose, user, onWorkou
     setStep('analyzing');
 
     try {
-      // Upload file
       const { file_url } = await base44.integrations.Core.UploadFile({ file: uploadedFile });
 
-      // Extract data from file
       const extractedData = await base44.integrations.Core.ExtractDataFromUploadedFile({
         file_url,
         json_schema: {
@@ -60,24 +183,23 @@ export default function ImportWorkoutPlanModal({ isOpen, onClose, user, onWorkou
       });
 
       if (extractedData.status !== 'success' || !extractedData.output) {
-        throw new Error(extractedData.details || 'Errore durante l\'estrazione dei dati');
+        throw new Error(extractedData.details || 'Extraction error');
       }
 
-      // Call AI to structure and validate exercises
       const aiResponse = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analizza questi esercizi estratti da un file e strutturali correttamente:
+        prompt: `Analyze these exercises extracted from a file and structure them correctly:
         
 ${JSON.stringify(extractedData.output.exercises, null, 2)}
 
-Per ogni esercizio, assicurati che abbia:
-- name: nome dell'esercizio
-- sets: numero di serie
-- reps: numero di ripetizioni (come stringa, es: "10-12 ripetizioni")
-- rest: tempo di riposo (come stringa, es: "60 secondi")
-- muscle_groups: array di gruppi muscolari
+For each exercise ensure it has:
+- name: exercise name
+- sets: number of sets
+- reps: number of reps (as string, e.g.: "10-12 reps")
+- rest: rest time (as string, e.g.: "60 seconds")
+- muscle_groups: array of muscle groups
 
-Valida che gli esercizi siano ragionevoli e correggi eventuali errori evidenti (es: reps negative, sets = 0).
-Ritorna un array di esercizi strutturato e validato.`,
+Validate that exercises are reasonable and fix obvious errors (e.g.: negative reps, sets = 0).
+Return a structured and validated array of exercises.`,
         response_json_schema: {
           type: 'object',
           properties: {
@@ -98,8 +220,7 @@ Ritorna un array di esercizi strutturato e validato.`,
             },
             warnings: {
               type: 'array',
-              items: { type: 'string' },
-              description: 'Avvisi su esercizi che potrebbero necessitare revisione'
+              items: { type: 'string' }
             }
           },
           required: ['exercises']
@@ -110,7 +231,7 @@ Ritorna un array di esercizi strutturato e validato.`,
       setStep('review');
     } catch (err) {
       console.error('Error analyzing file:', err);
-      setError(err.message || 'Errore durante l\'analisi del file');
+      setError(err.message || 'File analysis error');
       setStep('upload');
     } finally {
       setIsAnalyzing(false);
@@ -124,7 +245,6 @@ Ritorna un array di esercizi strutturato e validato.`,
     setStep('saving');
 
     try {
-      // Call backend function to save exercises to workout plans
       await base44.functions.invoke('importWorkoutPlanFromAnalysis', {
         user_id: user?.id,
         exercises: analysisResult.exercises
@@ -137,7 +257,7 @@ Ritorna un array di esercizi strutturato e validato.`,
       }, 2000);
     } catch (err) {
       console.error('Error saving workout plan:', err);
-      setError(err.message || 'Errore durante il salvataggio del piano');
+      setError(err.message || 'Save error');
       setStep('review');
     } finally {
       setIsSaving(false);
@@ -148,16 +268,13 @@ Ritorna un array di esercizi strutturato e validato.`,
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>{t('workouts.importPlan') || 'Importa Piano di Allenamento'}</DialogTitle>
+          <DialogTitle>{tx.title}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
-          {/* Step 1: Upload */}
           {step === 'upload' && (
             <div className="space-y-4">
-              <p className="text-sm text-gray-600">
-                Carica un file PDF o Excel con i tuoi esercizi. L'AI analizzerà il file e creerà una bozza precompilata.
-              </p>
+              <p className="text-sm text-gray-600">{tx.description}</p>
 
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                 <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
@@ -170,10 +287,10 @@ Ritorna un array di esercizi strutturato e validato.`,
                 />
                 <label htmlFor="file-upload" className="cursor-pointer">
                   <span className="text-sm font-medium text-[#26847F] hover:text-[#1f6b66]">
-                    Clicca per selezionare un file
+                    {tx.clickToSelect}
                   </span>
                 </label>
-                <p className="text-xs text-gray-500 mt-2">PDF, Excel, CSV o JSON</p>
+                <p className="text-xs text-gray-500 mt-2">{tx.fileFormats}</p>
               </div>
 
               {uploadedFile && (
@@ -192,27 +309,25 @@ Ritorna un array di esercizi strutturato e validato.`,
             </div>
           )}
 
-          {/* Step 2: Analyzing */}
           {step === 'analyzing' && (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
               <Loader2 className="w-12 h-12 text-[#26847F] animate-spin" />
-              <p className="text-gray-700 font-medium">Analizzando il file...</p>
-              <p className="text-sm text-gray-500">L'AI sta elaborando gli esercizi dal tuo file</p>
+              <p className="text-gray-700 font-medium">{tx.analyzing}</p>
+              <p className="text-sm text-gray-500">{tx.analyzingDesc}</p>
             </div>
           )}
 
-          {/* Step 3: Review */}
           {step === 'review' && analysisResult && (
             <div className="space-y-4">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-sm text-blue-800">
-                  ✨ L'AI ha analizzato il file e creato una bozza di {analysisResult.exercises.length} esercizi
+                  {tx.aiDraft} {analysisResult.exercises.length} {tx.exercises}
                 </p>
               </div>
 
               {analysisResult.warnings?.length > 0 && (
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                  <p className="text-sm font-medium text-amber-900 mb-2">⚠️ Avvisi:</p>
+                  <p className="text-sm font-medium text-amber-900 mb-2">{tx.warnings}</p>
                   <ul className="text-sm text-amber-800 space-y-1">
                     {analysisResult.warnings.map((w, i) => (
                       <li key={i}>• {w}</li>
@@ -232,7 +347,7 @@ Ritorna un array di esercizi strutturato e validato.`,
                         </span>
                       </div>
                       <p className="text-xs text-gray-600">
-                        Riposo: {ex.rest} • Gruppi: {ex.muscle_groups?.join(', ')}
+                        {tx.rest}: {ex.rest} • {tx.groups}: {ex.muscle_groups?.join(', ')}
                       </p>
                     </div>
                   ))}
@@ -247,20 +362,18 @@ Ritorna un array di esercizi strutturato e validato.`,
             </div>
           )}
 
-          {/* Step 4: Saving */}
           {step === 'saving' && (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
               <Loader2 className="w-12 h-12 text-[#26847F] animate-spin" />
-              <p className="text-gray-700 font-medium">Salvataggio in corso...</p>
+              <p className="text-gray-700 font-medium">{tx.saving}</p>
             </div>
           )}
 
-          {/* Step 5: Success */}
           {step === 'success' && (
             <div className="flex flex-col items-center justify-center py-12 gap-4">
               <CheckCircle2 className="w-12 h-12 text-green-600" />
-              <p className="text-gray-700 font-medium">Piano di allenamento importato!</p>
-              <p className="text-sm text-gray-500">Gli esercizi sono stati aggiunti al tuo piano settimanale</p>
+              <p className="text-gray-700 font-medium">{tx.imported}</p>
+              <p className="text-sm text-gray-500">{tx.importedDesc}</p>
             </div>
           )}
         </div>
@@ -271,7 +384,7 @@ Ritorna un array di esercizi strutturato e validato.`,
             onClick={onClose}
             disabled={isAnalyzing || isSaving || step === 'success'}
           >
-            Annulla
+            {tx.cancel}
           </Button>
           {step === 'upload' && (
             <Button
@@ -282,11 +395,9 @@ Ritorna un array di esercizi strutturato e validato.`,
               {isAnalyzing ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Analizzando...
+                  {tx.analyzing}
                 </>
-              ) : (
-                'Analizza File'
-              )}
+              ) : tx.analyze}
             </Button>
           )}
           {step === 'review' && (
@@ -298,11 +409,9 @@ Ritorna un array di esercizi strutturato e validato.`,
               {isSaving ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Salvataggio...
+                  {tx.saving}
                 </>
-              ) : (
-                'Conferma e Salva'
-              )}
+              ) : tx.confirm}
             </Button>
           )}
         </DialogFooter>
