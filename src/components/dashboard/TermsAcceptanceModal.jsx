@@ -13,16 +13,16 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <div className="space-y-3 md:space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-gray-900">
+          <div className="text-center space-y-1 md:space-y-2">
+            <h2 className="text-lg md:text-2xl font-bold text-gray-900">
               Benvenuto su MyWellness
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs md:text-sm text-gray-600">
               Abbiamo aggiornato i nostri Termini di Servizio e Privacy Policy
             </p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-2 md:space-y-4">
             <p className="text-sm text-gray-700">
               Per continuare a utilizzare MyWellness, ti preghiamo di leggere e accettare le nostre policy aggiornate:
             </p>
