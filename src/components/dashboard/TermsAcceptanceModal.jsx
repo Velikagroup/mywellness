@@ -46,11 +46,11 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <Shield className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+              <div className="flex items-start gap-2 md:gap-3 p-2 md:p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <Shield className="w-4 md:w-5 h-4 md:h-5 text-purple-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 mb-1">Privacy Policy</h3>
-                  <p className="text-xs text-gray-600 mb-2">
+                  <h3 className="font-semibold text-xs md:text-sm text-gray-900 mb-1">Privacy Policy</h3>
+                  <p className="text-xs text-gray-600 mb-1 md:mb-2">
                     La nostra Privacy Policy spiega come raccogliamo, usiamo, proteggiamo e condividiamo le tue informazioni personali quando utilizzi i nostri servizi.
                   </p>
                   <a 
