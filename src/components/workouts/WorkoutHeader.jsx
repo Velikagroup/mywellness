@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { BrainCircuit, AlertCircle } from 'lucide-react';
+import { BrainCircuit, AlertCircle, Upload } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import ImportWorkoutPlanModal from './ImportWorkoutPlanModal';
 
 export default function WorkoutHeader({
   trainingData,
@@ -10,9 +11,21 @@ export default function WorkoutHeader({
   remainingGenerations,
   generationLimitReached,
   onGenerateClick,
-  onUpgradeClick
+  onUpgradeClick,
+  user,
+  onWorkoutImported
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const importPlanLabels = {
+    it: 'Importa Piano',
+    en: 'Import Plan',
+    es: 'Importar Plan',
+    pt: 'Importar Plano',
+    de: 'Plan Importieren',
+    fr: 'Importer Plan'
+  };
+  const [showImportModal, setShowImportModal] = useState(false);
 
   const formatFitnessGoal = (goal) => {
     const goalLabels = {
