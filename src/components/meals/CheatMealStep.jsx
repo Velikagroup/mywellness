@@ -106,7 +106,7 @@ export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
                           key={meal.id}
                           onClick={() => toggleCheatMeal(day.id, meal.id)}
                           disabled={disabled}
-                          className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 transition-all ${
+                          className={`flex-1 flex items-center justify-center gap-1 px-2 py-2 rounded-lg border-2 transition-all ${
                             selected
                               ? 'bg-gradient-to-br from-orange-500 to-pink-500 border-orange-500 text-white shadow-lg'
                               : disabled
