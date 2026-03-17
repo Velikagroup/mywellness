@@ -15,7 +15,16 @@ export default function WorkoutHeader({
   user,
   onWorkoutImported
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const importPlanLabels = {
+    it: 'Importa Piano',
+    en: 'Import Plan',
+    es: 'Importar Plan',
+    pt: 'Importar Plano',
+    de: 'Plan Importieren',
+    fr: 'Importer Plan'
+  };
   const [showImportModal, setShowImportModal] = useState(false);
 
   const formatFitnessGoal = (goal) => {
