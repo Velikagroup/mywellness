@@ -514,41 +514,14 @@ Use verified nutritional data. All names and units in ${langName}.`;
         }
       });
 
-      // ✅ MATCH con dispensa utente
-      const userIngredients = await base44.entities.UserIngredient.filter({ user_id: user.id });
-      
       let validIngredients = llmResponse.ingredients.filter(ing => 
         ing.name && ing.quantity != null && ing.unit && ing.calories != null
-      );
-
-      // Sostituisci con ingredienti dalla dispensa se disponibili
-      validIngredients = validIngredients.map(ing => {
-        const pantryMatch = userIngredients.find(ui => 
-          ui.name.toLowerCase().includes(ing.name.toLowerCase()) || 
-          ing.name.toLowerCase().includes(ui.name.toLowerCase())
-        );
-        
-        if (pantryMatch) {
-          // Assuming ing.quantity is in grams or a unit that scales linearly for 100g metrics
-          const gramsUsed = ing.quantity;
-          return {
-            name: pantryMatch.name, // Use pantry's name for consistency
-            quantity: gramsUsed,
-            unit: pantryMatch.unit, // Use pantry's unit (or consider LLM's unit if more appropriate for recipe steps)
-            calories: Math.round((pantryMatch.calories_per_100g / 100) * gramsUsed),
-            protein: Math.round((pantryMatch.protein_per_100g / 100) * gramsUsed * 10) / 10,
-            carbs: Math.round((pantryMatch.carbs_per_100g / 100) * gramsUsed * 10) / 10,
-            fat: Math.round((pantryMatch.fat_per_100g / 100) * gramsUsed * 10) / 10
-          };
-        }
-        
-        return {
-          ...ing,
-          protein: Math.round(ing.protein * 10) / 10,
-          carbs: Math.round(ing.carbs * 10) / 10,
-          fat: Math.round(ing.fat * 10) / 10
-        };
-      });
+      ).map(ing => ({
+        ...ing,
+        protein: Math.round(ing.protein * 10) / 10,
+        carbs: Math.round(ing.carbs * 10) / 10,
+        fat: Math.round(ing.fat * 10) / 10
+      }));
 
       try {
         await base44.functions.invoke('validateAndSaveIngredient', {
