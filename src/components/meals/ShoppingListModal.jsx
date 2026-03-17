@@ -494,7 +494,7 @@ CRITICAL: Write explanation in ${langName.toUpperCase()}. Explain nutritional co
                               {item.name}
                             </p>
                             <p className="text-xs text-gray-500">
-                              {item.quantity} {item.unit}
+                              {Math.round(item.quantity)} {item.unit}
                             </p>
                           </div>
                         </div>
