@@ -121,6 +121,7 @@ export default function MealsPage() {
   const [cheatMealConfig, setCheatMealConfig] = useState([]);
   const [replaceMealTarget, setReplaceMealTarget] = useState(null);
   const [showDoctorPlanModal, setShowDoctorPlanModal] = useState(false);
+  const [showShoppingChoice, setShowShoppingChoice] = useState(false);
 
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useQuery({
     queryKey: ['currentUser'],
