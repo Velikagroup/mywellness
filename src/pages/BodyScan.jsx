@@ -99,9 +99,17 @@ export default function BodyScanPage() {
               <ScanLine className="w-5 h-5 text-gray-700" />
               <h2 className="font-bold text-gray-900 text-base">{t('bodyScan.latestScan')}</h2>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-3 text-sm text-gray-600">
               <Calendar className="w-4 h-4" />
               <span>{format(new Date(latestScan.created_date), 'dd/MM/yyyy')}</span>
+              <button
+                onClick={(e) => handleDeleteScan(e, latestScan.id)}
+                disabled={deletingId === latestScan.id}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                title="Elimina scan"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           </div>
 
