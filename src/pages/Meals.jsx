@@ -701,18 +701,9 @@ STRICT RULES:
 
       updateProgress(10, t('meals.analyzingProfile'));
 
-      // Carica ingredienti dispensa
-      const userIngredients = await base44.entities.UserIngredient.filter({ user_id: user.id });
-      console.log('📦 Ingredienti dispensa caricati:', userIngredients.length);
-      
-      // ✅ CREA LISTA INGREDIENTI PRIORITARI da passare all'AI
-      const pantryIngredientsPrompt = userIngredients.length > 0 
-        ? `\n\nPRIORITY INGREDIENTS FROM USER'S PANTRY (use these when possible with EXACT nutritional values):\n${
-            userIngredients.map(ing => 
-              `- ${ing.name}: ${ing.calories_per_100g}kcal, ${ing.protein_per_100g}g protein, ${ing.carbs_per_100g}g carbs, ${ing.fat_per_100g}g fat per 100g (unit: ${ing.unit})`
-            ).join('\n')
-          }`
-        : '';
+      // Carica ingredienti dispensa (solo per uso futuro, non influenzano la generazione)
+      const userIngredients = [];
+      const pantryIngredientsPrompt = '';
 
       // ✅ FIX CRITICO: Struttura pasti in base al numero selezionato
       let mealStructure;
