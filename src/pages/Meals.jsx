@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity, AlertCircle, Package, Stethoscope } from "lucide-react";
+import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity, AlertCircle, Package, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { hasFeatureAccess, PLANS, UpgradePrompt, getGenerationLimit } from '@/components/utils/subscriptionPlans';
@@ -1614,8 +1614,8 @@ STRICT RULES:
                 onClick={() => setShowDoctorPlanModal(true)}
                 className="bg-white border-2 border-blue-500 text-blue-600 hover:bg-blue-50 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl w-full lg:w-auto order-2 lg:order-2"
               >
-                <Stethoscope className="w-5 h-5" />
-                <span>Piano del Medico</span>
+                <Sparkles className="w-5 h-5" />
+                <span>Carica il tuo Piano</span>
               </Button>
               <div className="flex gap-2 w-full lg:w-auto order-3">
                 <Button
