@@ -8,11 +8,11 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
   return (
     <Dialog open={isOpen}>
       <DialogContent 
-        className="sm:max-w-[520px] [&>button]:hidden"
+        className="sm:max-w-[520px] [&>button]:hidden max-h-[90vh] md:max-h-full overflow-y-auto"
         onPointerDownOutside={(e) => e.preventDefault()}
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
-        <div className="space-y-6">
+        <div className="space-y-3 md:space-y-6">
           <div className="text-center space-y-2">
             <h2 className="text-2xl font-bold text-gray-900">
               Benvenuto su MyWellness
