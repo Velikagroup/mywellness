@@ -399,10 +399,10 @@ Return a structured and validated array of exercises.`,
               {/* Esercizi del giorno selezionato */}
               <div className="space-y-3">
                 <p className="text-sm font-medium text-gray-800">
-                  {dayTranslations[language][selectedDay]} - {exercisesByDay[selectedDay]?.length || 0} {tx.exercises}
+                  {dayTranslations[language][selectedDay]} - {(exercisesByDay && exercisesByDay[selectedDay]?.length) || 0} {tx.exercises}
                 </p>
 
-                {exercisesByDay[selectedDay]?.length > 0 ? (
+                {exercisesByDay && exercisesByDay[selectedDay]?.length > 0 ? (
                   <div className="max-h-[400px] overflow-y-auto border border-gray-200 rounded-lg">
                     <div className="space-y-2 p-4">
                       {exercisesByDay[selectedDay].map((ex, idx) => (
