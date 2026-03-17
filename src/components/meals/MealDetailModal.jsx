@@ -244,6 +244,31 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
               </div>
             </div>
           </div>
+
+          {/* Save Button */}
+          <div className="flex gap-3 pt-4 border-t mt-6">
+            <Button
+              onClick={onClose}
+              variant="outline"
+              className="flex-1"
+            >
+              {t('common.close') || 'Chiudi'}
+            </Button>
+            <Button
+              onClick={handleSaveChanges}
+              disabled={!hasChanges || isSaving}
+              className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white disabled:opacity-50"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {t('common.saving') || 'Salvataggio...'}
+                </>
+              ) : (
+                t('common.save') || 'Salva Modifiche'
+              )}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
