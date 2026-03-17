@@ -23,11 +23,11 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
           </div>
 
           <div className="space-y-2 md:space-y-4">
-            <p className="text-sm text-gray-700">
+            <p className="text-xs md:text-sm text-gray-700">
               Per continuare a utilizzare MyWellness, ti preghiamo di leggere e accettare le nostre policy aggiornate:
             </p>
 
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
                 <FileText className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
