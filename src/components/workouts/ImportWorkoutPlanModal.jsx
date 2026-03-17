@@ -264,9 +264,16 @@ Return a structured and validated array of exercises.`,
     setStep('saving');
 
     try {
+      const exercisesToSave = analysisResult.exercises.map((ex, idx) => ({
+        ...ex,
+        ...editingExercises[idx],
+        day_of_week: selectedDay
+      }));
+
       await base44.functions.invoke('importWorkoutPlanFromAnalysis', {
         user_id: user?.id,
-        exercises: analysisResult.exercises
+        exercises: exercisesToSave,
+        day_of_week: selectedDay
       });
 
       setStep('success');
