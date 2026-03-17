@@ -529,7 +529,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             className="fixed left-1/2 transform -translate-x-1/2 z-50 md:top-6"
             style={{ 
               top: isMainTabPage ? 'calc(3.625rem + env(safe-area-inset-top, 0px))' : 'calc(1.5rem + env(safe-area-inset-top, 0px))',
-              ...(location.pathname.toLowerCase().includes('bodyscan') && { top: 'calc(3.625rem + 30px + env(safe-area-inset-top, 0px))' })
+              ...(location.pathname.toLowerCase().includes('bodyscan') && { top: 'calc(3.625rem + 15px + env(safe-area-inset-top, 0px))' })
             }}
           >
             <div className="water-glass-effect rounded-full px-4 py-2 flex items-center gap-2 min-h-[44px]">
