@@ -1837,6 +1837,34 @@ STRICT RULES:
           }}
         />
       )}
+      {showShoppingChoice && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowShoppingChoice(false)}>
+          <div className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+            <h3 className="text-lg font-bold text-gray-900 mb-2">Aggiungi alla lista della spesa</h3>
+            <p className="text-sm text-gray-500 mb-5">Vuoi aggiungere solo gli ingredienti di oggi o di tutta la settimana?</p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => { setShowShoppingChoice(false); addDayToShoppingList(selectedDay); }}
+                className="w-full py-3.5 rounded-xl bg-[#26847F] text-white font-semibold text-sm hover:bg-[#1f6b66] transition-colors"
+              >
+                📅 Solo {getDayLabel(selectedDay)}
+              </button>
+              <button
+                onClick={() => { setShowShoppingChoice(false); addWeekToShoppingList(); }}
+                className="w-full py-3.5 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-emerald-700 font-semibold text-sm hover:bg-emerald-100 transition-colors"
+              >
+                📆 Tutta la settimana
+              </button>
+              <button
+                onClick={() => setShowShoppingChoice(false)}
+                className="w-full py-2.5 rounded-xl text-gray-500 text-sm hover:bg-gray-50 transition-colors"
+              >
+                Annulla
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {replaceMealTarget && (
         <ReplaceMealModal
           isOpen={!!replaceMealTarget}
