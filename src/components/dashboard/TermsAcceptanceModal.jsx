@@ -28,11 +28,11 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
             </p>
 
             <div className="space-y-2 md:space-y-3">
-              <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <FileText className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div className="flex items-start gap-2 md:gap-3 p-2 md:p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <FileText className="w-4 md:w-5 h-4 md:h-5 text-blue-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-gray-900 mb-1">Termini di Servizio</h3>
-                  <p className="text-xs text-gray-600 mb-2">
+                  <h3 className="font-semibold text-xs md:text-sm text-gray-900 mb-1">Termini di Servizio</h3>
+                  <p className="text-xs text-gray-600 mb-1 md:mb-2">
                     I nostri Termini di Servizio delineano le regole e normative per l'utilizzo della piattaforma MyWellness, inclusi diritti, responsabilità e limitazioni.
                   </p>
                   <a 
