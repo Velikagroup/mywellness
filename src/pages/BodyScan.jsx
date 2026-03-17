@@ -475,6 +475,14 @@ export default function BodyScanPage() {
                       }`}
                     />
                   </button>
+                  <button
+                    onClick={(e) => handleDeleteScan(e, scan.id)}
+                    disabled={deletingId === scan.id}
+                    className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors z-10"
+                    title="Elimina scan"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
 
                   <AnimatePresence>
                     {expandedHistoryId === scan.id && (
