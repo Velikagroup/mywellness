@@ -74,12 +74,12 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
 
           <Button 
             onClick={onAccept}
-            className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white py-6 text-base font-semibold"
+            className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white py-3 md:py-6 text-sm md:text-base font-semibold"
           >
             Accetto
           </Button>
 
-          <p className="text-center text-xs text-gray-500">
+          <p className="text-center text-xs text-gray-500 leading-tight md:leading-normal">
             Devi accettare questi termini per continuare a utilizzare MyWellness
           </p>
         </div>
