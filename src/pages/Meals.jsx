@@ -1295,20 +1295,7 @@ Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${recoveryIntolerancesT
               mealData.ingredients.forEach(ing => {
                 const normalizedName = ing.name.toLowerCase().trim();
                 
-                const pantryMatch = userIngredients.find(ui => 
-                  ui.name.toLowerCase().includes(normalizedName) || 
-                  normalizedName.includes(ui.name.toLowerCase())
-                );
-                
-                const ingredient = pantryMatch ? {
-                  name: pantryMatch.name,
-                  quantity: ing.quantity,
-                  unit: pantryMatch.unit,
-                  calories: Math.round((pantryMatch.calories_per_100g / 100) * ing.quantity),
-                  protein: Math.round((pantryMatch.protein_per_100g / 100) * ing.quantity * 10) / 10,
-                  carbs: Math.round((pantryMatch.carbs_per_100g / 100) * ing.quantity * 10) / 10,
-                  fat: Math.round((pantryMatch.fat_per_100g / 100) * ing.quantity * 10) / 10
-                } : {
+                const ingredient = {
                   name: ing.name,
                   quantity: ing.quantity,
                   unit: ing.unit,
