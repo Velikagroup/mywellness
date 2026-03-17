@@ -265,12 +265,12 @@ ALL text MUST be in ${langName}. Return ONLY valid JSON.`,
                 )}
                 
                 {(exercise.detailed_description || (exercise.form_tips && exercise.form_tips.length > 0) || (exercise.target_muscles && exercise.target_muscles.length > 0) || intensityTips.length > 0) && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowDetails(true)}
-                    className="text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]"
-                  >
+                 <Button
+                   variant="ghost"
+                   size="sm"
+                   onClick={openDetails}
+                   className="text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]"
+                 >
                     <Eye className="w-4 h-4 mr-1" />
                     {t('workouts.details')}
                   </Button>
