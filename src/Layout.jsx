@@ -608,7 +608,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
               <>
                 <button
                   onClick={() => navigate(-1)}
-                  className="flex items-center justify-center min-w-[44px] min-h-[44px] -ml-1 text-gray-700 hover:text-gray-900 transition-colors"
+                  className="flex items-center justify-center min-w-[44px] py-2 -ml-1 text-gray-700 hover:text-gray-900 transition-colors"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
