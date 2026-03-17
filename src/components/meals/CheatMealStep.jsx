@@ -92,8 +92,8 @@ export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
             <Card key={day.id} className="overflow-hidden hover:shadow-md transition-shadow">
               <CardContent className="p-4">
                 <div className="flex items-center gap-4">
-                  <div className="min-w-[80px]">
-                    <p className="font-semibold text-gray-900">{day.label}</p>
+                  <div className="min-w-[60px]">
+                    <p className="font-semibold text-gray-900 text-sm">{day.short}</p>
                   </div>
                   
                   <div className="flex gap-2 flex-1">
