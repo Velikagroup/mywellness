@@ -1822,24 +1822,6 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     }, 0);
   }, [workoutPlans]);
 
-// Formatta l'obiettivo fitness per display (usato in WorkoutHeader)
-  const formatFitnessGoal = (goal) => {
-    const goalLabels = {
-      'forza_massimale': 'Forza Massimale',
-      'ipertrofia': 'Ipertrofia',
-      'dimagrimento': 'Dimagrimento',
-      'resistenza': 'Resistenza',
-      'esplosivita': 'Esplosività',
-      'mobilita': 'Mobilità',
-      'tonificazione': 'Tonificazione',
-      'cardio': 'Cardio',
-      'riabilitazione': 'Riabilitazione'
-    };
-    return goalLabels[goal] || goal;
-  };
-  
-import WorkoutHeader from '../components/workouts/WorkoutHeader';
-
   if (isGenerating) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 pt-8 md:pt-4">
