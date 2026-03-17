@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity, AlertCircle, Package } from "lucide-react";
+import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity, AlertCircle, Package, Stethoscope } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { hasFeatureAccess, PLANS, UpgradePrompt, getGenerationLimit } from '@/components/utils/subscriptionPlans';
@@ -19,6 +19,8 @@ import CheatMealStep from '../components/meals/CheatMealStep';
 import PantryModal from '../components/meals/PantryModal';
 import MealPlanWizard from '../components/meals/MealPlanWizard';
 import ReplaceMealModal from '../components/meals/ReplaceMealModal';
+import MealPlanGenerating from '../components/meals/MealPlanGenerating';
+import DoctorMealPlanModal from '../components/meals/DoctorMealPlanModal';
 import { useLanguage } from '../components/i18n/LanguageContext';
 import PullToRefresh from '../components/mobile/PullToRefresh';
 
@@ -142,6 +144,7 @@ export default function MealsPage() {
   const [showCheatMealStep, setShowCheatMealStep] = useState(false);
   const [cheatMealConfig, setCheatMealConfig] = useState([]);
   const [replaceMealTarget, setReplaceMealTarget] = useState(null);
+  const [showDoctorPlanModal, setShowDoctorPlanModal] = useState(false);
 
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useQuery({
     queryKey: ['currentUser'],
@@ -1514,7 +1517,7 @@ STRICT RULES:
   }
   
   if (isGenerating) {
-    return <GenerateMealPlan generationProgress={generationProgress} generationStatus={generationStatus} nutritionData={nutritionData} t={t} />;
+    return <MealPlanGenerating generationProgress={generationProgress} generationStatus={generationStatus} nutritionData={nutritionData} t={t} />;
   }
 
   const days = [
