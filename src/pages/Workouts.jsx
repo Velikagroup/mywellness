@@ -1822,7 +1822,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     }, 0);
   }, [workoutPlans]);
 
-// Formatta l'obiettivo fitness per display
+// Formatta l'obiettivo fitness per display (usato in WorkoutHeader)
   const formatFitnessGoal = (goal) => {
     const goalLabels = {
       'forza_massimale': 'Forza Massimale',
