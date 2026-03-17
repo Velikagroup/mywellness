@@ -2199,45 +2199,26 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
       )}
 
       <div className="min-h-screen pb-20">
-        <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('workouts.title')}</h1>
-              <p className="text-gray-600">
-                {workoutPlans.length > 0 
-                  ? `${t('workouts.exerciseCount', { count: totalExercisesInWeeklyPlan })} • ${t('common.goal')}: ${formatFitnessGoal(trainingData.fitness_goal)}`
-                  : `${t('workouts.noPlanGenerated')} • ${t('common.goal')}: ${trainingData.fitness_goal ? formatFitnessGoal(trainingData.fitness_goal) : t('common.notSet')}`
-                }
-              </p>
-              {remainingGenerations !== null && remainingGenerations !== -1 && remainingGenerations !== 0 && (
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="flex items-center gap-1 text-sm">
-                    <BrainCircuit className="w-4 h-4 text-[#26847F]" />
-                    <span className={`font-semibold ${remainingGenerations === 0 ? 'text-red-600' : 'text-[#26847F]'}`}>
-                      {t('workouts.generationsRemaining', { count: remainingGenerations })}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
-            <Button 
-              onClick={() => {
-                if (generationLimitReached && remainingGenerations === 0) {
-                  setShowUpgradeModal(true);
-                } else {
-                  setShowAssessment(true);
-                }
-              }}
-              className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center gap-2 shadow-[0_4px_20px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_25px_rgba(38,132,127,0.4)] transition-all px-6 py-6 text-base font-semibold rounded-xl w-full lg:w-auto relative"
-              disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_plan') && remainingGenerations === 0}
-            >
-              <BrainCircuit className="w-5 h-5" /> 
-              {t('workouts.generateWithAI')}
-              {generationLimitReached && remainingGenerations === 0 && (
-                <AlertCircle className="w-4 h-4 ml-1 animate-pulse" />
-              )}
-            </Button>
-          </div>
+         <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
+           <WorkoutHeader
+             trainingData={trainingData}
+             workoutPlans={workoutPlans}
+             totalExercisesInWeeklyPlan={totalExercisesInWeeklyPlan}
+             remainingGenerations={remainingGenerations}
+             generationLimitReached={generationLimitReached}
+             onGenerateClick={() => {
+               if (generationLimitReached && remainingGenerations === 0) {
+                 setShowUpgradeModal(true);
+               } else {
+                 setShowAssessment(true);
+               }
+             }}
+             onUpgradeClick={() => setShowUpgradeModal(true)}
+             user={trainingData}
+             onWorkoutImported={() => {
+               queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
+             }}
+           />
 
           {generationLimitReached && remainingGenerations === 0 && hasFeatureAccess(trainingData.subscription_plan, 'workout_plan') && (
             <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 shadow-xl rounded-xl">
