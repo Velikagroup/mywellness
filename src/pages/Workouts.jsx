@@ -28,8 +28,8 @@ import UpgradeModal from '../components/meals/UpgradeModal';
 import ReplaceExerciseModal from '../components/workouts/ReplaceExerciseModal';
 import AddExerciseModal from '../components/workouts/AddExerciseModal';
 import DeleteExerciseDialog from '../components/workouts/DeleteExerciseDialog';
+import WorkoutHeader from '../components/workouts/WorkoutHeader';
 import { useLanguage } from '../components/i18n/LanguageContext';
-
 import { motion } from "framer-motion";
 
 const getAllTrainingSteps = (isPerformanceOriented, workoutStyle) => {
