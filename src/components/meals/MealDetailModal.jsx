@@ -78,6 +78,28 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
       total_carbs: Math.round(active.reduce((s, i) => s + i.carbs, 0)),
       total_fat: Math.round(active.reduce((s, i) => s + i.fat, 0)),
     });
+    setHasChanges(true);
+  };
+
+  const handleSaveChanges = async () => {
+    setIsSaving(true);
+    try {
+      const ingredientsForDB = currentMeal.ingredients.map(({ is_active, ...rest }) => rest);
+      await base44.entities.MealPlan.update(currentMeal.id, {
+        ingredients: ingredientsForDB,
+        total_calories: currentMeal.total_calories,
+        total_protein: currentMeal.total_protein,
+        total_carbs: currentMeal.total_carbs,
+        total_fat: currentMeal.total_fat,
+      });
+      onMealUpdate({ ...currentMeal, ingredients: ingredientsForDB });
+      setHasChanges(false);
+    } catch (error) {
+      console.error("Failed to save changes:", error);
+      alert(t('common.error') || 'Errore nel salvataggio');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Called from IngredientReplaceModal on confirm
