@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
-import { ChevronDown, ScanLine, Calendar, TrendingUp, TrendingDown, Percent, Activity, Cake, User, Layers, Eye, Droplets } from 'lucide-react';
+import { ChevronDown, ScanLine, Calendar, TrendingUp, TrendingDown, Percent, Activity, Cake, User, Layers, Eye, Droplets, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
