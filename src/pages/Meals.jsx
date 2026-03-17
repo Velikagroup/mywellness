@@ -1598,45 +1598,58 @@ STRICT RULES:
                 </div>
               )}
             </div>
-            <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-auto">
-              <Button
+            <div className="flex flex-col lg:flex-row gap-2.5 w-full lg:w-auto">
+              {/* AI Generate */}
+              <button
                 onClick={() => handleShowGenerator(user)}
-                className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-6 py-6 text-base font-semibold rounded-xl w-full lg:w-auto relative order-1 lg:order-3"
                 disabled={generationLimitReached && remainingGenerations === 0}
+                className="relative order-1 lg:order-3 flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-2xl font-semibold text-sm text-white w-full lg:w-auto overflow-hidden transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ background: 'linear-gradient(135deg, #26847F 0%, #1a9e97 100%)', boxShadow: '0 4px 15px rgba(38,132,127,0.4)' }}
               >
-                <BrainCircuit className="w-5 h-5" />
+                <span className="absolute inset-0 bg-white opacity-0 hover:opacity-10 transition-opacity rounded-2xl" />
+                <BrainCircuit className="w-4.5 h-4.5 flex-shrink-0" />
                 <span>{t('meals.regenerateWithAI')}</span>
                 {generationLimitReached && remainingGenerations === 0 && (
-                  <AlertCircle className="w-4 h-4 ml-1 animate-pulse" />
+                  <AlertCircle className="w-4 h-4 animate-pulse" />
                 )}
-              </Button>
-              <Button
+              </button>
+
+              {/* Carica Piano */}
+              <button
                 onClick={() => setShowDoctorPlanModal(true)}
-                className="bg-white border-2 border-blue-500 text-blue-600 hover:bg-blue-50 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl w-full lg:w-auto order-2 lg:order-2"
+                className="relative order-2 flex items-center justify-center gap-2.5 px-5 py-3.5 rounded-2xl font-semibold text-sm w-full lg:w-auto overflow-hidden transition-all duration-200 active:scale-95"
+                style={{ background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', color: '#2563eb', border: '1.5px solid rgba(59,130,246,0.3)', boxShadow: '0 4px 12px rgba(59,130,246,0.15)' }}
               >
-                <Sparkles className="w-5 h-5" />
+                <span className="absolute inset-0 bg-blue-500 opacity-0 hover:opacity-5 transition-opacity rounded-2xl" />
+                <Sparkles className="w-4 h-4 flex-shrink-0" />
                 <span>Carica il tuo Piano</span>
-              </Button>
-              <div className="flex gap-2 w-full lg:w-auto order-3">
-                <Button
+              </button>
+
+              {/* Pantry + Shopping */}
+              <div className="flex gap-2.5 w-full lg:w-auto order-3">
+                <button
                   onClick={() => setShowPantry(true)}
-                  className="bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial"
+                  className="relative flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-semibold text-sm flex-1 lg:flex-initial overflow-hidden transition-all duration-200 active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%)', color: '#7c3aed', border: '1.5px solid rgba(124,58,237,0.25)', boxShadow: '0 4px 12px rgba(124,58,237,0.15)' }}
                 >
-                  <Package className="w-5 h-5" />
+                  <span className="absolute inset-0 bg-purple-500 opacity-0 hover:opacity-5 transition-opacity rounded-2xl" />
+                  <Package className="w-4 h-4 flex-shrink-0" />
                   <span>{t('meals.pantry')}</span>
-                </Button>
-                <Button
+                </button>
+                <button
                   onClick={() => setShowShoppingList(true)}
-                  className="bg-white border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial relative"
+                  className="relative flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-semibold text-sm flex-1 lg:flex-initial overflow-hidden transition-all duration-200 active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, #f0fdf8 0%, #d1fae5 100%)', color: '#047857', border: '1.5px solid rgba(4,120,87,0.25)', boxShadow: '0 4px 12px rgba(4,120,87,0.15)' }}
                 >
-                  <ShoppingCart className="w-5 h-5" />
+                  <span className="absolute inset-0 bg-emerald-500 opacity-0 hover:opacity-5 transition-opacity rounded-2xl" />
+                  <ShoppingCart className="w-4 h-4 flex-shrink-0" />
                   <span>{t('meals.shoppingList')}</span>
                   {shoppingLists.length > 0 && shoppingLists[0].items.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-md border-2 border-white">
                       {shoppingLists[0].items.length}
                     </span>
                   )}
-                </Button>
+                </button>
               </div>
             </div>
           </div>
