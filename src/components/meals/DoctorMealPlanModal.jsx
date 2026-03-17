@@ -114,16 +114,14 @@ export default function DoctorMealPlanModal({ isOpen, onClose, user, existingMea
     };
 
     const parsed = await base44.integrations.Core.InvokeLLM({
-      prompt: `Sei un nutrizionista esperto. Analizza il seguente piano alimentare prescritto e convertilo in formato strutturato per una settimana completa (lunedì-domenica).
+      prompt: `Sei un nutrizionista esperto. Analizza il piano alimentare prescritto nel file allegato e convertilo in formato strutturato per una settimana completa (lunedì-domenica).
 
 Per ogni giorno della settimana, estrai tutti i pasti con i relativi ingredienti e valori nutrizionali.
 Se il piano non specifica tutti i giorni, ripeti il pattern per i giorni mancanti.
 Se non ci sono valori nutrizionali specifici per gli ingredienti, stimali in modo realistico.
 Usa le chiavi in inglese: monday, tuesday, wednesday, thursday, friday, saturday, sunday.
-Per meal_type usa: breakfast (colazione), snack1 (spuntino mattina), lunch (pranzo), snack2 (merenda), dinner (cena), snack3 (spuntino sera).
-
-PIANO ALIMENTARE DA ANALIZZARE:
-${planText}`,
+Per meal_type usa: breakfast (colazione), snack1 (spuntino mattina), lunch (pranzo), snack2 (merenda), dinner (cena), snack3 (spuntino sera).`,
+      file_urls: [file_url],
       response_json_schema: schema
     });
 
