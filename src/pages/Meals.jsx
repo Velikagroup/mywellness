@@ -1674,17 +1674,12 @@ STRICT RULES:
                       <div className="flex items-center justify-between mb-4">
                         <h4 className="font-bold text-gray-900 text-lg">{t('meals.protocolFor').replace('{day}', getDayLabel(selectedDay))}</h4>
                         <Button
-                          onClick={() => addDayToShoppingList(selectedDay)}
+                          onClick={() => setShowShoppingChoice(true)}
                           size="sm"
                           variant="outline"
                           className="border-[#26847F] text-[#26847F] hover:bg-[#E0F2F1]"
-                          disabled={addedDays.includes(selectedDay)}
                         >
-                          {addedDays.includes(selectedDay) ? (
-                            <><Check className="w-4 h-4 mr-1" />{t('meals.added')}</>
-                          ) : (
-                            <><Plus className="w-4 h-4 mr-1" />{t('meals.addToShoppingList')}</>
-                          )}
+                          <Plus className="w-4 h-4 mr-1" />{t('meals.addToShoppingList')}
                         </Button>
                       </div>
 
