@@ -114,9 +114,9 @@ export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
                               : 'bg-white border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700'
                           }`}
                         >
-                          <span className="text-xl">{meal.icon}</span>
-                          <span className="font-medium text-sm">{meal.label}</span>
-                          {selected && <Check className="w-4 h-4" strokeWidth={3} />}
+                          <span className="text-base">{meal.icon}</span>
+                          <span className="font-medium text-xs">{meal.label}</span>
+                          {selected && <Check className="w-3 h-3" strokeWidth={3} />}
                         </button>
                       );
                     })}
