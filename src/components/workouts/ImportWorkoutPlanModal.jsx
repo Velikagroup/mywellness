@@ -155,6 +155,8 @@ export default function ImportWorkoutPlanModal({ isOpen, onClose, user, onWorkou
   const [analysisResult, setAnalysisResult] = useState(null);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedDay, setSelectedDay] = useState(null);
+  const [editingExercises, setEditingExercises] = useState({});
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
