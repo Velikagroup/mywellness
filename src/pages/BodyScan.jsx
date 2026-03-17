@@ -447,23 +447,23 @@ export default function BodyScanPage() {
                         </div>
                       </div>
                       {(scan.skin_texture || scan.skin_tone || scan.swelling_percentage !== undefined) && (
-                        <div className="grid grid-cols-3 gap-2 text-xs pt-2 border-t border-gray-300">
+                        <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-300">
                           {scan.skin_texture && (
-                            <div className="flex flex-col">
-                              <p className="text-gray-500 text-xs mb-1">{t('bodyScan.texture')}</p>
-                              <span className="text-gray-700 font-semibold truncate">{scan.skin_texture}</span>
+                            <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
+                              <span className="text-gray-500 text-xs">{t('bodyScan.texture')}:</span>
+                              <span className="text-gray-800 text-xs font-semibold">{scan.skin_texture}</span>
                             </div>
                           )}
                           {scan.skin_tone && (
-                            <div className="flex flex-col">
-                              <p className="text-gray-500 text-xs mb-1">{t('bodyScan.tone')}</p>
-                              <span className="text-gray-700 font-semibold truncate">{scan.skin_tone}</span>
+                            <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
+                              <span className="text-gray-500 text-xs">{t('bodyScan.tone')}:</span>
+                              <span className="text-gray-800 text-xs font-semibold">{scan.skin_tone}</span>
                             </div>
                           )}
                           {scan.swelling_percentage !== undefined && (
-                            <div className="flex flex-col">
-                              <p className="text-gray-500 text-xs mb-1">{t('bodyScan.swelling')}</p>
-                              <span className="text-gray-700 font-semibold">{scan.swelling_percentage}%</span>
+                            <div className="flex items-center gap-1 bg-gray-100 rounded-full px-2 py-1">
+                              <span className="text-gray-500 text-xs">{t('bodyScan.swelling')}:</span>
+                              <span className="text-gray-800 text-xs font-semibold">{scan.swelling_percentage}%</span>
                             </div>
                           )}
                         </div>
