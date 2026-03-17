@@ -1852,18 +1852,20 @@ STRICT RULES:
             <div className="bg-white rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
               <h3 className="text-lg font-bold text-gray-900 mb-2">{txt.title}</h3>
               <p className="text-sm text-gray-500 mb-5">{txt.subtitle}</p>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2.5 mt-1">
                 <button
                   onClick={() => { setShowShoppingChoice(false); addDayToShoppingList(selectedDay); }}
-                  className="w-full py-3.5 rounded-xl bg-[#26847F] text-white font-semibold text-sm hover:bg-[#1f6b66] transition-colors"
+                  className="w-full py-4 rounded-2xl font-semibold text-sm text-white transition-all active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, #26847F 0%, #1a9e97 100%)', boxShadow: '0 4px 15px rgba(38,132,127,0.35)' }}
                 >{txt.day}</button>
                 <button
                   onClick={() => { setShowShoppingChoice(false); addWeekToShoppingList(); }}
-                  className="w-full py-3.5 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-emerald-700 font-semibold text-sm hover:bg-emerald-100 transition-colors"
+                  className="w-full py-4 rounded-2xl font-semibold text-sm transition-all active:scale-95"
+                  style={{ background: 'linear-gradient(135deg, #f0fdf8 0%, #d1fae5 100%)', color: '#047857', border: '1.5px solid rgba(4,120,87,0.25)', boxShadow: '0 4px 12px rgba(4,120,87,0.12)' }}
                 >{txt.week}</button>
                 <button
                   onClick={() => setShowShoppingChoice(false)}
-                  className="w-full py-2.5 rounded-xl text-gray-500 text-sm hover:bg-gray-50 transition-colors"
+                  className="w-full py-3 rounded-2xl text-gray-400 text-sm font-medium hover:text-gray-600 transition-colors"
                 >{txt.cancel}</button>
               </div>
             </div>
