@@ -1837,34 +1837,39 @@ STRICT RULES:
           }}
         />
       )}
-      {showShoppingChoice && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowShoppingChoice(false)}>
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Aggiungi alla lista della spesa</h3>
-            <p className="text-sm text-gray-500 mb-5">Vuoi aggiungere solo gli ingredienti di oggi o di tutta la settimana?</p>
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => { setShowShoppingChoice(false); addDayToShoppingList(selectedDay); }}
-                className="w-full py-3.5 rounded-xl bg-[#26847F] text-white font-semibold text-sm hover:bg-[#1f6b66] transition-colors"
-              >
-                📅 Solo {getDayLabel(selectedDay)}
-              </button>
-              <button
-                onClick={() => { setShowShoppingChoice(false); addWeekToShoppingList(); }}
-                className="w-full py-3.5 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-emerald-700 font-semibold text-sm hover:bg-emerald-100 transition-colors"
-              >
-                📆 Tutta la settimana
-              </button>
-              <button
-                onClick={() => setShowShoppingChoice(false)}
-                className="w-full py-2.5 rounded-xl text-gray-500 text-sm hover:bg-gray-50 transition-colors"
-              >
-                Annulla
-              </button>
+      {showShoppingChoice && (() => {
+        const sc = {
+          it: { title: 'Aggiungi alla lista della spesa', subtitle: 'Vuoi aggiungere solo gli ingredienti di oggi o di tutta la settimana?', day: `📅 Solo ${getDayLabel(selectedDay)}`, week: '📆 Tutta la settimana', cancel: 'Annulla' },
+          en: { title: 'Add to shopping list', subtitle: 'Do you want to add only today\'s ingredients or the whole week?', day: `📅 Only ${getDayLabel(selectedDay)}`, week: '📆 Whole week', cancel: 'Cancel' },
+          es: { title: 'Añadir a la lista de compras', subtitle: '¿Quieres añadir solo los ingredientes de hoy o de toda la semana?', day: `📅 Solo ${getDayLabel(selectedDay)}`, week: '📆 Toda la semana', cancel: 'Cancelar' },
+          pt: { title: 'Adicionar à lista de compras', subtitle: 'Queres adicionar apenas os ingredientes de hoje ou de toda a semana?', day: `📅 Só ${getDayLabel(selectedDay)}`, week: '📆 Toda a semana', cancel: 'Cancelar' },
+          de: { title: 'Zur Einkaufsliste hinzufügen', subtitle: 'Möchtest du nur die Zutaten von heute oder der ganzen Woche hinzufügen?', day: `📅 Nur ${getDayLabel(selectedDay)}`, week: '📆 Ganze Woche', cancel: 'Abbrechen' },
+          fr: { title: 'Ajouter à la liste de courses', subtitle: 'Veux-tu ajouter seulement les ingrédients d\'aujourd\'hui ou de toute la semaine ?', day: `📅 Seulement ${getDayLabel(selectedDay)}`, week: '📆 Toute la semaine', cancel: 'Annuler' },
+        };
+        const txt = sc[language] || sc.it;
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowShoppingChoice(false)}>
+            <div className="bg-white rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl" onClick={e => e.stopPropagation()}>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">{txt.title}</h3>
+              <p className="text-sm text-gray-500 mb-5">{txt.subtitle}</p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => { setShowShoppingChoice(false); addDayToShoppingList(selectedDay); }}
+                  className="w-full py-3.5 rounded-xl bg-[#26847F] text-white font-semibold text-sm hover:bg-[#1f6b66] transition-colors"
+                >{txt.day}</button>
+                <button
+                  onClick={() => { setShowShoppingChoice(false); addWeekToShoppingList(); }}
+                  className="w-full py-3.5 rounded-xl bg-emerald-50 border-2 border-emerald-500 text-emerald-700 font-semibold text-sm hover:bg-emerald-100 transition-colors"
+                >{txt.week}</button>
+                <button
+                  onClick={() => setShowShoppingChoice(false)}
+                  className="w-full py-2.5 rounded-xl text-gray-500 text-sm hover:bg-gray-50 transition-colors"
+                >{txt.cancel}</button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
       {replaceMealTarget && (
         <ReplaceMealModal
           isOpen={!!replaceMealTarget}
