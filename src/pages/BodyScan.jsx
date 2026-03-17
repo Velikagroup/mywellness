@@ -12,6 +12,16 @@ export default function BodyScanPage() {
   const [bodyScanHistory, setBodyScanHistory] = useState([]);
   const [expandedHistoryId, setExpandedHistoryId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
+
+  const handleDeleteScan = async (e, scanId) => {
+    e.stopPropagation();
+    if (!confirm('Vuoi eliminare questo scan?')) return;
+    setDeletingId(scanId);
+    await base44.entities.BodyScanResult.delete(scanId);
+    setBodyScanHistory(prev => prev.filter(s => s.id !== scanId));
+    setDeletingId(null);
+  };
 
   useEffect(() => {
     loadData();
