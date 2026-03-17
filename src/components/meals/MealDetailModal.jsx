@@ -18,6 +18,8 @@ const MacroCircle = ({ label, value, unit, color }) => (
 export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
   const { t } = useLanguage();
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const [currentMeal, setCurrentMeal] = useState(() => ({
     ...meal,
     ingredients: meal.ingredients.map(ing => ({ ...ing, is_active: true }))
