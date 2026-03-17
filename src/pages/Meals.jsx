@@ -1569,7 +1569,7 @@ STRICT RULES:
                 </button>
                 <button
                   onClick={() => setShowShoppingList(true)}
-                  className="relative flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-semibold text-sm flex-1 lg:flex-initial overflow-hidden transition-all duration-200 active:scale-95"
+                  className="relative flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-semibold text-sm flex-1 lg:flex-initial transition-all duration-200 active:scale-95"
                   style={{ background: 'linear-gradient(135deg, #f0fdf8 0%, #d1fae5 100%)', color: '#047857', border: '1.5px solid rgba(4,120,87,0.25)', boxShadow: '0 4px 12px rgba(4,120,87,0.15)' }}
                 >
                   <span className="absolute inset-0 bg-emerald-500 opacity-0 hover:opacity-5 transition-opacity rounded-2xl" />
