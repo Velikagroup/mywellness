@@ -601,9 +601,9 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       {location.pathname !== createPageUrl('Video') && !location.pathname.toLowerCase().includes('quiz') && (
         <div
           className="fixed left-1/2 transform -translate-x-1/2 z-50 md:top-6"
-          style={{ top: 'calc(1.5rem + env(safe-area-inset-top, 0px))' }}
-          >
-            <div className="water-glass-effect rounded-full px-4 py-3 flex items-center gap-2 min-h-[56px]">
+          style={{ top: isMainTabPage ? 'calc(3.625rem + env(safe-area-inset-top, 0px))' : 'calc(1.5rem + env(safe-area-inset-top, 0px))' }}
+        >
+          <div className="water-glass-effect rounded-full px-4 py-2 flex items-center gap-2 min-h-[44px]">
             {showBackButton ? (
               <>
                 <button
