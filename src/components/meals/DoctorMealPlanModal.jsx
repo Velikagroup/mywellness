@@ -302,25 +302,52 @@ Per meal_type usa: breakfast (colazione), snack1 (spuntino mattina), lunch (pran
                 </p>
               </div>
 
-              <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Testo del piano alimentare
-                </Label>
-                <textarea
-                  value={planText}
-                  onChange={e => setPlanText(e.target.value)}
-                  placeholder={`Incolla qui il piano del tuo medico/nutrizionista. Esempi di formato supportati:
-
-Lunedì:
-- Colazione: 2 uova strapazzate, 30g pane integrale, caffè senza zucchero
-- Pranzo: 80g pasta integrale al pomodoro, insalata verde
-- Cena: 150g pollo alla griglia, 200g verdure al vapore, 1 fetta pane
-
-Martedì:
-...`}
-                  className="w-full h-56 p-3 border border-gray-200 rounded-xl text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-400"
-                  disabled={step === 'parsing'}
+              {/* File drop zone */}
+              <div
+                onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={e => { e.preventDefault(); setDragOver(false); handleFileChange(e.dataTransfer.files[0]); }}
+                onClick={() => document.getElementById('plan-file-input').click()}
+                className={`relative cursor-pointer border-2 border-dashed rounded-xl p-8 text-center transition-all ${
+                  dragOver ? 'border-purple-400 bg-purple-50' :
+                  selectedFile ? 'border-green-400 bg-green-50' :
+                  'border-gray-200 hover:border-purple-300 hover:bg-purple-50/40'
+                }`}
+              >
+                <input
+                  id="plan-file-input"
+                  type="file"
+                  accept=".pdf,.xlsx,.xls,.csv,.txt"
+                  className="hidden"
+                  onChange={e => handleFileChange(e.target.files[0])}
                 />
+                {selectedFile ? (
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                      <FileText className="w-7 h-7 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-green-800">{selectedFile.name}</p>
+                      <p className="text-xs text-green-600 mt-0.5">{(selectedFile.size / 1024).toFixed(1)} KB — pronto per l'analisi</p>
+                    </div>
+                    <button
+                      onClick={e => { e.stopPropagation(); setSelectedFile(null); }}
+                      className="flex items-center gap-1 text-xs text-gray-500 hover:text-red-500 transition-colors"
+                    >
+                      <X className="w-3 h-3" /> Rimuovi file
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
+                      <Upload className="w-7 h-7 text-purple-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700">Trascina il file qui o clicca per caricare</p>
+                      <p className="text-xs text-gray-400 mt-1">PDF, Excel (.xlsx/.xls), CSV, TXT</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {error && (
