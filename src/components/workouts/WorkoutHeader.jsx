@@ -71,7 +71,7 @@ export default function WorkoutHeader({
             className="border-[#26847F] text-[#26847F] hover:bg-[#e9f6f5] flex items-center gap-2 px-4 py-6 text-base font-semibold rounded-xl"
           >
             <Upload className="w-5 h-5" /> 
-            {t('workouts.importPlan') || 'Importa Piano'}
+            {importPlanLabels[language] || 'Importa Piano'}
           </Button>
           <Button 
             onClick={onGenerateClick}
