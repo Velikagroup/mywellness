@@ -401,6 +401,23 @@ export default function MealsPage() {
     }
   };
 
+  const addWeekToShoppingList = async () => {
+    if (!user) return;
+    try {
+      if (mealPlans.length === 0) {
+        alert('Nessun pasto nel piano settimanale.');
+        return;
+      }
+      await addMealsToShoppingList(mealPlans, mealPlans.map(m => m.day_of_week));
+      const allDayKeys = [...new Set(mealPlans.map(m => m.day_of_week))];
+      setAddedDays(prev => Array.from(new Set([...prev, ...allDayKeys])));
+      alert('✅ Ingredienti di tutta la settimana aggiunti alla lista della spesa!');
+    } catch (error) {
+      console.error('Error adding week to shopping list:', error);
+      alert("Errore nell'aggiunta degli ingredienti. Riprova.");
+    }
+  };
+
   const regenerateSingleMeal = async (mealToRegenerate) => {
     if (!user || !nutritionData) return;
     setRegeneratingMealId(mealToRegenerate.id);
