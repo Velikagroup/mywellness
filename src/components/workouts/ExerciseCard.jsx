@@ -307,14 +307,20 @@ ALL text MUST be in ${langName}. Return ONLY valid JSON.`,
               </DialogDescription>
             </DialogHeader>
 
+            {isLoadingDetails ? (
+              <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <Loader2 className="w-8 h-8 animate-spin text-[#26847F]" />
+                <p className="text-sm text-gray-500">{t('workouts.generatingDetails') || 'Generating details...'}</p>
+              </div>
+            ) : (
             <div className="space-y-6 py-4">
-              {/* Target Muscles - mostra sempre anche se vuoto con fallback */}
+              {/* Target Muscles */}
               <div>
                 <h4 className="font-semibold text-gray-900 mb-2">🎯 {t('workouts.targetMuscles')}</h4>
                 <div className="flex flex-wrap gap-2">
-                  {((displayExercise.target_muscles || exercise.target_muscles)?.length > 0 
-                    ? (displayExercise.target_muscles || exercise.target_muscles)
-                    : (displayExercise.muscle_groups || exercise.muscle_groups || [])
+                  {(localizedDetails?.target_muscles?.length > 0
+                    ? localizedDetails.target_muscles
+                    : (exercise.target_muscles || exercise.muscle_groups || [])
                   ).map((muscle, idx) => (
                     <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm border border-blue-200">
                       {muscle}
@@ -323,27 +329,27 @@ ALL text MUST be in ${langName}. Return ONLY valid JSON.`,
                 </div>
               </div>
 
-              {/* Descrizione Dettagliata - mostra sempre con fallback */}
+              {/* Descrizione Dettagliata */}
               <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
                 <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
                   <Info className="w-4 h-4 text-blue-600" />
                   {t('workouts.detailedDescription')}
                 </h4>
                 <p className="text-sm text-gray-700 leading-relaxed">
-                  {displayExercise.detailed_description || exercise.detailed_description || exercise.description || t('workouts.noDescriptionAvailable')}
+                  {localizedDetails?.detailed_description || exercise.detailed_description || exercise.description || t('workouts.noDescriptionAvailable')}
                 </p>
               </div>
 
-              {/* Form Tips - mostra sempre con fallback */}
+              {/* Form Tips */}
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                   <Zap className="w-4 h-4 text-green-600" />
                   {t('workouts.formTips')}
                 </h4>
                 <ul className="space-y-2">
-                  {((displayExercise.form_tips || exercise.form_tips)?.length > 0 
-                    ? (displayExercise.form_tips || exercise.form_tips)
-                    : [t('workouts.defaultFormTip1'), t('workouts.defaultFormTip2'), t('workouts.defaultFormTip3')]
+                  {(localizedDetails?.form_tips?.length > 0
+                    ? localizedDetails.form_tips
+                    : (exercise.form_tips?.length > 0 ? exercise.form_tips : [t('workouts.defaultFormTip1'), t('workouts.defaultFormTip2'), t('workouts.defaultFormTip3')])
                   ).map((tip, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                       <span className="text-green-600 font-bold flex-shrink-0">•</span>
@@ -353,15 +359,15 @@ ALL text MUST be in ${langName}. Return ONLY valid JSON.`,
                 </ul>
               </div>
 
-              {/* Intensity Tips - sempre visibile */}
-              {intensityTips?.length > 0 && (
+              {/* Intensity Tips */}
+              {(localizedDetails?.intensity_tips?.length > 0 || intensityTips?.length > 0) && (
                 <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
                   <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <Dumbbell className="w-4 h-4 text-orange-600" />
                     {t('workouts.loadIntensity')}
                   </h4>
                   <ul className="space-y-2">
-                    {intensityTips.map((tip, idx) => (
+                    {(localizedDetails?.intensity_tips || intensityTips).map((tip, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                         <span className="text-orange-600 font-bold flex-shrink-0">•</span>
                         <span>{tip}</span>
@@ -371,6 +377,7 @@ ALL text MUST be in ${langName}. Return ONLY valid JSON.`,
                 </div>
               )}
             </div>
+            )}
 
             <Button
               onClick={() => setShowDetails(false)}
