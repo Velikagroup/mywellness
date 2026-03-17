@@ -11316,7 +11316,7 @@ export const translations = {
       cookingRelaxed: "Entspannt",
       cookingRelaxedDesc: "30+ Minuten",
       // Cheat meal
-      cheatMealTitle: "Cheat Meal",
+      cheatMealTitle: "Cheat Meal - Planen Sie Ihre Diät-Ausnahmen",
       cheatMealSubtitle: "Möchten Sie eine wöchentliche Ausnahme-Mahlzeit planen?",
       skipCheatMeal: "Überspringen",
       // Pantry Modal
@@ -13692,7 +13692,7 @@ export const translations = {
       cookingRelaxed: "Détendu",
       cookingRelaxedDesc: "30+ minutes",
       // Cheat meal
-      cheatMealTitle: "Cheat Meal",
+      cheatMealTitle: "Cheat Meal - Planifiez Vos Écarts de Régime",
       cheatMealSubtitle: "Voulez-vous planifier un repas libre hebdomadaire ?",
       skipCheatMeal: "Passer",
       // Pantry Modal
