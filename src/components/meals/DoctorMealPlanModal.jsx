@@ -391,7 +391,7 @@ Per meal_type usa: breakfast (colazione), snack1 (spuntino mattina), lunch (pran
                     {totalMealsInserted} pasti strutturati su 7 giorni. Controlla ogni giorno, modifica se necessario, poi salva.
                   </p>
                   <button
-                    onClick={() => { setStep('input'); setError(''); }}
+                    onClick={() => { setStep('input'); setError(''); setSelectedFile(null); }}
                     className="text-xs text-green-700 underline mt-1 hover:text-green-900"
                   >
                     ← Ricomincia con un altro testo
