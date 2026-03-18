@@ -2175,8 +2175,8 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
         </Dialog>
       )}
 
-      <div className="min-h-screen pb-20">
-         <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
+      <div className="min-h-screen pb-20 overflow-x-hidden">
+         <div className="max-w-7xl mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-8 w-full">
            <WorkoutHeader
              trainingData={trainingData}
              workoutPlans={workoutPlans}
