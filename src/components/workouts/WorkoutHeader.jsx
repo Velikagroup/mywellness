@@ -64,7 +64,7 @@ export default function WorkoutHeader({
             </div>
           )}
         </div>
-        <div className="flex gap-3 w-full lg:w-auto justify-between lg:justify-end">
+        <div className="flex flex-col gap-2 w-full lg:w-auto">
           <Button 
             onClick={() => setShowImportModal(true)}
             variant="outline"
