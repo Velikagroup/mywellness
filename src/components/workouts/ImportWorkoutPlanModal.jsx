@@ -309,57 +309,89 @@ export default function ImportWorkoutPlanModal({ isOpen, onClose, user, onWorkou
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file: uploadedFile });
 
-      // Read the PDF directly with vision — no intermediate extraction step
       const aiResponse = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a fitness assistant. Read the attached workout plan document and extract EVERY exercise exactly as written.
-
-CRITICAL RULES:
-- Extract ONLY exercises that actually appear in the document. DO NOT invent or add any exercise.
-- Copy exercise names EXACTLY as written in the document (same language, same spelling).
-- Extract sets, reps, rest, RPE exactly as written. If a field is missing, use null.
-- Classify "phase": "warm_up" if the exercise is in a warm-up section, "cool_down" if in a cool-down/stretching section, "main" for all other exercises.
-- Extract ALL exercises from ALL days/sections shown in the document.
-- Include notes/tempo if written next to the exercise.
-
-Return every single exercise found in the document. Nothing more, nothing less.`,
+        model: 'claude_sonnet_4_6',
         file_urls: [file_url],
+        prompt: `Leggi attentamente il documento PDF allegato che contiene una scheda di allenamento.
+
+Il tuo compito è estrarre TUTTI gli esercizi presenti nel documento, esattamente come sono scritti.
+
+REGOLE OBBLIGATORIE:
+1. Copia i nomi degli esercizi ESATTAMENTE come scritti nel documento (stessa lingua, stessa grafia).
+2. NON inventare esercizi. Estrai SOLO quelli presenti nel PDF.
+3. Per ogni esercizio estrai: nome, serie (sets), ripetizioni (reps), recupero (rest), RPE se presente, note/indicazioni tecniche.
+4. Classifica la fase (phase):
+   - "warm_up" = esercizi nella sezione riscaldamento
+   - "cool_down" = esercizi nella sezione defaticamento/stretching
+   - "main" = tutti gli altri esercizi (la maggior parte)
+5. Se il documento ha più giorni, raggruppa gli esercizi per giorno (day_label = "Lunedì", "Martedì", ecc. o "Day 1", "Day 2", ecc.)
+6. Se un campo non è specificato nel documento, lascialo null/vuoto.
+
+Restituisci tutti gli esercizi trovati nel documento, niente di più.`,
         response_json_schema: {
           type: 'object',
           properties: {
-            exercises: {
+            days: {
               type: 'array',
+              description: 'Lista dei giorni/sessioni trovati nel documento',
               items: {
                 type: 'object',
                 properties: {
-                  name: { type: 'string' },
-                  sets: { type: 'number' },
-                  reps: { type: 'string' },
-                  rest: { type: 'string' },
-                  rpe: { type: 'string' },
-                  muscle_groups: { type: 'array', items: { type: 'string' } },
-                  phase: { type: 'string', enum: ['warm_up', 'main', 'cool_down'] },
-                  notes: { type: 'string' }
+                  day_label: { type: 'string', description: 'Nome del giorno/sessione come scritto nel documento (es: Lunedì, Day 1, Sessione A)' },
+                  day_of_week: { type: 'string', enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], description: 'Giorno della settimana corrispondente' },
+                  exercises: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        name: { type: 'string' },
+                        sets: { type: 'number' },
+                        reps: { type: 'string' },
+                        rest: { type: 'string' },
+                        rpe: { type: 'string' },
+                        muscle_groups: { type: 'array', items: { type: 'string' } },
+                        phase: { type: 'string', enum: ['warm_up', 'main', 'cool_down'] },
+                        notes: { type: 'string' }
+                      },
+                      required: ['name', 'phase']
+                    }
+                  }
                 },
-                required: ['name', 'phase']
+                required: ['exercises']
               }
             },
             warnings: { type: 'array', items: { type: 'string' } }
           },
-          required: ['exercises']
+          required: ['days']
         }
       });
 
-      setAnalysisResult(aiResponse);
+      // Build exercisesByDay from the parsed days
+      const dayMap = { monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [] };
+      const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+      let globalIdx = 0;
 
-      const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-      const dayExercises = { monday: [], tuesday: [], wednesday: [], thursday: [], friday: [], saturday: [], sunday: [] };
-      aiResponse.exercises?.forEach((ex, idx) => {
-        const dayIndex = idx % 7;
-        dayExercises[days[dayIndex]].push({ ...ex, originalIndex: idx });
+      if (aiResponse.days?.length > 0) {
+        aiResponse.days.forEach((day, dayIdx) => {
+          const targetDay = day.day_of_week || dayOrder[dayIdx % 7];
+          (day.exercises || []).forEach(ex => {
+            dayMap[targetDay].push({ ...ex, originalIndex: globalIdx++ });
+          });
+        });
+      }
+
+      // Flatten all exercises for analysisResult
+      const allExercises = Object.values(dayMap).flat().map(ex => {
+        const { originalIndex, ...rest } = ex;
+        return rest;
       });
 
-      setExercisesByDay(dayExercises);
-      setSelectedDay('monday');
+      setAnalysisResult({ exercises: allExercises, warnings: aiResponse.warnings });
+      setExercisesByDay(dayMap);
+
+      // Select first day that has exercises
+      const firstDayWithExercises = dayOrder.find(d => dayMap[d].length > 0) || 'monday';
+      setSelectedDay(firstDayWithExercises);
       setStep('review');
     } catch (err) {
       console.error('Error analyzing file:', err);
