@@ -322,11 +322,20 @@ export default function ImportWorkoutPlanModal({ isOpen, onClose, user, onWorkou
       }
 
       const aiResponse = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analyze these exercises and structure them correctly. Also classify each exercise as "warm_up", "main", or "cool_down" based on its nature (e.g. light cardio/mobility = warm_up, heavy compound lifts = main, stretching/breathing = cool_down):
+        prompt: `You are a fitness expert. Extract and structure ALL exercises from the data below WITHOUT skipping any. Do NOT merge or collapse exercises.
 
+Rules for "phase" classification:
+- "warm_up": ONLY exercises explicitly labeled as warm-up, activation drills, or mobility prep (typically 1-3 exercises MAX)
+- "cool_down": ONLY exercises explicitly labeled as cool-down, stretching, or recovery (typically 1-3 exercises MAX)  
+- "main": ALL other exercises — strength, compound lifts, isolation, supersets, HIIT, cardio blocks, etc.
+- When in doubt, classify as "main". Do NOT over-classify as warm_up or cool_down.
+
+Also extract RPE (Rate of Perceived Exertion) if present in the data (e.g. "RPE 8", "@8", "effort 8/10").
+
+Data to process:
 ${JSON.stringify(extractedData.output.exercises, null, 2)}
 
-Return structured exercises with all fields. If no explicit warm_up or cool_down exercises exist, identify 1-2 suitable ones from the list or leave those arrays empty.`,
+IMPORTANT: Return every single exercise found. Fix obvious data errors (e.g. sets=0, negative reps).`,
         response_json_schema: {
           type: 'object',
           properties: {
@@ -339,6 +348,7 @@ Return structured exercises with all fields. If no explicit warm_up or cool_down
                   sets: { type: 'number' },
                   reps: { type: 'string' },
                   rest: { type: 'string' },
+                  rpe: { type: 'string' },
                   muscle_groups: { type: 'array', items: { type: 'string' } },
                   difficulty: { type: 'string', enum: ['beginner', 'intermediate', 'advanced'] },
                   phase: { type: 'string', enum: ['warm_up', 'main', 'cool_down'] }
