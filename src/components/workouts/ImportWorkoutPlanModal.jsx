@@ -237,6 +237,9 @@ function ExerciseCard({ ex, idx, editingExercises, setEditingExercises, tx }) {
       {ex.muscle_groups?.length > 0 && (
         <p className="text-xs text-gray-400">{tx.groups}: {ex.muscle_groups.join(', ')}</p>
       )}
+      {ex.notes && (
+        <p className="text-xs text-gray-400 italic">📝 {ex.notes}</p>
+      )}
     </div>
   );
 }
