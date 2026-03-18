@@ -222,6 +222,17 @@ function ExerciseCard({ ex, idx, editingExercises, setEditingExercises, tx }) {
             className="w-16 text-xs font-bold text-orange-500 bg-transparent outline-none text-center"
           />
         </div>
+        {(current.rpe ?? ex.rpe) && (
+          <div className="flex items-center gap-1 bg-red-50 rounded-xl px-3 py-1.5">
+            <span className="text-xs text-red-500 font-medium">RPE:</span>
+            <input
+              type="text"
+              value={current.rpe ?? ex.rpe}
+              onChange={(e) => update('rpe', e.target.value)}
+              className="w-8 text-xs font-bold text-red-500 bg-transparent outline-none text-center"
+            />
+          </div>
+        )}
       </div>
       {ex.muscle_groups?.length > 0 && (
         <p className="text-xs text-gray-400">{tx.groups}: {ex.muscle_groups.join(', ')}</p>
