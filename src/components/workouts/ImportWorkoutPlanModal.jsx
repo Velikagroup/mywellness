@@ -313,14 +313,18 @@ export default function ImportWorkoutPlanModal({ isOpen, onClose, user, onWorkou
           properties: {
             exercises: {
               type: 'array',
+              description: 'Extract EVERY exercise found in the document exactly as written. Do not skip any.',
               items: {
                 type: 'object',
                 properties: {
-                  name: { type: 'string' },
-                  sets: { type: 'number' },
-                  reps: { type: 'string' },
-                  rest: { type: 'string' },
-                  muscle_groups: { type: 'array', items: { type: 'string' } }
+                  name: { type: 'string', description: 'Exact exercise name as written in the document' },
+                  sets: { type: 'number', description: 'Number of sets (e.g. 3, 4)' },
+                  reps: { type: 'string', description: 'Reps or duration as written (e.g. "10", "10-12", "45 sec", "AMRAP")' },
+                  rest: { type: 'string', description: 'Rest time as written (e.g. "60s", "2 min", "N/A")' },
+                  rpe: { type: 'string', description: 'RPE value if present (e.g. "8", "7-8", "@8"). Leave empty if not present.' },
+                  muscle_groups: { type: 'array', items: { type: 'string' }, description: 'Muscle groups targeted' },
+                  phase: { type: 'string', description: 'Section in the document: warm_up if in warm-up section, cool_down if in cool-down/stretching section, main for all other exercises' },
+                  notes: { type: 'string', description: 'Any additional notes, tempo, technique cues written in the document' }
                 }
               }
             }
@@ -332,21 +336,18 @@ export default function ImportWorkoutPlanModal({ isOpen, onClose, user, onWorkou
         throw new Error(extractedData.details || 'Extraction error');
       }
 
+      // Minimal cleanup pass — only fix missing required fields, never invent exercises
       const aiResponse = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a fitness expert. Extract and structure ALL exercises from the data below WITHOUT skipping any. Do NOT merge or collapse exercises.
+        prompt: `You are given a list of exercises extracted from a PDF workout plan. Your ONLY job is to:
+1. Keep ALL exercises exactly as extracted — do NOT add, remove, or rename any exercise
+2. Fill in "phase" if missing: "warm_up" for explicit warm-up sections, "cool_down" for explicit cool-down/stretching sections, "main" for everything else
+3. Fix obviously broken numeric fields only (e.g. sets=null → 3, reps=null → "10")
+4. Preserve RPE exactly as extracted
 
-Rules for "phase" classification:
-- "warm_up": ONLY exercises explicitly labeled as warm-up, activation drills, or mobility prep (typically 1-3 exercises MAX)
-- "cool_down": ONLY exercises explicitly labeled as cool-down, stretching, or recovery (typically 1-3 exercises MAX)  
-- "main": ALL other exercises — strength, compound lifts, isolation, supersets, HIIT, cardio blocks, etc.
-- When in doubt, classify as "main". Do NOT over-classify as warm_up or cool_down.
+DO NOT invent exercises. DO NOT change exercise names. Return the exact same list with fixes only.
 
-Also extract RPE (Rate of Perceived Exertion) if present in the data (e.g. "RPE 8", "@8", "effort 8/10").
-
-Data to process:
-${JSON.stringify(extractedData.output.exercises, null, 2)}
-
-IMPORTANT: Return every single exercise found. Fix obvious data errors (e.g. sets=0, negative reps).`,
+Extracted exercises:
+${JSON.stringify(extractedData.output.exercises, null, 2)}`,
         response_json_schema: {
           type: 'object',
           properties: {
@@ -362,7 +363,8 @@ IMPORTANT: Return every single exercise found. Fix obvious data errors (e.g. set
                   rpe: { type: 'string' },
                   muscle_groups: { type: 'array', items: { type: 'string' } },
                   difficulty: { type: 'string', enum: ['beginner', 'intermediate', 'advanced'] },
-                  phase: { type: 'string', enum: ['warm_up', 'main', 'cool_down'] }
+                  phase: { type: 'string', enum: ['warm_up', 'main', 'cool_down'] },
+                  notes: { type: 'string' }
                 },
                 required: ['name', 'sets', 'reps', 'rest', 'muscle_groups', 'phase']
               }
