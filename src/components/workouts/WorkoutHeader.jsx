@@ -87,6 +87,18 @@ export default function WorkoutHeader({
         </div>
       </div>
 
+
+      {showImportModal && (
+        <ImportWorkoutPlanModal
+          isOpen={showImportModal}
+          onClose={() => setShowImportModal(false)}
+          user={user}
+          onWorkoutImported={() => {
+            setShowImportModal(false);
+            onWorkoutImported?.();
+          }}
+        />
+      )}
     </>
   );
 }
