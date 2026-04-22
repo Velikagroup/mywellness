@@ -764,7 +764,8 @@ function HomeContent() {
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-2">
-            <div className="flex flex-col items-center gap-2">
+            {/* CTA buttons temporaneamente nascosti */}
+            <div className="hidden flex-col items-center gap-2">
               <button onClick={handleGetStarted} disabled={isLoading} className="rounded-full bg-red-500 flex items-center justify-center border-[var(--brand-primary)] hover:opacity-90 transition-opacity cursor-pointer" style={{ width: '80px', height: '80px', borderWidth: '5px' }}>
                 <ScanLine className="w-[40px] h-[40px] text-white" strokeWidth={2.5} />
               </button>
