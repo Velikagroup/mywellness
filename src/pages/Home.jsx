@@ -122,11 +122,11 @@ function HomeContent() {
       console.log('🔗 Codice affiliato salvato:', affiliateCode.toUpperCase());
     }
 
-    // Pop-up quiz dopo 5 secondi
-    const timer = setTimeout(() => {
-      setShowQuizPopup(true);
-    }, 5000);
-    return () => clearTimeout(timer);
+    // Pop-up quiz temporaneamente disabilitato
+    // const timer = setTimeout(() => {
+    //   setShowQuizPopup(true);
+    // }, 5000);
+    // return () => clearTimeout(timer);
   }, []);
 
   // Removed automatic redirect to Quiz - let users browse the Home page freely
