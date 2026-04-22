@@ -591,14 +591,7 @@ function HomeContent() {
               Play Store
             </a>
             
-            {showNavQuizButton &&
-            <Button
-              onClick={handleGetStarted}
-              disabled={isLoading}
-              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-2 px-4 text-sm font-medium rounded-full quiz-button-slide whitespace-nowrap flex-shrink-0">
-                {t('home.freeQuiz')}
-              </Button>
-            }
+            {/* Quiz button temporaneamente nascosto */}
           </div>
         </div>
 
