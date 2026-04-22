@@ -585,8 +585,8 @@ function HomeContent() {
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 bg-black hover:bg-gray-900 text-white text-xs font-semibold whitespace-nowrap rounded-full px-4 py-2 transition-colors">
-              <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3.18 23.76c.3.17.64.24.99.2L15.34 12 11.69 8.35 3.18 23.76zm17.3-12.21c-.38-.34-3.98-2.28-5.95-3.41L11.22 11.4l3.66 3.66c1.97-1.12 5.57-3.07 5.95-3.41a1.5 1.5 0 00-.35-2.1zM1.79.48C1.48.82 1.3 1.3 1.3 1.9v20.2c0 .6.18 1.08.49 1.42l.07.07L12.92 12.6V12.4L1.86.41l-.07.07zM15.34 12L4.17.24c-.33-.33-.79-.4-1.2-.2L15.34 12z"/>
+              <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.6 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c17.1-9.8 17.1-34.1 0-43.9l-1.2.1zm-256.1 26.1L47 512c13.1 6.8 27.9 6.8 41 0l280.8-161.2-101.3-99.1z"/>
               </svg>
               Play Store
             </a>
@@ -711,8 +711,8 @@ function HomeContent() {
                   rel="noopener noreferrer"
                   onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-center gap-2 w-full bg-black hover:bg-gray-900 text-white text-sm font-semibold rounded-full py-3 transition-colors">
-                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3.18 23.76c.3.17.64.24.99.2L15.34 12 11.69 8.35 3.18 23.76zm17.3-12.21c-.38-.34-3.98-2.28-5.95-3.41L11.22 11.4l3.66 3.66c1.97-1.12 5.57-3.07 5.95-3.41a1.5 1.5 0 00-.35-2.1zM1.79.48C1.48.82 1.3 1.3 1.3 1.9v20.2c0 .6.18 1.08.49 1.42l.07.07L12.92 12.6V12.4L1.86.41l-.07.07zM15.34 12L4.17.24c-.33-.33-.79-.4-1.2-.2L15.34 12z"/>
+                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 512 512" fill="currentColor">
+                    <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.6 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c17.1-9.8 17.1-34.1 0-43.9l-1.2.1zm-256.1 26.1L47 512c13.1 6.8 27.9 6.8 41 0l280.8-161.2-101.3-99.1z"/>
                   </svg>
                   {({'it':'Download su Play Store','en':'Get it on Play Store','es':'Disponible en Play Store','pt':'Baixar no Play Store','de':'Bei Google Play laden','fr':'Télécharger sur Play Store'})[language] || 'Get it on Play Store'}
                 </a>
