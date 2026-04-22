@@ -4,7 +4,7 @@ import { Ruler } from "lucide-react";
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
-export default function HeightStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev }) {
+export default function HeightStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
   const t = translations?.quiz || {};
   const [unit, setUnit] = useState('cm');
   const [displayValue, setDisplayValue] = useState('');

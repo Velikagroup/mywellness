@@ -4,7 +4,7 @@ import { Scale } from "lucide-react";
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
-export default function CurrentWeightStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev }) {
+export default function CurrentWeightStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
   const t = translations?.quiz || {};
   const [unit, setUnit] = useState('kg');
   const [displayValue, setDisplayValue] = useState('');

@@ -570,19 +570,26 @@ function HomeContent() {
               )}
             </div>
             
-            {user ? (
-              <button
-                onClick={() => navigate(createPageUrl('Dashboard'))}
-                className="text-sm text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
-                Dashboard
-              </button>
-            ) : (
-              <button
-                onClick={handleLogin}
-                className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
-                {t('nav.login')}
-              </button>
-            )}
+            <a
+              href="https://apps.apple.com/es/app/mywellness-ai-body-scanner/id6761993278"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-black hover:bg-gray-900 text-white text-xs font-semibold whitespace-nowrap rounded-full px-4 py-2 transition-colors">
+              <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+              </svg>
+              App Store
+            </a>
+            <a
+              href="https://play.google.com/store/apps/details?id=com.mywellness.app&pcampaignid=web_share"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-black hover:bg-gray-900 text-white text-xs font-semibold whitespace-nowrap rounded-full px-4 py-2 transition-colors">
+              <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3.18 23.76c.3.17.64.24.99.2L15.34 12 11.69 8.35 3.18 23.76zm17.3-12.21c-.38-.34-3.98-2.28-5.95-3.41L11.22 11.4l3.66 3.66c1.97-1.12 5.57-3.07 5.95-3.41a1.5 1.5 0 00-.35-2.1zM1.79.48C1.48.82 1.3 1.3 1.3 1.9v20.2c0 .6.18 1.08.49 1.42l.07.07L12.92 12.6V12.4L1.86.41l-.07.07zM15.34 12L4.17.24c-.33-.33-.79-.4-1.2-.2L15.34 12z"/>
+              </svg>
+              Play Store
+            </a>
             
             {showNavQuizButton &&
             <Button
@@ -686,34 +693,29 @@ function HomeContent() {
                 {t('nav.blog')}
               </button>
 
-              <div className="border-t border-gray-200/50 pt-3 mt-3">
-                {user ? (
-                  <Button
-                    onClick={() => {
-                      navigate(createPageUrl('Dashboard'));
-                      setMobileMenuOpen(false);
-                    }}
-                    className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2">
-                    Dashboard
-                  </Button>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => {
-                        handleLogin();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
-                      {t('nav.login')}
-                    </button>
-                    <Button
-                      onClick={handleGetStarted}
-                      disabled={isLoading}
-                      className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2 mt-2">
-                      {t('home.freeQuiz')}
-                    </Button>
-                  </>
-                )}
+              <div className="border-t border-gray-200/50 pt-3 mt-3 space-y-2">
+                <a
+                  href="https://apps.apple.com/es/app/mywellness-ai-body-scanner/id6761993278"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full bg-black hover:bg-gray-900 text-white text-sm font-semibold rounded-full py-3 transition-colors">
+                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                  </svg>
+                  Download su App Store
+                </a>
+                <a
+                  href="https://play.google.com/store/apps/details?id=com.mywellness.app&pcampaignid=web_share"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full bg-black hover:bg-gray-900 text-white text-sm font-semibold rounded-full py-3 transition-colors">
+                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3.18 23.76c.3.17.64.24.99.2L15.34 12 11.69 8.35 3.18 23.76zm17.3-12.21c-.38-.34-3.98-2.28-5.95-3.41L11.22 11.4l3.66 3.66c1.97-1.12 5.57-3.07 5.95-3.41a1.5 1.5 0 00-.35-2.1zM1.79.48C1.48.82 1.3 1.3 1.3 1.9v20.2c0 .6.18 1.08.49 1.42l.07.07L12.92 12.6V12.4L1.86.41l-.07.07zM15.34 12L4.17.24c-.33-.33-.79-.4-1.2-.2L15.34 12z"/>
+                  </svg>
+                  Download su Play Store
+                </a>
               </div>
             </div>
           </div>

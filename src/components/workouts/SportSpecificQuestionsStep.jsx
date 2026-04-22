@@ -1052,11 +1052,13 @@ export default function SportSpecificQuestionsStep({ data, onDataChange, nextSte
   
   const [answers, setAnswers] = useState(data?.sport_specific_data || {});
 
-  if (!sportConfig) {
-    // Se non ci sono domande specifiche, salta questo step
-    React.useEffect(() => {
+  React.useEffect(() => {
+    if (!sportConfig) {
       nextStep();
-    }, []);
+    }
+  }, []);
+
+  if (!sportConfig) {
     return null;
   }
   

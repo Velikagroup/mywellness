@@ -1200,6 +1200,7 @@ Use accurate nutritional data. All in ${langName.toUpperCase()}.`;
               recoveryIntolerancesText += `\n🚫 User also said: "${generationPrefs.custom_intolerances}" - NEVER include these.`;
             }
 
+            const langName = language || 'italian';
             const recoveryPrompt = `Create ${missingMealTypes.length} meals in ${langName.toUpperCase()} for ${day}:
 ${mealSpecs.map(spec => `${spec.label}: ${spec.target_calories} kcal${spec.is_cheat ? ' (CHEAT MEAL)' : ''}`).join('\n')}
 Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${recoveryIntolerancesText}${pantryIngredientsPrompt}`;

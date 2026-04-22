@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
 import BlogArticleContent from '@/components/blog/BlogArticleContent';
 
-export default function itblogarticle() {
+export default function Itblogarticle() {
   // Get slug from URL path
   const urlParams = new URLSearchParams(window.location.search);
   const slugFromQuery = urlParams.get('slug');

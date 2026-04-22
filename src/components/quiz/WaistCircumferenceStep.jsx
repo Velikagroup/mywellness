@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Circle } from "lucide-react";
 import QuizHeader from './QuizHeader';
 
-export default function WaistCircumferenceStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev }) {
+export default function WaistCircumferenceStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
   const t = translations?.quiz || {};
   const [unit, setUnit] = useState('cm');
   const [displayValue, setDisplayValue] = useState('');
